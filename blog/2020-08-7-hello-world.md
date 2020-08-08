@@ -58,13 +58,46 @@ definitely evaluate these alternatives if you're building a Scala command-line
 application. But first, let me explain why the features that make Moped unique
 in my opinion.
 
-## Model configuration as Scala data structures
+## Model commands with Scala data structures
 
-A Moped command is implemented as a normal Scala case class.
+Moped commands are implemented as normal Scala case classes that extend the
+`Command` class. Below is an example command that implements an `echo`
+application that prints its arguments to standard output.
 
 ```scala mdoc
-println(42)
+import moped.annotations._
+import moped.console._
+
+@Description("Writes arguments to standard output")
+@ExampleUsage(
+  """|$ echo Hello world!
+     |Hello world!
+     |$ echo --uppercase Hello world!
+     |HELLO WORLD!
+     |""".stripMargin
+)
+case class EchoCommand(
+  @Description("If true, prints the output in UPPERCASE")
+  uppercase: Boolean = false,
+  @PositionalArguments()
+  arguments: List[String] = Nil
+) extends Command {
+  def run(app: Application): Int = {
+    val toPrint =
+      if (uppercase) arguments.map(_.toUpperCase)
+      else arguments
+    app.out.println(toPrint.mkString(" "))
+    0
+  }
+}
 ```
+
+Observe that command-line flags like `--uppercase` are encoded as
+`uppercase: Boolean` fields on the class. Flags can have advanced types such as
+`Option[T]`, `Map[String, T]`, another case class or a sealed trait.
+
+Positional and trailing arguments are defined as case class fields just like
+normal command-line flags.
 
 ## Unified command-line parsing and configuration parsing
 
