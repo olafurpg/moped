@@ -62,8 +62,8 @@ in my opinion.
 
 A Moped command is implemented as a normal Scala case class.
 
-```scala
-
+```scala mdoc
+println(42)
 ```
 
 ## Unified command-line parsing and configuration parsing

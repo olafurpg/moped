@@ -93,7 +93,20 @@ lazy val docs = project
     ),
     mdocOut :=
       baseDirectory.in(ThisBuild).value / "website" / "target" / "docs",
-    mdocExtraArguments := List("--no-link-hygiene")
+    mdocExtraArguments := {
+      val cwd = baseDirectory.in(ThisBuild).value
+      List(
+        "--no-link-hygiene",
+        "--in",
+        (cwd / "docs").getAbsolutePath,
+        "--out",
+        (cwd / "website" / "target" / "docs").getAbsolutePath,
+        "--in",
+        (cwd / "blog").getAbsolutePath,
+        "--out",
+        (cwd / "website" / "blog").getAbsolutePath
+      )
+    }
   )
   .dependsOn(tests)
   .enablePlugins(DocusaurusPlugin)
