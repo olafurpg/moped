@@ -101,5 +101,31 @@ normal command-line flags.
 
 ## Unified command-line parsing and configuration parsing
 
-When parsing command-line arguments, Mpoed first converts the arguments into
-JSON. At its core, Moped is a JSON converts command-line arguments into a JSON
+Moped commands can be parsed from JSON instead of command-line arguments. The
+benefit of JSON is that users can declare command-line arguments in
+configuration files to avoid repeating the same flags on every invocation.
+
+```sh
+$ cat echo.json
+{
+  "uppercase": true
+}
+$ echo hello world!
+HELLO WORLD!
+```
+
+It's often desirable to write user configuration in a more high-level syntax
+than JSON so Moped additionally supports HOCON, TOML, YAML, Jsonnet and Dhall.
+
+Error messages from decoding configuration files point to source locations in
+the user-written source, just like a normal compiler.
+
+```sh
+$ cat echo.json
+{
+  "upper": true
+}
+$ echo hello world!
+error: echo.json:1
+HELLO WORLD!
+```

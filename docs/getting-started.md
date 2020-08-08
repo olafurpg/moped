@@ -251,7 +251,7 @@ needed additional features:
   command-line interface and I spent a lot of time struggling to troubleshoot
   cryptic compile error messages. While I loved the low-boilerplate API of
   case-app, I still didn't feel productive.
-- Holistic command-line/JSON/HOCON parsing and idiomatic Scala: after playing
+- Unified command-line/JSON/HOCON parsing and idiomatic Scala: after playing
   around with Picocli I observed that I still nek
 
 Here are some of the features that
