@@ -16,7 +16,8 @@ abstract class BaseSuite
           CommandParser[VersionCommand],
           CommandParser[CompletionsCommand],
           CommandParser[WorkingDirectoryCommand],
-          CommandParser[EchoCommand]
+          CommandParser[EchoCommand],
+          CommandParser[ConfigCommand]
         )
       )
     )

@@ -57,6 +57,7 @@ object EchoCommand {
       CommandParser[VersionCommand],
       CommandParser[TerminalsCommand],
       CommandParser[EchoCommand],
+      CommandParser[ConfigCommand],
       CommandParser[CompletionsCommand]
     )
   )

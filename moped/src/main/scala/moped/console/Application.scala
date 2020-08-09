@@ -23,6 +23,7 @@ case class Application(
     version: String,
     commands: List[CommandParser[_]],
     env: Environment,
+    reporter: Reporter,
     relativeCommands: List[CommandParser[_]] = Nil,
     arguments: List[String] = Nil,
     relativeArguments: List[String] = Nil,
@@ -34,9 +35,6 @@ case class Application(
     },
     onEmptyArguments: BaseCommand = new HelpCommand(),
     onNotRecognoziedCommand: BaseCommand = NotRecognizedCommand,
-    reporter: Reporter = new ConsoleReporter(
-      Environment.default.standardOutput
-    ),
     token: CancelToken = CancelToken.empty()
 ) {
   require(binaryName.nonEmpty, "binaryName must be non-empty")
@@ -87,15 +85,18 @@ object Application {
       binaryName: String,
       version: String,
       commands: List[CommandParser[_]]
-  ): Application =
+  ): Application = {
+    val env = Environment.fromProjectDirectories(
+      ProjectDirectories.fromPath(binaryName)
+    )
     Application(
       binaryName,
       version,
       commands,
-      Environment.fromProjectDirectories(
-        ProjectDirectories.fromPath(binaryName)
-      )
+      env = env,
+      reporter = new ConsoleReporter(env.standardOutput)
     )
+  }
   def run(app: Application): Int = {
     val args = app.preProcessArguments(app.arguments)
     val base = app.copy(commands = app.commands.map(_.withApplication(app)))

@@ -17,10 +17,14 @@ import munit.TestOptions
 
 abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
   val reporter = new ConsoleReporter(System.out)
-  val path = new PathFixture
+  val temporaryDirectory = new DirectoryFixture
+  def workingDirectory = temporaryDirectory().resolve("workingDirectory")
+  def preferencesDirectory = temporaryDirectory().resolve("preferences")
+  def cacheDirectory = temporaryDirectory().resolve("cache")
+  def dataDirectory = temporaryDirectory().resolve("data")
   val app = new ApplicationFixture(applicationToTest)
 
-  class PathFixture extends Fixture[Path]("Path") {
+  class DirectoryFixture extends Fixture[Path]("Directory") {
     private var path: Path = _
     def apply(): Path = path
     override def beforeAll(): Unit = {
@@ -35,13 +39,17 @@ abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
       extends Fixture[Application]("Application") {
     private val out = new ByteArrayOutputStream
     private val ps = new PrintStream(out)
-    private val instrumentedApp = app.copy(
-      env = app.env.copy(
-        standardOutput = ps,
-        standardError = ps
-      ),
-      reporter = new ConsoleReporter(ps)
-    )
+    private def instrumentedApp =
+      app.copy(
+        env = app.env.copy(
+          workingDirectory = workingDirectory,
+          cacheDirectory = cacheDirectory,
+          preferencesDirectory = preferencesDirectory,
+          standardOutput = ps,
+          standardError = ps
+        ),
+        reporter = new ConsoleReporter(ps)
+      )
     def apply(): Application = instrumentedApp
     def reset(): Unit = {
       out.reset()
@@ -56,7 +64,7 @@ abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
 
   override def munitFixtures: Seq[Fixture[_]] =
     super.munitFixtures ++ List(
-      path,
+      temporaryDirectory,
       app
     )
 
@@ -70,7 +78,7 @@ abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
 
   def checkOutput(
       name: TestOptions,
-      arguments: List[String],
+      arguments: => List[String],
       expectedOutput: String,
       expectedExit: Int = 0
   ): Unit = {

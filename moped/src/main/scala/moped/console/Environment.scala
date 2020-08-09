@@ -32,7 +32,9 @@ final case class Environment(
 }
 
 object Environment {
-  val default: Environment = fromProjectDirectories(ProjectDirectories.fromPath("moped"))
+  val default: Environment = fromName("moped")
+  def fromName(name: String): Environment =
+    fromProjectDirectories(ProjectDirectories.fromPath("moped"))
   def fromProjectDirectories(dirs: ProjectDirectories): Environment =
     Environment(
       dataDirectory = Paths.get(dirs.dataDir),
