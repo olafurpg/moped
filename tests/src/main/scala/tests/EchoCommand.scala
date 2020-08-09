@@ -49,7 +49,7 @@ case class EchoCommand(
 object EchoCommand {
   implicit val parser: CommandParser[EchoCommand] =
     CommandParser.derive(EchoCommand())
-  lazy val app = Application(
+  lazy val app: Application = Application.fromName(
     "tests",
     "1.0.0",
     commands = List(

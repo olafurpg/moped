@@ -10,7 +10,6 @@ import scala.collection.immutable.Nil
 
 import moped.console.Application
 import moped.console.CommandParser
-import moped.console.Environment
 import moped.internal.console.Utils
 import moped.reporters.ConsoleReporter
 import munit.FunSuite
@@ -36,13 +35,12 @@ abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
       extends Fixture[Application]("Application") {
     private val out = new ByteArrayOutputStream
     private val ps = new PrintStream(out)
-    private val env = Environment(
-      standardOutput = ps,
-      standardError = ps
-    )
     private val instrumentedApp = app.copy(
-      env = env,
-      reporter = new ConsoleReporter(env.standardOutput)
+      env = app.env.copy(
+        standardOutput = ps,
+        standardError = ps
+      ),
+      reporter = new ConsoleReporter(ps)
     )
     def apply(): Application = instrumentedApp
     def reset(): Unit = {

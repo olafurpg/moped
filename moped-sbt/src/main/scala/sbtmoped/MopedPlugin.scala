@@ -3,7 +3,9 @@ package sbtmoped
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
-import java.util.jar.{Attributes, JarOutputStream, Manifest}
+import java.util.jar.Attributes
+import java.util.jar.JarOutputStream
+import java.util.jar.Manifest
 
 import scala.collection.mutable
 import scala.sys.process.Process
@@ -20,23 +22,23 @@ object MopedPlugin extends AutoPlugin {
     val Moped: Configuration = config("moped")
     val MopedInternal: Configuration = config("moped-internal").hide
 
-    lazy val mopedAlert =
+    lazy val mopedAlert: TaskKey[String => Unit] =
       taskKey[String => Unit](
         "This function is called with a message when the native image is ready."
       )
-    lazy val mopedNativeImageVersion =
+    lazy val mopedNativeImageVersion: SettingKey[String] =
       settingKey[String]("The version of GraalVM to use by default.")
-    lazy val mopedCoursierBinary =
+    lazy val mopedCoursierBinary: TaskKey[File] =
       taskKey[File](
         "Path to a coursier binary that is used to launch GraalVM native-image."
       )
-    lazy val mopedNativeImageBinary =
+    lazy val mopedNativeImageBinary: TaskKey[List[String]] =
       taskKey[List[String]](
         "The command arguments to launch the GraalVM native-image binary."
       )
-    lazy val mopedNativeImage =
+    lazy val mopedNativeImage: TaskKey[File] =
       taskKey[File]("Generate a native image for this project.")
-    lazy val mopedNativeImageOptions =
+    lazy val mopedNativeImageOptions: TaskKey[List[String]] =
       taskKey[List[String]](
         "Extra command-line arguments that should be forwarded to the native-image optimizer."
       )

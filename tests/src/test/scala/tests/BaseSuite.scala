@@ -8,7 +8,7 @@ import moped.console.CommandParser
 
 abstract class BaseSuite
     extends moped.testkit.MopedSuite(
-      Application(
+      Application.fromName(
         "tests",
         "1.0.0",
         commands = List(

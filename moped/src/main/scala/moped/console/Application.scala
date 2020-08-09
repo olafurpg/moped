@@ -1,8 +1,5 @@
 package moped.console
 
-import java.nio.file.Path
-import java.nio.file.Paths
-
 import scala.concurrent.Await
 import scala.concurrent.Future
 import scala.concurrent.duration.Duration
@@ -25,6 +22,7 @@ case class Application(
     binaryName: String,
     version: String,
     commands: List[CommandParser[_]],
+    env: Environment,
     relativeCommands: List[CommandParser[_]] = Nil,
     arguments: List[String] = Nil,
     relativeArguments: List[String] = Nil,
@@ -34,11 +32,8 @@ case class Application(
         HelpCommand.moveFlagsBehindSubcommand(args)
       )
     },
-    projectQualifier: String = "",
-    projectOrganization: String = "",
     onEmptyArguments: BaseCommand = new HelpCommand(),
     onNotRecognoziedCommand: BaseCommand = NotRecognizedCommand,
-    env: Environment = Environment.default,
     reporter: Reporter = new ConsoleReporter(
       Environment.default.standardOutput
     ),
@@ -59,13 +54,6 @@ case class Application(
 
   def consumedArguments: List[String] =
     arguments.dropRight(relativeArguments.length)
-
-  def projectDirectories: ProjectDirectories =
-    ProjectDirectories.from(projectQualifier, projectOrganization, binaryName)
-  def configDirectory: Path = Paths.get(projectDirectories.configDir)
-  def cacheDirectory: Path = Paths.get(projectDirectories.cacheDir)
-  def dataDirectory: Path = Paths.get(projectDirectories.dataDir)
-  def preferencesDirectory: Path = Paths.get(projectDirectories.preferenceDir)
 
   def runAndExitIfNonZero(args: List[String]): Unit = {
     val exit = run(args)
@@ -95,6 +83,19 @@ case class Application(
 }
 
 object Application {
+  def fromName(
+      binaryName: String,
+      version: String,
+      commands: List[CommandParser[_]]
+  ): Application =
+    Application(
+      binaryName,
+      version,
+      commands,
+      Environment.fromProjectDirectories(
+        ProjectDirectories.fromPath(binaryName)
+      )
+    )
   def run(app: Application): Int = {
     val args = app.preProcessArguments(app.arguments)
     val base = app.copy(commands = app.commands.map(_.withApplication(app)))

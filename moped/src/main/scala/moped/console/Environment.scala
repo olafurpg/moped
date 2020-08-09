@@ -8,18 +8,35 @@ import java.{util => ju}
 
 import scala.collection.JavaConverters._
 
+import dev.dirs.ProjectDirectories
+
 final case class Environment(
+    dataDirectory: Path,
+    cacheDirectory: Path,
+    preferencesDirectory: Path,
     standardOutput: PrintStream = Console.out,
     standardError: PrintStream = Console.err,
     standardInput: BufferedReader = Console.in,
     workingDirectory: Path = Paths.get(System.getProperty("user.dir")),
     homeDirectory: Path = Paths.get(System.getProperty("user.home")),
-    configDirectory: Path = Paths.get(System.getProperty("user.home")),
     systemProperties: ju.Properties = System.getProperties(),
     environmentVariables: collection.Map[String, String] =
       System.getenv().asScala
-)
+) {
+  def withProjectDirectories(dirs: ProjectDirectories): Environment =
+    copy(
+      dataDirectory = Paths.get(dirs.dataDir),
+      cacheDirectory = Paths.get(dirs.cacheDir),
+      preferencesDirectory = Paths.get(dirs.preferenceDir)
+    )
+}
 
 object Environment {
-  val default: Environment = Environment()
+  val default: Environment = fromProjectDirectories(ProjectDirectories.fromPath("moped"))
+  def fromProjectDirectories(dirs: ProjectDirectories): Environment =
+    Environment(
+      dataDirectory = Paths.get(dirs.dataDir),
+      cacheDirectory = Paths.get(dirs.cacheDir),
+      preferencesDirectory = Paths.get(dirs.preferenceDir)
+    )
 }
