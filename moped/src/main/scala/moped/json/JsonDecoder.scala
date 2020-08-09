@@ -12,8 +12,8 @@ import moped.reporters.Diagnostic
 trait JsonDecoder[A] { self =>
 
   def decode(context: DecodingContext): DecodingResult[A]
-  final def decode(elem: JsonElement): DecodingResult[A] =
-    decode(DecodingContext(elem))
+  // final def decode(elem: JsonElement): DecodingResult[A] =
+  //   decode(DecodingContext(elem))
 
   final def map[B](fn: A => B): JsonDecoder[B] =
     context => decode(context).map(fn)
@@ -75,7 +75,7 @@ object JsonDecoder {
         value.zipWithIndex.foreach {
           case (value, i) =>
             val cursor = SelectIndexCursor(i).withParent(context.cursor)
-            ev.decode(DecodingContext(value, cursor)) match {
+            ev.decode(context.withJson(value).withCursor(cursor)) match {
               case ErrorResult(e) => errors += e
               case ValueResult(e) => successValues += e
             }
@@ -99,7 +99,7 @@ object JsonDecoder {
         members.foreach { member =>
           val cursor =
             SelectMemberCursor(member.key.value).withParent(context.cursor)
-          ev.decode(DecodingContext(member.value, cursor)) match {
+          ev.decode(context.withJson(member.value).withCursor(cursor)) match {
             case ErrorResult(error) => errors += error
             case ValueResult(value) =>
               successValues += (member.key.value -> value)

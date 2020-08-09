@@ -129,7 +129,7 @@ object Application {
                   )
                 val configured: DecodingResult[BaseCommand] =
                   conf.flatMap(elem =>
-                    command.decodeCommand(DecodingContext(elem))
+                    command.decodeCommand(DecodingContext(elem, app.env))
                   )
                 configured match {
                   case ValueResult(value) =>

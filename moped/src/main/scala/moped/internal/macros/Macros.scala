@@ -97,7 +97,7 @@ class Macros(val c: blackbox.Context) {
         val getter = T.member(param.name)
         val fallback = q"tmp.$getter"
         val next =
-          q"_root_.moped.internal.json.DrillIntoJson.getOrElse[$P](conf, $fallback, settings.get($name).get)"
+          q"_root_.moped.internal.json.DrillIntoJson.getOrElse[$P](conf, $fallback, settings.get($name).get, context)"
         next
       }
     }

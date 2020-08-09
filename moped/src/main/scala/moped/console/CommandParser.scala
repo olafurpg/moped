@@ -66,10 +66,10 @@ trait CommandParser[A <: BaseCommand] extends JsonCodec[A] {
     Cases.camelToKebab(shape.name).stripSuffix("-command").toLowerCase()
   def decodeCommand(context: DecodingContext): DecodingResult[BaseCommand] =
     this.decode(context)
-  def parseCommand(arguments: List[String]): DecodingResult[BaseCommand] =
-    CommandLineParser
-      .parseArgs[A](arguments)(this)
-      .flatMap(elem => decodeCommand(DecodingContext(elem)))
+  // def parseCommand(arguments: List[String]): DecodingResult[BaseCommand] =
+  //   CommandLineParser
+  //     .parseArgs[A](arguments)(this)
+  //     .flatMap(elem => decodeCommand(DecodingContext(elem)))
   def withTabCompletion(
       fn: TabCompletionContext => List[TabCompletionItem]
   ): CommandParser[A] = ???

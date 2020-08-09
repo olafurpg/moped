@@ -4,6 +4,7 @@ import moped.internal.diagnostics.MissingFieldDiagnostic
 import moped.internal.diagnostics.TypeMismatchDiagnostic
 import moped.json._
 import moped.macros.ParameterShape
+import moped.console.Environment
 
 object DrillIntoJson {
   def getKey(obj: JsonElement, keys: Seq[String]): Option[JsonElement] =
@@ -24,25 +25,35 @@ object DrillIntoJson {
   def getOrElse[T](
       conf: JsonElement,
       default: T,
-      param: ParameterShape
+      param: ParameterShape,
+      context: DecodingContext
   )(implicit ev: JsonDecoder[T]): DecodingResult[T] = {
     getKey(conf, param.allNames) match {
-      case Some(value) => ev.decode(value)
+      case Some(value) => ev.decode(context.withJson(value))
       case None => ValueResult(default)
     }
   }
 
-  def get[T](obj: JsonObject, path: String, extraNames: String*)(implicit
+  def get[T](
+      obj: JsonObject,
+      env: Environment,
+      path: String,
+      extraNames: String*
+  )(implicit
       ev: JsonDecoder[T]
   ): DecodingResult[T] = {
-    get[T](DecodingContext(obj, SelectMemberCursor(path)), path, extraNames: _*)
+    get[T](
+      DecodingContext(obj, env, SelectMemberCursor(path)),
+      path,
+      extraNames: _*
+    )
   }
 
   def get[T](context: DecodingContext, path: String, extraNames: String*)(
       implicit ev: JsonDecoder[T]
   ): DecodingResult[T] = {
     getKey(context.json, path +: extraNames) match {
-      case Some(value) => ev.decode(value)
+      case Some(value) => ev.decode(context.withJson(value))
       case None =>
         context.json match {
           case JsonObject(_) =>
