@@ -84,8 +84,9 @@ abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
       workingDirectoryLayout: String = ""
   ): Unit = {
     test(name) {
-      if (workingDirectoryLayout.nonEmpty)
-        tests.FileLayout.fromString(workingDirectoryLayout, workingDirectory)
+      if (workingDirectoryLayout.nonEmpty) {
+        FileLayout.fromString(workingDirectoryLayout, workingDirectory)
+      }
       val exit = app().run(arguments)
       assertEquals(exit, expectedExit, clues(app.capturedOutput))
       assertNoDiff(app.capturedOutput, expectedOutput)

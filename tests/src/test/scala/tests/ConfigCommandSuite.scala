@@ -1,7 +1,5 @@
 package tests
 
-import moped.internal.console.Utils
-
 class ConfigCommandSuite extends BaseSuite {
   checkOutput(
     "basic",
@@ -16,14 +14,12 @@ class ConfigCommandSuite extends BaseSuite {
   )
 
   checkOutput(
-    "json", {
-      Utils.overwriteFile(
-        workingDirectory.resolve("tests.json"),
-        """{"foobar":true}"""
-      )
-      List("config")
-    },
-    "foobar"
+    "json",
+    List("config"),
+    "foobar",
+    workingDirectoryLayout = """|/tests.json
+                                |{"foobar": true}
+                                |""".stripMargin
   )
 
 }
