@@ -7,6 +7,11 @@ import upickle.core.{Visitor, ObjArrVisitor}
 import moped.reporters.Input
 import moped.reporters.RangePosition
 
+object JsonConfParser extends Transformer[Input] {
+  def transform[T](j: Input, f: Visitor[_, T]): T =
+    new JsonParser(j).parse(f)
+}
+
 final class JsonParser[J](input: Input)
     extends Parser[J]
     with CharBasedParser[J] {
@@ -99,9 +104,4 @@ final class JsonParser[J](input: Input)
   final def dropBufferUntil(i: Int): Unit = ()
   final def char(i: Int): Char = upickle.core.Platform.charAt(chars, i)
   final def sliceString(i: Int, j: Int): CharSequence = chars.subSequence(i, j)
-}
-
-object JsonConfParser extends Transformer[Input] {
-  def transform[T](j: Input, f: Visitor[_, T]): T =
-    new JsonParser(j).parse(f)
 }
