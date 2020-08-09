@@ -1,10 +1,10 @@
 package moped.internal.json
 
+import moped.console.Environment
 import moped.internal.diagnostics.MissingFieldDiagnostic
 import moped.internal.diagnostics.TypeMismatchDiagnostic
 import moped.json._
 import moped.macros.ParameterShape
-import moped.console.Environment
 
 object DrillIntoJson {
   def getKey(obj: JsonElement, keys: Seq[String]): Option[JsonElement] =
