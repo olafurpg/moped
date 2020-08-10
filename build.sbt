@@ -68,6 +68,16 @@ lazy val toml = project
   )
   .dependsOn(moped)
 
+lazy val dhall = project
+  .in(file("moped-dhall"))
+  .settings(
+    moduleName := "moped-dhall",
+    libraryDependencies ++= List(
+      "org.dhallj" %% "dhall-scala" % "0.5.0-M1"
+    )
+  )
+  .dependsOn(moped)
+
 lazy val testkit = project
   .settings(
     libraryDependencies ++= List(
