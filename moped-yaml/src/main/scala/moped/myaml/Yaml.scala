@@ -6,15 +6,12 @@ import upickle.core.ArrVisitor
 import upickle.core.ObjVisitor
 import java.{util => ju}
 import scala.collection.JavaConverters._
-import moped.reporters.Input
-import org.yaml.snakeyaml.Yaml
 import java.nio.charset.StandardCharsets
+import scala.collection.mutable
+import upickle.core.Util
 
 class YamlElement(val value: Any)
 object YamlElement extends AstTransformer[YamlElement] {
-  def parse(input: Input): YamlElement = {
-    val yaml = new Yaml()
-  }
   override def transform[T](j: YamlElement, f: Visitor[_, T]): T = {
     j.value match {
       case c: ju.Map[_, _] =>
@@ -51,19 +48,30 @@ object YamlElement extends AstTransformer[YamlElement] {
   override def visitArray(
       length: Int,
       index: Int
-  ): ArrVisitor[YamlElement, YamlElement] = ???
+  ): ArrVisitor[YamlElement, YamlElement] =
+    new AstArrVisitor[mutable.ListBuffer](buf => new YamlElement(buf.asJava))
   override def visitObject(
       length: Int,
       index: Int
-  ): ObjVisitor[YamlElement, YamlElement] = ???
-  override def visitNull(index: Int): YamlElement = ???
-  override def visitFalse(index: Int): YamlElement = ???
-  override def visitTrue(index: Int): YamlElement = ???
+  ): ObjVisitor[YamlElement, YamlElement] =
+    new AstObjVisitor[mutable.LinkedHashMap[String, YamlElement]](map =>
+      new YamlElement(map)
+    )
+  override def visitNull(index: Int): YamlElement = new YamlElement(null)
+  override def visitFalse(index: Int): YamlElement =
+    new YamlElement(java.lang.Boolean.FALSE)
+  override def visitTrue(index: Int): YamlElement =
+    new YamlElement(java.lang.Boolean.TRUE)
   override def visitFloat64StringParts(
       s: CharSequence,
       decIndex: Int,
       expIndex: Int,
       index: Int
-  ): YamlElement = ???
-  override def visitString(s: CharSequence, index: Int): YamlElement = ???
+  ): YamlElement =
+    new YamlElement(
+      if (decIndex != -1 || expIndex != -1) s.toString.toDouble
+      else Util.parseIntegralNum(s, decIndex, expIndex, index)
+    )
+  override def visitString(s: CharSequence, index: Int): YamlElement =
+    new YamlElement(s.toString())
 }
