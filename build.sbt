@@ -58,6 +58,16 @@ lazy val yaml = project
   )
   .dependsOn(moped)
 
+lazy val toml = project
+  .in(file("moped-toml"))
+  .settings(
+    moduleName := "moped-toml",
+    libraryDependencies ++= List(
+      "tech.sparse" %% "toml-scala" % "0.2.2"
+    )
+  )
+  .dependsOn(moped)
+
 lazy val testkit = project
   .settings(
     libraryDependencies ++= List(

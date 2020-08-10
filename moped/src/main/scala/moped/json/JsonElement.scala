@@ -2,7 +2,6 @@ package moped.json
 
 import scala.collection.immutable.ListMap
 
-import moped.internal.reporters._
 import moped.reporters._
 import org.typelevel.paiges.Doc
 import ujson.AstTransformer
