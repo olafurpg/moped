@@ -48,6 +48,16 @@ lazy val hocon = project
   )
   .dependsOn(moped)
 
+lazy val yaml = project
+  .in(file("moped-yaml"))
+  .settings(
+    moduleName := "moped-yaml",
+    libraryDependencies ++= List(
+      "org.yaml" % "snakeyaml" % "1.26"
+    )
+  )
+  .dependsOn(moped)
+
 lazy val testkit = project
   .settings(
     libraryDependencies ++= List(
