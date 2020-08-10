@@ -1,5 +1,6 @@
 def scala212 = "2.12.12"
 def graalvm = "20.1.0"
+def ujson = "1.2.0"
 def isCI = "true".equalsIgnoreCase(System.getenv("CI"))
 inThisBuild(
   List(
@@ -30,12 +31,22 @@ lazy val moped = project
       "org.scala-lang" % "scala-reflect" % scalaVersion.value,
       "dev.dirs" % "directories" % "20",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.2",
-      "com.lihaoyi" %% "ujson" % "1.2.0",
+      "com.lihaoyi" %% "ujson" % ujson,
       "com.lihaoyi" %% "pprint" % "0.5.9",
       "com.lihaoyi" %% "fansi" % "0.2.7",
       "org.typelevel" %% "paiges-core" % "0.3.1"
     )
   )
+
+lazy val hocon = project
+  .in(file("moped-hocon"))
+  .settings(
+    moduleName := "moped-hocon",
+    libraryDependencies ++= List(
+      "org.ekrich" %% "sconfig" % "1.3.1"
+    )
+  )
+  .dependsOn(moped)
 
 lazy val testkit = project
   .settings(
