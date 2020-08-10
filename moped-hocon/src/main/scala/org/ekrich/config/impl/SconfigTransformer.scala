@@ -25,12 +25,8 @@ class SconfigTransformer extends AstTransformer[ConfigValue] {
           case c: java.lang.String => f.visitString(c, -1)
           case c: java.lang.Integer => f.visitInt32(c, -1)
           case c: java.lang.Double => f.visitFloat64(c, -1)
+          case c: java.lang.Float => f.visitFloat32(c, -1)
           case c: java.lang.Long => f.visitInt64(c, -1)
-          case null => f.visitNull(-1)
-          case x =>
-            throw new IllegalArgumentException(
-              s"Unexpected config value $j with unwrapped value $x"
-            )
         }
     }
   }
