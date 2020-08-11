@@ -71,7 +71,7 @@ sealed abstract class JsonElement extends Product with Serializable {
 
 object JsonElement extends AstTransformer[JsonElement] {
   def merge(elements: Iterable[JsonElement]): JsonElement = {
-    val merger = new JsonMerger()
+    val merger = new ObjectMergerTraverser()
     elements.foreach { elem =>
       merger.mergeElement(elem)
     }

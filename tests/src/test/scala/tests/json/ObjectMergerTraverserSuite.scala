@@ -4,7 +4,7 @@ import munit.TestOptions
 import moped.json.JsonElement
 import tests.BaseSuite
 
-class JsonMergerSuite extends BaseSuite {
+class ObjectMergerTraverserSuite extends BaseSuite {
   def check(
       name: TestOptions,
       original: List[JsonElement],
@@ -15,6 +15,7 @@ class JsonMergerSuite extends BaseSuite {
       assertJsonEquals(obtained, expected)
     }
   }
+
   check(
     "object-object",
     List(
@@ -94,7 +95,7 @@ class JsonMergerSuite extends BaseSuite {
       parseJson("""[41]"""),
       parseJson("""[42]""")
     ),
-    parseJson("""[41, 42]""")
+    parseJson("""[42]""")
   )
 
   check(
@@ -114,4 +115,14 @@ class JsonMergerSuite extends BaseSuite {
     ),
     parseJson("""41""")
   )
+
+  check(
+    "number-boolean",
+    List(
+      parseJson("""{"a": 42}"""),
+      parseJson("""{"a": true}""")
+    ),
+    parseJson("""{"a": true}""")
+  )
+
 }

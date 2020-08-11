@@ -6,7 +6,6 @@ import scala.collection.mutable
 sealed abstract class JsonBuilder {
   def addObjectMember(member: JsonMember): Unit
   def addArrayValue(value: JsonElement): Unit
-  def matches(elem: JsonElement): Boolean
   def result(): JsonElement
 }
 
@@ -27,14 +26,12 @@ object JsonBuilder {
 }
 
 final class PrimitiveBuilder(value: JsonElement) extends JsonBuilder {
-  def matches(elem: JsonElement): Boolean = false
   def addObjectMember(member: JsonMember): Unit = ()
   def addArrayValue(value: JsonElement): Unit = ()
   def result(): JsonElement = value
 }
 
 final class ArrayBuilder() extends JsonBuilder {
-  def matches(elem: JsonElement): Boolean = elem.isArray
   private val buf = ListBuffer.empty[JsonElement]
   def addObjectMember(member: JsonMember): Unit = ()
   def addArrayValue(value: JsonElement): Unit = buf += value
@@ -42,7 +39,6 @@ final class ArrayBuilder() extends JsonBuilder {
 }
 
 final class ObjectBuilder() extends JsonBuilder {
-  def matches(elem: JsonElement): Boolean = elem.isObject
   private val buf = mutable.LinkedHashMap.empty[JsonString, JsonBuilder]
   def addObjectMember(member: JsonMember): Unit = {
     (buf.get(member.key), member.value) match {
