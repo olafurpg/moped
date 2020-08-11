@@ -9,14 +9,13 @@ class JsonTraverser {
       case e: JsonArray => traverseArray(e, cursor)
       case e: JsonObject => traverseObject(e, cursor)
     }
-  def traversePrimitive(e: JsonPrimitive, cursor: Cursor): Unit = {
+  def traversePrimitive(e: JsonPrimitive, cursor: Cursor): Unit =
     e match {
       case e: JsonNull => traverseNull(e, cursor)
       case e: JsonNumber => traverseNumber(e, cursor)
       case e: JsonBoolean => traverseBoolean(e, cursor)
       case e: JsonString => traverseString(e, cursor)
     }
-  }
   def traverseNull(e: JsonNull, cursor: Cursor): Unit = ()
   def traverseNumber(e: JsonNumber, cursor: Cursor): Unit = ()
   def traverseBoolean(e: JsonBoolean, cursor: Cursor): Unit = ()
@@ -27,13 +26,22 @@ class JsonTraverser {
         traverse(e, SelectIndexCursor(i).withParent(cursor))
     }
   }
-  def traverseObjectMember(e: JsonMember, cursor: Cursor): Unit = {
-    traverseString(e.key, cursor)
-    traverse(e.value, SelectMemberCursor(e.key.value).withParent(cursor))
+  def traverseMemberKey(e: JsonString, cursor: Cursor): Unit = {
+    traverseString(e, cursor)
+  }
+  def traverseMemberValue(e: JsonElement, cursor: Cursor): Unit = {
+    traverse(e, cursor)
+  }
+  def traverseMember(e: JsonMember, cursor: Cursor): Unit = {
+    traverseMemberKey(e.key, cursor)
+    traverseMemberValue(
+      e.value,
+      SelectMemberCursor(e.key.value).withParent(cursor)
+    )
   }
   def traverseObject(e: JsonObject, cursor: Cursor): Unit = {
     e.members.foreach { m =>
-      traverseObjectMember(m, cursor)
+      traverseMember(m, cursor)
     }
   }
 }

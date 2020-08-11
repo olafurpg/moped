@@ -20,6 +20,15 @@ sealed abstract class JsonElement extends Product with Serializable {
     copy.myPosition = newPosition
     copy
   }
+
+  def isArray: Boolean = this.isInstanceOf[JsonArray]
+  def isObject: Boolean = this.isInstanceOf[JsonObject]
+  def isString: Boolean = this.isInstanceOf[JsonString]
+  def isBoolean: Boolean = this.isInstanceOf[JsonBoolean]
+  def isNumber: Boolean = this.isInstanceOf[JsonNumber]
+  def isNull: Boolean = this.isInstanceOf[JsonNull]
+  def isPrimitive: Boolean = this.isInstanceOf[JsonPrimitive]
+
   private def copyThis(): JsonElement =
     this match {
       case JsonNull() => JsonNull()
@@ -61,15 +70,12 @@ sealed abstract class JsonElement extends Product with Serializable {
 }
 
 object JsonElement extends AstTransformer[JsonElement] {
-  def merge(objects: Iterable[JsonElement]): JsonElement = {
-    objects.foldRight(JsonObject(Nil)) {
-      case (next: JsonObject, accum) =>
-        // TODO(olafur): merge nested keys
-        JsonObject(accum.members ++ next.members)
-      case (_, accum) =>
-        // TODO(olafur): Handle non-objects, maybe report an error?
-        accum
+  def merge(elements: Iterable[JsonElement]): JsonElement = {
+    val merger = new JsonMerger()
+    elements.foreach { elem =>
+      merger.mergeElement(elem)
     }
+    merger.result()
   }
   def transform[T](j: JsonElement, f: Visitor[_, T]): T =
     j match {
@@ -111,7 +117,6 @@ object JsonElement extends AstTransformer[JsonElement] {
   def visitString(s: CharSequence, index: Int): JsonElement =
     JsonString(s.toString())
 }
-
 sealed abstract class JsonPrimitive extends JsonElement
 final case class JsonNull() extends JsonPrimitive
 final case class JsonNumber(value: Double) extends JsonPrimitive

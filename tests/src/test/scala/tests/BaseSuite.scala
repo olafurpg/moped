@@ -5,6 +5,9 @@ import moped.commands.HelpCommand
 import moped.commands.VersionCommand
 import moped.console.Application
 import moped.console.CommandParser
+import moped.json.JsonElement
+import moped.parsers.JsonParser
+import moped.reporters.Input
 
 abstract class BaseSuite
     extends moped.testkit.MopedSuite(
@@ -20,4 +23,16 @@ abstract class BaseSuite
           CommandParser[ConfigCommand]
         )
       )
-    )
+    ) {
+  def assertJsonEquals(obtained: JsonElement, expected: JsonElement)(implicit
+      loc: munit.Location
+  ): Unit =
+    if (obtained != expected) {
+      val width = 40
+      assertNoDiff(obtained.toDoc.render(width), expected.toDoc.render(width))
+      assertEquals(obtained, expected)
+    }
+  def parseJson(json: String): JsonElement = {
+    JsonParser.parse(Input.string(json)).get
+  }
+}
