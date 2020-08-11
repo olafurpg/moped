@@ -39,6 +39,14 @@ sealed abstract class Cursor {
       case SelectIndexCursor(value) => SelectIndexCursor(value)
     }
 }
+object Cursor {
+  def fromPath(members: List[String]): Cursor = {
+    members.foldLeft(NoCursor(): Cursor) {
+      case (parent, c) =>
+        SelectMemberCursor(c).withParent(parent)
+    }
+  }
+}
 final case class NoCursor() extends Cursor
 final case class SelectMemberCursor(value: String) extends Cursor
 final case class SelectIndexCursor(value: Int) extends Cursor

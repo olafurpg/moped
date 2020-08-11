@@ -18,6 +18,7 @@ import moped.macros.ClassShape
 import moped.reporters.ConsoleReporter
 import moped.reporters.Reporter
 import moped.json.JsonObject
+import moped.parsers.ConfigurationParser
 
 case class Application(
     binaryName: String,
@@ -36,6 +37,7 @@ case class Application(
     },
     onEmptyArguments: BaseCommand = new HelpCommand(),
     onNotRecognoziedCommand: BaseCommand = NotRecognizedCommand,
+    parsers: List[ConfigurationParser] = Nil,
     token: CancelToken = CancelToken.empty()
 ) {
   require(binaryName.nonEmpty, "binaryName must be non-empty")

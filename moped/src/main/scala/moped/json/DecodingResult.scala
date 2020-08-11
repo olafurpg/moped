@@ -2,7 +2,6 @@ package moped.json
 
 import scala.util.control.NonFatal
 
-import moped.internal.diagnostics.ThrowableDiagnostic
 import moped.internal.diagnostics.WithFilterDiagnostic
 import moped.reporters.Diagnostic
 
@@ -12,7 +11,7 @@ final case class ErrorResult(error: Diagnostic) extends DecodingResult[Nothing]
 object DecodingResult {
   def fromUnsafe[A](thunk: () => A): DecodingResult[A] =
     try ValueResult(thunk())
-    catch { case NonFatal(e) => ErrorResult(new ThrowableDiagnostic(e)) }
+    catch { case NonFatal(e) => ErrorResult(Diagnostic.exception(e)) }
 }
 
 sealed abstract class DecodingResult[+A] extends Product with Serializable {
