@@ -78,6 +78,16 @@ lazy val dhall = project
   )
   .dependsOn(moped)
 
+lazy val jsonnet = project
+  .in(file("moped-jsonnet"))
+  .settings(
+    moduleName := "moped-jsonnet",
+    libraryDependencies ++= List(
+      "com.lihaoyi" %% "sjsonnet" % "0.2.6"
+    )
+  )
+  .dependsOn(moped)
+
 lazy val testkit = project
   .settings(
     libraryDependencies ++= List(

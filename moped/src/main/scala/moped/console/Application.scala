@@ -17,6 +17,7 @@ import moped.json.ValueResult
 import moped.macros.ClassShape
 import moped.reporters.ConsoleReporter
 import moped.reporters.Reporter
+import moped.json.JsonObject
 
 case class Application(
     binaryName: String,
@@ -124,7 +125,7 @@ object Application {
                   command.nestedCommands
                 )
               } else {
-                val conf =
+                val conf: DecodingResult[JsonObject] =
                   CommandLineParser.parseArgs[command.Value](tail)(
                     command.asClassShaper
                   )
@@ -132,6 +133,7 @@ object Application {
                   conf.flatMap(elem =>
                     command.decodeCommand(DecodingContext(elem, app.env))
                   )
+                JsonObject(Nil)
                 configured match {
                   case ValueResult(value) =>
                     value.runAsFuture(app)

@@ -1,4 +1,4 @@
-package moped.internal.json
+package moped.internal.transformers
 
 import java.nio.CharBuffer
 import moped.reporters.Input
@@ -7,12 +7,12 @@ import upickle.core.{Visitor, ObjArrVisitor}
 import moped.reporters.Input
 import moped.reporters.RangePosition
 
-object JsonConfParser extends Transformer[Input] {
+object InputTransformer extends Transformer[Input] {
   def transform[T](j: Input, f: Visitor[_, T]): T =
-    new JsonParser(j).parse(f)
+    new InputTransformer(j).parse(f)
 }
 
-final class JsonParser[J](input: Input)
+final class InputTransformer[J](input: Input)
     extends Parser[J]
     with CharBasedParser[J] {
   var line = 0

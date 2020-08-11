@@ -44,6 +44,11 @@ object Diagnostic {
     new MessageOnlyDiagnostic(value, WarningSeverity)
   def error(value: String): Diagnostic =
     new MessageOnlyDiagnostic(value, ErrorSeverity)
+  def exception(e: Throwable): Diagnostic =
+    e match {
+      case d: DiagnosticException => d.d
+      case _ => new ThrowableDiagnostic(e)
+    }
   def typeMismatch(expected: String, context: DecodingContext): Diagnostic =
     new TypeMismatchDiagnostic(expected, context)
   def fromDiagnostics(head: Diagnostic, other: List[Diagnostic]): Diagnostic = {

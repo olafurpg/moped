@@ -149,7 +149,7 @@ object CommandLineParser {
 
   def parseArgs[T](
       args: List[String]
-  )(implicit settings: ClassShaper[T]): DecodingResult[JsonElement] = {
+  )(implicit settings: ClassShaper[T]): DecodingResult[JsonObject] = {
     val toInline = inlinedSettings(settings)
     val parser = new CommandLineParser[T](settings, toInline)
     parser.loop(JsonObject(Nil), args, NoFlag)

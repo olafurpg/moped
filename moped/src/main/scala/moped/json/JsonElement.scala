@@ -115,4 +115,10 @@ final case class JsonObject(members: List[JsonMember]) extends JsonElement {
     value.get(key)
   }
 }
+object JsonObject {
+  def merge(objects: Iterable[JsonObject]): JsonObject = {
+    // TODO(olafur): handle merging nested keys
+    JsonObject(objects.iterator.flatMap(_.members).toList)
+  }
+}
 final case class JsonMember(key: JsonString, value: JsonElement)
