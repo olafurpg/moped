@@ -61,6 +61,16 @@ sealed abstract class JsonElement extends Product with Serializable {
 }
 
 object JsonElement extends AstTransformer[JsonElement] {
+  def merge(objects: Iterable[JsonElement]): JsonElement = {
+    objects.foldRight(JsonObject(Nil)) {
+      case (next: JsonObject, accum) =>
+        // TODO(olafur): merge nested keys
+        JsonObject(accum.members ++ next.members)
+      case (_, accum) =>
+        // TODO(olafur): Handle non-objects, maybe report an error?
+        accum
+    }
+  }
   def transform[T](j: JsonElement, f: Visitor[_, T]): T =
     j match {
       case JsonNull() => f.visitNull(-1)
@@ -113,12 +123,6 @@ final case class JsonObject(members: List[JsonMember]) extends JsonElement {
     ListMap(members.map(m => m.key.value -> m.value): _*)
   def getMember(key: String): Option[JsonElement] = {
     value.get(key)
-  }
-}
-object JsonObject {
-  def merge(objects: Iterable[JsonObject]): JsonObject = {
-    // TODO(olafur): handle merging nested keys
-    JsonObject(objects.iterator.flatMap(_.members).toList)
   }
 }
 final case class JsonMember(key: JsonString, value: JsonElement)

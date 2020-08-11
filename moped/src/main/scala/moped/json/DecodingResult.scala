@@ -4,11 +4,28 @@ import scala.util.control.NonFatal
 
 import moped.internal.diagnostics.WithFilterDiagnostic
 import moped.reporters.Diagnostic
+import scala.collection.mutable
 
 final case class ValueResult[+A](value: A) extends DecodingResult[A]
 final case class ErrorResult(error: Diagnostic) extends DecodingResult[Nothing]
 
 object DecodingResult {
+  def fromResults[A](
+      results: Iterable[DecodingResult[A]]
+  ): DecodingResult[List[A]] = {
+    val buf = mutable.ListBuffer.empty[A]
+    val errors = mutable.ListBuffer.empty[Diagnostic]
+    results.iterator.foreach {
+      case ErrorResult(error) =>
+        errors += error
+      case ValueResult(value) =>
+        buf += value
+    }
+    Diagnostic.fromDiagnostics(errors.toList) match {
+      case Some(diagnostic) => ErrorResult(diagnostic)
+      case None => ValueResult(buf.toList)
+    }
+  }
   def fromUnsafe[A](thunk: () => A): DecodingResult[A] =
     try ValueResult(thunk())
     catch { case NonFatal(e) => ErrorResult(Diagnostic.exception(e)) }

@@ -19,6 +19,7 @@ import moped.reporters.ConsoleReporter
 import moped.reporters.Reporter
 import moped.json.JsonObject
 import moped.parsers.ConfigurationParser
+import moped.json.JsonElement
 
 case class Application(
     binaryName: String,
@@ -38,6 +39,7 @@ case class Application(
     onEmptyArguments: BaseCommand = new HelpCommand(),
     onNotRecognoziedCommand: BaseCommand = NotRecognizedCommand,
     parsers: List[ConfigurationParser] = Nil,
+    searcher: ConfigurationSearcher = EmptySearcher,
     token: CancelToken = CancelToken.empty()
 ) {
   require(binaryName.nonEmpty, "binaryName must be non-empty")
@@ -131,11 +133,13 @@ object Application {
                   CommandLineParser.parseArgs[command.Value](tail)(
                     command.asClassShaper
                   )
+                val configs =
+                  DecodingResult.fromResults(conf :: app.searcher.find(app))
+                val mergedConfig = configs.map(JsonElement.merge)
                 val configured: DecodingResult[BaseCommand] =
-                  conf.flatMap(elem =>
+                  mergedConfig.flatMap(elem =>
                     command.decodeCommand(DecodingContext(elem, app.env))
                   )
-                JsonObject(Nil)
                 configured match {
                   case ValueResult(value) =>
                     value.runAsFuture(app)
