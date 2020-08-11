@@ -1,4 +1,4 @@
-package moped.mtoml
+package moped.internal.transformers
 
 import toml.Value
 import ujson.AstTransformer
@@ -7,7 +7,7 @@ import upickle.core.ArrVisitor
 import upickle.core.ObjVisitor
 import upickle.core.Util
 
-object TomlElement extends AstTransformer[toml.Value] {
+object TomlTransformer extends AstTransformer[toml.Value] {
   override def transform[T](j: Value, f: Visitor[_, T]): T =
     j match {
       case Value.Str(value) => f.visitString(value, -1)

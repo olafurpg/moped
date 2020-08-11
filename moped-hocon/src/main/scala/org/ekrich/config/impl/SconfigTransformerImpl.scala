@@ -12,7 +12,7 @@ import scala.collection.JavaConverters._
 import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigList
 
-class SconfigTransformer extends AstTransformer[ConfigValue] {
+class SconfigTransformerImpl extends AstTransformer[ConfigValue] {
   val origin = SimpleConfigOrigin.newSimple("origin")
   override def transform[T](j: ConfigValue, f: Visitor[_, T]): T = {
     j match {

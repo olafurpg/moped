@@ -1,4 +1,4 @@
-package moped.myaml
+package moped.internal.transformers
 
 import ujson.AstTransformer
 import upickle.core.Visitor
@@ -11,7 +11,8 @@ import scala.collection.mutable
 import upickle.core.Util
 
 class YamlElement(val value: Any)
-object YamlElement extends AstTransformer[YamlElement] {
+
+object YamlTransformer extends AstTransformer[YamlElement] {
   override def transform[T](j: YamlElement, f: Visitor[_, T]): T = {
     j.value match {
       case c: ju.Map[_, _] =>

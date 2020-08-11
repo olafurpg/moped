@@ -1,4 +1,4 @@
-package moped
+package moped.internal.transformers
 
 import ujson.AstTransformer
 import org.dhallj.core.Expr
@@ -8,7 +8,7 @@ import upickle.core.ObjVisitor
 import org.dhallj.ast
 import upickle.core.Util
 
-object DhallElement extends AstTransformer[Expr] {
+object DhallTransformer extends AstTransformer[Expr] {
   def transform[T](j: Expr, f: Visitor[_, T]): T = {
     j match {
       case ast.BoolLiteral(c) => if (c) f.visitTrue(-1) else f.visitFalse(-1)
