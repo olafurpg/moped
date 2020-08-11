@@ -2,4 +2,4 @@ package moped.internal.transformers
 
 import org.ekrich.config.impl.SconfigTransformerImpl
 
-object SconfigTransformer extends SconfigTransformerImpl
+object HoconTransformer extends SconfigTransformerImpl

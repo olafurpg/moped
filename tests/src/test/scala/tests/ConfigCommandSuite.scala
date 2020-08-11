@@ -17,8 +17,55 @@ class ConfigCommandSuite extends BaseSuite {
     "json",
     List("config"),
     "foobar",
-    workingDirectoryLayout = """|/tests.json
+    workingDirectoryLayout = """|/.tests.json
                                 |{"foobar": true}
+                                |""".stripMargin
+  )
+
+  checkOutput(
+    "hocon",
+    List("config"),
+    "foobar",
+    workingDirectoryLayout = """|/.tests.conf
+                                |foobar = true
+                                |""".stripMargin
+  )
+
+  checkOutput(
+    "toml",
+    List("config"),
+    "foobar",
+    workingDirectoryLayout = """|/.tests.toml
+                                |foobar = true
+                                |""".stripMargin
+  )
+
+  checkOutput(
+    "yaml",
+    List("config"),
+    "foobar",
+    workingDirectoryLayout = """|/.tests.yaml
+                                |foobar: true
+                                |""".stripMargin
+  )
+
+  checkOutput(
+    "dhall",
+    List("config"),
+    "foobar",
+    workingDirectoryLayout = """|/.tests.dhall
+                                |let hello = True in
+                                |{ foobar = hello }
+                                |""".stripMargin
+  )
+
+  checkOutput(
+    "jsonnet",
+    List("config"),
+    "foobar",
+    workingDirectoryLayout = """|/.tests.jsonnet
+                                |local hello(enabled) = {foobar: enabled};
+                                |hello(true)
                                 |""".stripMargin
   )
 

@@ -20,6 +20,8 @@ import moped.reporters.Reporter
 import moped.json.JsonObject
 import moped.parsers.ConfigurationParser
 import moped.json.JsonElement
+import moped.console.AggregateSearcher
+import moped.parsers.JsonParser
 
 case class Application(
     binaryName: String,
@@ -38,8 +40,10 @@ case class Application(
     },
     onEmptyArguments: BaseCommand = new HelpCommand(),
     onNotRecognoziedCommand: BaseCommand = NotRecognizedCommand,
-    parsers: List[ConfigurationParser] = Nil,
-    searcher: ConfigurationSearcher = EmptySearcher,
+    parsers: List[ConfigurationParser] = List(JsonParser),
+    searcher: ConfigurationSearcher = new AggregateSearcher(
+      List(ProjectSearcher, SystemSearcher)
+    ),
     token: CancelToken = CancelToken.empty()
 ) {
   require(binaryName.nonEmpty, "binaryName must be non-empty")

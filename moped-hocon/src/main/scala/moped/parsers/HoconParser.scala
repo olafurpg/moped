@@ -3,13 +3,13 @@ package moped.parsers
 import moped.json.{DecodingResult, JsonElement}
 import moped.reporters.Input
 import org.ekrich.config.ConfigFactory
-import moped.internal.transformers.SconfigTransformer
+import moped.internal.transformers.HoconTransformer
 
-object SconfigParser extends ConfigurationParser {
+object HoconParser extends ConfigurationParser {
   def supportedFileExtensions: List[String] = List("conf")
   def parse(input: Input): DecodingResult[JsonElement] =
     DecodingResult.fromUnsafe { () =>
       val root = ConfigFactory.parseString(input.text).resolve().root
-      SconfigTransformer.transform(root, JsonElement)
+      HoconTransformer.transform(root, JsonElement)
     }
 }

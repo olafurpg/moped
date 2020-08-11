@@ -11,7 +11,8 @@ object DhallParser extends ConfigurationParser {
     DecodingResult.fromUnsafe { () =>
       input.text.parseExpr match {
         case Left(value) => throw value
-        case Right(value) => DhallTransformer.transform(value, JsonElement)
+        case Right(value) =>
+          DhallTransformer.transform(value.normalize(), JsonElement)
       }
     }
 }

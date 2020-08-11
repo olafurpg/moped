@@ -111,7 +111,7 @@ lazy val tests = project
     )
   )
   .enablePlugins(BuildInfoPlugin, MopedPlugin)
-  .dependsOn(testkit)
+  .dependsOn(testkit, hocon, toml, yaml, dhall, jsonnet)
 
 val scalatagsVersion = Def.setting {
   if (scalaVersion.value.startsWith("2.11")) "0.6.7"
