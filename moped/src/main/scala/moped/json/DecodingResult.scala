@@ -10,6 +10,8 @@ final case class ValueResult[+A](value: A) extends DecodingResult[A]
 final case class ErrorResult(error: Diagnostic) extends DecodingResult[Nothing]
 
 object DecodingResult {
+  def value[A](a: A): DecodingResult[A] = ValueResult(a)
+  def error[A](d: Diagnostic): DecodingResult[A] = ErrorResult(d)
   def fromResults[A](
       results: Iterable[DecodingResult[A]]
   ): DecodingResult[List[A]] = {
