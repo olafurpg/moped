@@ -22,6 +22,15 @@ class ConfigCommandSuite extends BaseSuite {
                                 |""".stripMargin
   )
 
+  checkErrorOutput(
+    "json".only,
+    List("config"),
+    "foobar",
+    workingDirectoryLayout = """|/.tests.json
+                                |{
+                                |""".stripMargin
+  )
+
   checkOutput(
     "hocon",
     List("config"),

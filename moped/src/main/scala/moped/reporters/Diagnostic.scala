@@ -36,14 +36,14 @@ abstract class Diagnostic(
 }
 
 object Diagnostic {
-  def debug(value: String): Diagnostic =
-    new MessageOnlyDiagnostic(value, DebugSeverity)
-  def info(value: String): Diagnostic =
-    new MessageOnlyDiagnostic(value, InfoSeverity)
-  def warning(value: String): Diagnostic =
-    new MessageOnlyDiagnostic(value, WarningSeverity)
-  def error(value: String): Diagnostic =
-    new MessageOnlyDiagnostic(value, ErrorSeverity)
+  def debug(value: String, pos: Position = NoPosition): Diagnostic =
+    new MessageOnlyDiagnostic(value, DebugSeverity, pos)
+  def info(value: String, pos: Position = NoPosition): Diagnostic =
+    new MessageOnlyDiagnostic(value, InfoSeverity, pos)
+  def warning(value: String, pos: Position = NoPosition): Diagnostic =
+    new MessageOnlyDiagnostic(value, WarningSeverity, pos)
+  def error(value: String, pos: Position = NoPosition): Diagnostic =
+    new MessageOnlyDiagnostic(value, ErrorSeverity, pos)
   def exception(e: Throwable): Diagnostic =
     e match {
       case d: DiagnosticException => d.d

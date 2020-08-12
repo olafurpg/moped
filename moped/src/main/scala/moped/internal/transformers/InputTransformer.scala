@@ -6,6 +6,8 @@ import ujson._
 import upickle.core.{Visitor, ObjArrVisitor}
 import moped.reporters.Input
 import moped.reporters.RangePosition
+import moped.internal.diagnostics.DiagnosticException
+import moped.reporters.Diagnostic
 
 object InputTransformer extends Transformer[Input] {
   def transform[T](j: Input, f: Visitor[_, T]): T =
@@ -20,12 +22,20 @@ final class InputTransformer[J](input: Input)
   val wrapped: CharBuffer = CharBuffer.wrap(chars)
 
   override def die(i: Int, msg: String): Nothing = {
+    pprint.log(msg)
     val pos = RangePosition(input, i, i)
     val error = pos.pretty("error", msg)
     throw new ParseException(error, i, pos.startLine, pos.startColumn) {
       // super.getMessage appends useless "at index N" suffix.
       override def getMessage: String = error
     }
+  }
+
+  override def reject(j: Int): PartialFunction[Throwable, Nothing] = {
+    case e: IndexOutOfBoundsException =>
+      val n = chars.length - 1
+      val pos = RangePosition(input, n, n)
+      throw new DiagnosticException(Diagnostic.error("incomplete JSON", pos))
   }
 
   private def trailingComma(i: Int): Int =

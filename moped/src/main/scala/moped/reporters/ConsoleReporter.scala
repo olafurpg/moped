@@ -14,11 +14,10 @@ class ConsoleReporter(
     Severity.all.map(s => s -> new AtomicInteger).toMap
 
   override def log(diag: Diagnostic): Unit = {
-    val prefix = severityColor(diag.severity)
-      .apply(diag.severity.name + ": ")
-      .toString()
+    val severity =
+      severityColor(diag.severity).apply(diag.severity.name).toString()
     counts(diag.severity).incrementAndGet()
-    ps.println(prefix + diag.message)
+    ps.println(diag.position.pretty(severity, diag.message))
   }
 
   override def errorCount(): Int = counts(ErrorSeverity).get()

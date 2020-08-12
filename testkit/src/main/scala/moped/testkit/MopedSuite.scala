@@ -71,9 +71,16 @@ abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
   def checkErrorOutput(
       name: TestOptions,
       arguments: List[String],
-      expectedOutput: String
+      expectedOutput: String,
+      workingDirectoryLayout: String = ""
   ): Unit = {
-    checkOutput(name, arguments, expectedOutput, expectedExit = 1)
+    checkOutput(
+      name,
+      arguments,
+      expectedOutput,
+      expectedExit = 1,
+      workingDirectoryLayout = workingDirectoryLayout
+    )
   }
 
   def checkOutput(
