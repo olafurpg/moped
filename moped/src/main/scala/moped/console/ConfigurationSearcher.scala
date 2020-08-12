@@ -1,11 +1,13 @@
 package moped.console
 
-import moped.reporters.Input
-import java.nio.file.Path
-import scala.collection.mutable
 import java.nio.file.Files
+import java.nio.file.Path
+
+import scala.collection.mutable
+
 import moped.json.DecodingResult
 import moped.json.JsonElement
+import moped.reporters.Input
 
 trait ConfigurationSearcher {
   def find(app: Application): List[DecodingResult[JsonElement]]

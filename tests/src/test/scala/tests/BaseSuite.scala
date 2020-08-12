@@ -5,9 +5,7 @@ import moped.commands.HelpCommand
 import moped.commands.VersionCommand
 import moped.console.Application
 import moped.console.CommandParser
-import moped.json.JsonElement
 import moped.parsers._
-import moped.reporters.Input
 
 abstract class BaseSuite
     extends moped.testkit.MopedSuite(

@@ -1,13 +1,14 @@
 package moped.parsers
 
-import moped.json.{DecodingResult, JsonElement}
-import moped.reporters.Input
-import org.yaml.snakeyaml.Yaml
-import moped.internal.transformers.YamlTransformer
-import moped.internal.transformers.YamlElement
-import moped.reporters.RangePosition
 import moped.internal.diagnostics.DiagnosticException
+import moped.internal.transformers.YamlElement
+import moped.internal.transformers.YamlTransformer
+import moped.json.DecodingResult
+import moped.json.JsonElement
 import moped.reporters.Diagnostic
+import moped.reporters.Input
+import moped.reporters.RangePosition
+import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.error.MarkedYAMLException
 
 object YamlParser extends ConfigurationParser {

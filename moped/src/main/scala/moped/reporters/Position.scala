@@ -1,6 +1,6 @@
 package moped.reporters
 
-import scala.languageFeature.postfixOps
+
 
 sealed abstract class Position { pos =>
   def input: Input

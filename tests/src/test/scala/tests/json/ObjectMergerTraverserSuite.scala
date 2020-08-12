@@ -1,7 +1,7 @@
 package tests.json
 
-import munit.TestOptions
 import moped.json.JsonElement
+import munit.TestOptions
 import tests.BaseSuite
 
 class ObjectMergerTraverserSuite extends BaseSuite {

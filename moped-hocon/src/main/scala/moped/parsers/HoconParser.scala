@@ -1,16 +1,18 @@
 package moped.parsers
 
-import moped.json.{DecodingResult, JsonElement}
-import moped.reporters.Input
-import org.ekrich.config.ConfigFactory
-import moped.internal.transformers.HoconTransformer
-import org.ekrich.config.ConfigParseOptions
 import scala.util.control.NonFatal
-import org.ekrich.config.ConfigException
+
+import moped.internal.diagnostics.DiagnosticException
+import moped.internal.transformers.HoconTransformer
+import moped.json.DecodingResult
+import moped.json.JsonElement
+import moped.reporters.Diagnostic
+import moped.reporters.Input
 import moped.reporters.NoPosition
 import moped.reporters.RangePosition
-import moped.internal.diagnostics.DiagnosticException
-import moped.reporters.Diagnostic
+import org.ekrich.config.ConfigException
+import org.ekrich.config.ConfigFactory
+import org.ekrich.config.ConfigParseOptions
 
 object HoconParser extends ConfigurationParser {
   def supportedFileExtensions: List[String] = List("conf")

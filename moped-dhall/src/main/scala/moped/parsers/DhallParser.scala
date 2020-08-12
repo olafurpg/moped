@@ -1,16 +1,15 @@
 package moped.parsers
 
-import moped.json.{DecodingResult, JsonElement}
-import moped.reporters.Input
-import org.dhallj.syntax._
-import org.dhallj.parser.support.JavaCCParserInternals
-import moped.internal.transformers.DhallTransformer
-import scala.util.control.NonFatal
-import org.dhallj.parser.support.ParseException
-import org.dhallj.parser.support.JavaCCParserException
-import moped.reporters.RangePosition
 import moped.internal.diagnostics.DiagnosticException
+import moped.internal.transformers.DhallTransformer
+import moped.json.DecodingResult
+import moped.json.JsonElement
 import moped.reporters.Diagnostic
+import moped.reporters.Input
+import moped.reporters.RangePosition
+import org.dhallj.parser.support.JavaCCParserException
+import org.dhallj.parser.support.JavaCCParserInternals
+import org.dhallj.syntax._
 
 object DhallParser extends ConfigurationParser {
   def supportedFileExtensions: List[String] = List("dhall")

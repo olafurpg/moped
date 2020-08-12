@@ -13,15 +13,14 @@ import moped.internal.diagnostics.AggregateDiagnostic
 import moped.json.DecodingContext
 import moped.json.DecodingResult
 import moped.json.ErrorResult
+import moped.json.JsonElement
+import moped.json.JsonObject
 import moped.json.ValueResult
 import moped.macros.ClassShape
+import moped.parsers.ConfigurationParser
+import moped.parsers.JsonParser
 import moped.reporters.ConsoleReporter
 import moped.reporters.Reporter
-import moped.json.JsonObject
-import moped.parsers.ConfigurationParser
-import moped.json.JsonElement
-import moped.console.AggregateSearcher
-import moped.parsers.JsonParser
 
 case class Application(
     binaryName: String,

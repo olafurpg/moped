@@ -1,10 +1,10 @@
 package moped.json
 
+import scala.collection.mutable
 import scala.util.control.NonFatal
 
 import moped.internal.diagnostics.WithFilterDiagnostic
 import moped.reporters.Diagnostic
-import scala.collection.mutable
 
 final case class ValueResult[+A](value: A) extends DecodingResult[A]
 final case class ErrorResult(error: Diagnostic) extends DecodingResult[Nothing]

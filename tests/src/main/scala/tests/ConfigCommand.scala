@@ -1,7 +1,7 @@
 package tests
 
-import moped.console.Command
 import moped.console.Application
+import moped.console.Command
 import moped.console.CommandParser
 
 case class ConfigCommand(
@@ -15,5 +15,5 @@ case class ConfigCommand(
 }
 
 object ConfigCommand {
-  implicit lazy val parser = CommandParser.derive(ConfigCommand())
+  implicit lazy val parser: CommandParser[ConfigCommand] = CommandParser.derive(ConfigCommand())
 }

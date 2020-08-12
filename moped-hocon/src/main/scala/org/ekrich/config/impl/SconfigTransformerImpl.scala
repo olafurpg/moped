@@ -1,19 +1,19 @@
 package org.ekrich.config.impl
 
-import ujson.AstTransformer
+import scala.collection.JavaConverters._
+import scala.collection.mutable
 
+import org.ekrich.config.ConfigList
+import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigValue
-import upickle.core.Visitor
+import ujson.AstTransformer
 import upickle.core.ArrVisitor
 import upickle.core.ObjVisitor
 import upickle.core.Util
-import scala.collection.mutable
-import scala.collection.JavaConverters._
-import org.ekrich.config.ConfigObject
-import org.ekrich.config.ConfigList
+import upickle.core.Visitor
 
 class SconfigTransformerImpl extends AstTransformer[ConfigValue] {
-  val origin = SimpleConfigOrigin.newSimple("origin")
+  val origin: SimpleConfigOrigin = SimpleConfigOrigin.newSimple("origin")
   override def transform[T](j: ConfigValue, f: Visitor[_, T]): T = {
     j match {
       case c: ConfigObject => transformObject(f, c.asScala)

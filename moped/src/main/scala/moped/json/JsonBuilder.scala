@@ -1,7 +1,7 @@
 package moped.json
 
-import scala.collection.mutable.ListBuffer
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 sealed abstract class JsonBuilder {
   def addObjectMember(member: JsonMember): Unit

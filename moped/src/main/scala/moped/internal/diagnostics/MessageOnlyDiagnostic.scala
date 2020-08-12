@@ -1,8 +1,8 @@
 package moped.internal.diagnostics
 
-import moped.reporters.Severity
 import moped.reporters.NoPosition
 import moped.reporters.Position
+import moped.reporters.Severity
 
 class MessageOnlyDiagnostic(
     val message: String,

@@ -1,18 +1,19 @@
 package moped.parsers
 
-import moped.json.{DecodingResult, JsonElement}
-import moped.reporters.Input
-import moped.internal.transformers.TomlTransformer
-import moped.reporters.Diagnostic
-import moped.internal.diagnostics.DiagnosticException
-import moped.json.Cursor
-import toml.Rules
+import scala.meta.internal.fastparse.all.End
 import scala.meta.internal.fastparse.core.Parsed.Failure
 import scala.meta.internal.fastparse.core.Parsed.Success
-import toml.Embed
 
-import scala.meta.internal.fastparse.all.End
+import moped.internal.diagnostics.DiagnosticException
+import moped.internal.transformers.TomlTransformer
+import moped.json.Cursor
+import moped.json.DecodingResult
+import moped.json.JsonElement
+import moped.reporters.Diagnostic
+import moped.reporters.Input
 import moped.reporters.RangePosition
+import toml.Embed
+import toml.Rules
 
 object TomlParser extends ConfigurationParser {
   def supportedFileExtensions: List[String] = List("toml")

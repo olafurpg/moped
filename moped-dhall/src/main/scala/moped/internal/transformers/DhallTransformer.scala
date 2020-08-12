@@ -1,12 +1,12 @@
 package moped.internal.transformers
 
-import ujson.AstTransformer
+import org.dhallj.ast
 import org.dhallj.core.Expr
-import upickle.core.Visitor
+import ujson.AstTransformer
 import upickle.core.ArrVisitor
 import upickle.core.ObjVisitor
-import org.dhallj.ast
 import upickle.core.Util
+import upickle.core.Visitor
 
 object DhallTransformer extends AstTransformer[Expr] {
   def transform[T](j: Expr, f: Visitor[_, T]): T = {

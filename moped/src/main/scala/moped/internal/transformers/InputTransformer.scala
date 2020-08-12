@@ -1,13 +1,14 @@
 package moped.internal.transformers
 
 import java.nio.CharBuffer
-import moped.reporters.Input
-import ujson._
-import upickle.core.{Visitor, ObjArrVisitor}
-import moped.reporters.Input
-import moped.reporters.RangePosition
+
 import moped.internal.diagnostics.DiagnosticException
 import moped.reporters.Diagnostic
+import moped.reporters.Input
+import moped.reporters.RangePosition
+import ujson._
+import upickle.core.ObjArrVisitor
+import upickle.core.Visitor
 
 object InputTransformer extends Transformer[Input] {
   def transform[T](j: Input, f: Visitor[_, T]): T =

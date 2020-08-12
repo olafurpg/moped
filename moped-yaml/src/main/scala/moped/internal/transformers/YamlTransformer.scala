@@ -1,14 +1,16 @@
 package moped.internal.transformers
 
+import java.nio.charset.StandardCharsets
+import java.{util => ju}
+
+import scala.collection.JavaConverters._
+import scala.collection.mutable
+
 import ujson.AstTransformer
-import upickle.core.Visitor
 import upickle.core.ArrVisitor
 import upickle.core.ObjVisitor
-import java.{util => ju}
-import scala.collection.JavaConverters._
-import java.nio.charset.StandardCharsets
-import scala.collection.mutable
 import upickle.core.Util
+import upickle.core.Visitor
 
 class YamlElement(val value: Any)
 

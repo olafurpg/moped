@@ -11,21 +11,21 @@ import scala.collection.immutable.Nil
 import moped.console.Application
 import moped.console.CommandParser
 import moped.internal.console.Utils
-import moped.reporters.ConsoleReporter
-import munit.FunSuite
-import munit.TestOptions
 import moped.json.JsonElement
 import moped.parsers.JsonParser
+import moped.reporters.ConsoleReporter
 import moped.reporters.Input
+import munit.FunSuite
 import munit.Location
+import munit.TestOptions
 
 abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
   val reporter = new ConsoleReporter(System.out)
   val temporaryDirectory = new DirectoryFixture
-  def workingDirectory = temporaryDirectory().resolve("workingDirectory")
-  def preferencesDirectory = temporaryDirectory().resolve("preferences")
-  def cacheDirectory = temporaryDirectory().resolve("cache")
-  def dataDirectory = temporaryDirectory().resolve("data")
+  def workingDirectory: Path = temporaryDirectory().resolve("workingDirectory")
+  def preferencesDirectory: Path = temporaryDirectory().resolve("preferences")
+  def cacheDirectory: Path = temporaryDirectory().resolve("cache")
+  def dataDirectory: Path = temporaryDirectory().resolve("data")
   val app = new ApplicationFixture(applicationToTest)
 
   class DirectoryFixture extends Fixture[Path]("Directory") {

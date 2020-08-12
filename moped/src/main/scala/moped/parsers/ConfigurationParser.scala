@@ -1,8 +1,8 @@
 package moped.parsers
 
-import moped.reporters.Input
 import moped.json.DecodingResult
 import moped.json.JsonElement
+import moped.reporters.Input
 
 trait ConfigurationParser {
   def supportedFileExtensions: List[String]

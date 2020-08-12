@@ -1,10 +1,11 @@
 package moped.parsers
 
-import moped.json.{DecodingResult, JsonElement}
-import moped.reporters.Input
-import moped.internal.transformers.JsonnetInterpreter
-import moped.reporters.Diagnostic
 import moped.internal.diagnostics.DiagnosticException
+import moped.internal.transformers.JsonnetInterpreter
+import moped.json.DecodingResult
+import moped.json.JsonElement
+import moped.reporters.Diagnostic
+import moped.reporters.Input
 
 object JsonnetParser extends JsonnetParser(JsonnetInterpreter())
 class JsonnetParser(interpreter: JsonnetInterpreter)

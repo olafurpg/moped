@@ -1,16 +1,16 @@
 package moped.json
 
 import scala.collection.immutable.ListMap
+import scala.collection.mutable
 
 import moped.reporters._
 import org.typelevel.paiges.Doc
 import ujson.AstTransformer
-import upickle.core.Visitor
+import ujson.StringRenderer
 import upickle.core.ArrVisitor
 import upickle.core.ObjVisitor
-import scala.collection.mutable
 import upickle.core.Util
-import ujson.StringRenderer
+import upickle.core.Visitor
 
 sealed abstract class JsonElement extends Product with Serializable {
   private var myPosition: Position = NoPosition

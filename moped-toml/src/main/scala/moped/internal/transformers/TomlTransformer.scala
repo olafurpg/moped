@@ -2,10 +2,10 @@ package moped.internal.transformers
 
 import toml.Value
 import ujson.AstTransformer
-import upickle.core.Visitor
 import upickle.core.ArrVisitor
 import upickle.core.ObjVisitor
 import upickle.core.Util
+import upickle.core.Visitor
 
 object TomlTransformer extends AstTransformer[toml.Value] {
   override def transform[T](j: Value, f: Visitor[_, T]): T =
