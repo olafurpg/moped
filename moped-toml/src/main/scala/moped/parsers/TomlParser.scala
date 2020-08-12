@@ -22,24 +22,15 @@ object TomlParser extends ConfigurationParser {
         new Rules(Set(toml.Extension.MultiLineInlineTables))
       val parsed = rules.root.parse(input.text)
       parsed match {
-        case f @ Failure(End, index, extra) =>
-          val pos = RangePosition(input, index, index).endOfFileOffset
-          throw new DiagnosticException(
-            Diagnostic.error("incomplete TOML", pos)
-          )
         case f @ Failure(lastParser, index, extra) =>
-          val formatParser =
-            Failure.formatParser(lastParser, extra.input, index)
-          pprint.log(formatParser)
-          val msg = Failure.formatStackTrace(
-            Nil,
-            extra.input,
-            index,
-            ""
+          val pos = RangePosition(input, index, index).endOfFileOffset
+          val message = lastParser match {
+            case End => "incomplete TOML"
+            case _ => f.msg
+          }
+          throw new DiagnosticException(
+            Diagnostic.error(message, pos)
           )
-          println(msg)
-          pprint.log(parsed)
-          ???
         case Success(value, _) =>
           Embed.root(value) match {
             case Left((address, message)) =>

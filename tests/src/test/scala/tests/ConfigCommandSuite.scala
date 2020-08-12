@@ -65,7 +65,7 @@ class ConfigCommandSuite extends BaseSuite {
   )
 
   checkErrorOutput(
-    "toml-error".only,
+    "toml-error",
     List("config"),
     """|/workingDirectory/.tests.toml:1:8 error: incomplete TOML
        |foobar =
@@ -82,6 +82,18 @@ class ConfigCommandSuite extends BaseSuite {
     "foobar",
     workingDirectoryLayout = """|/.tests.yaml
                                 |foobar: true
+                                |""".stripMargin
+  )
+
+  checkErrorOutput(
+    "yaml-error".only,
+    List("config"),
+    """|/workingDirectory/.tests.yaml:2:0 error: found unexpected end of stream
+       |foobar: "
+       |         ^
+       |""".stripMargin,
+    workingDirectoryLayout = """|/.tests.yaml
+                                |foobar: "
                                 |""".stripMargin
   )
 
