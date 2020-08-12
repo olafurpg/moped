@@ -23,9 +23,12 @@ class ConfigCommandSuite extends BaseSuite {
   )
 
   checkErrorOutput(
-    "json".only,
+    "json-error",
     List("config"),
-    "foobar",
+    """|/workingDirectory/.tests.json:1:1 error: incomplete JSON
+       |{
+       | ^
+       |""".stripMargin,
     workingDirectoryLayout = """|/.tests.json
                                 |{
                                 |""".stripMargin
@@ -37,6 +40,18 @@ class ConfigCommandSuite extends BaseSuite {
     "foobar",
     workingDirectoryLayout = """|/.tests.conf
                                 |foobar = true
+                                |""".stripMargin
+  )
+
+  checkErrorOutput(
+    "hocon-error",
+    List("config"),
+    """|/workingDirectory/.tests.conf:2:0 error: Expecting a value but got wrong token: end of file
+       |foobar =
+       |        ^
+       |""".stripMargin,
+    workingDirectoryLayout = """|/.tests.conf
+                                |foobar =
                                 |""".stripMargin
   )
 

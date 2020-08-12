@@ -34,16 +34,4 @@ abstract class BaseSuite
             JsonnetParser
           )
         )
-    ) {
-  def assertJsonEquals(obtained: JsonElement, expected: JsonElement)(implicit
-      loc: munit.Location
-  ): Unit =
-    if (obtained != expected) {
-      val width = 40
-      assertNoDiff(obtained.toDoc.render(width), expected.toDoc.render(width))
-      assertEquals(obtained, expected)
-    }
-  def parseJson(json: String): JsonElement = {
-    JsonParser.parse(Input.string(json)).get
-  }
-}
+    ) {}

@@ -14,6 +14,10 @@ import moped.internal.console.Utils
 import moped.reporters.ConsoleReporter
 import munit.FunSuite
 import munit.TestOptions
+import moped.json.JsonElement
+import moped.parsers.JsonParser
+import moped.reporters.Input
+import munit.Location
 
 abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
   val reporter = new ConsoleReporter(System.out)
@@ -73,7 +77,7 @@ abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
       arguments: List[String],
       expectedOutput: String,
       workingDirectoryLayout: String = ""
-  ): Unit = {
+  )(implicit loc: munit.Location): Unit = {
     checkOutput(
       name,
       arguments,
@@ -89,7 +93,7 @@ abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
       expectedOutput: String,
       expectedExit: Int = 0,
       workingDirectoryLayout: String = ""
-  ): Unit = {
+  )(implicit loc: munit.Location): Unit = {
     test(name) {
       if (workingDirectoryLayout.nonEmpty) {
         FileLayout.fromString(workingDirectoryLayout, workingDirectory)
@@ -139,5 +143,28 @@ abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
         assertNoDiff(obtained, expected, clues(expectFile))
       }
     }
+  }
+
+  override def assertNoDiff(obtained: String, expected: String, clue: => Any)(
+      implicit loc: Location
+  ): Unit = {
+    super.assertNoDiff(
+      obtained.replace(temporaryDirectory().toString(), ""),
+      expected,
+      clue
+    )
+  }
+
+  def assertJsonEquals(obtained: JsonElement, expected: JsonElement)(implicit
+      loc: munit.Location
+  ): Unit =
+    if (obtained != expected) {
+      val width = 40
+      assertNoDiff(obtained.toDoc.render(width), expected.toDoc.render(width))
+      assertEquals(obtained, expected)
+    }
+
+  def parseJson(json: String): JsonElement = {
+    JsonParser.parse(Input.string(json)).get
   }
 }

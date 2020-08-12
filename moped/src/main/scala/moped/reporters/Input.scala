@@ -52,6 +52,8 @@ final class Input private (
     buf.toArray
   }
 
+  def lineCount: Int = cachedLineIndices.length
+
   def lineToOffset(line: Int): Int = {
     // NOTE: The length-1 part is not a typo, it's to accommodate the sentinel value.
     if (!(0 <= line && line <= cachedLineIndices.length - 1)) {

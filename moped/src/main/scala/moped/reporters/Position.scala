@@ -1,5 +1,7 @@
 package moped.reporters
 
+import scala.languageFeature.postfixOps
+
 sealed abstract class Position { pos =>
   def input: Input
   def start: Int
@@ -22,10 +24,13 @@ sealed abstract class Position { pos =>
     val sb = new StringBuilder()
     sb.append(lineInput(severity, message))
       .append("\n")
-      .append(content.next())
-      .append("\n")
-      .append(lineCaret)
-      .append("\n")
+    if (content.hasNext) {
+      sb
+        .append(content.next())
+        .append("\n")
+        .append(lineCaret)
+        .append("\n")
+    }
     content.foreach { line =>
       sb.append(line)
         .append("\n")
@@ -34,33 +39,60 @@ sealed abstract class Position { pos =>
   }
 
   final def lineInput(severity: String, message: String): String = {
-    val sev = if (severity.isEmpty) "" else s" $severity:"
-    val msg = if (message.isEmpty) "" else s" $message"
     val path = pos.input.path match {
       case Some(path) => path.toString()
       case None => pos.input.filename
     }
-    s"${path}:${pos.startLine + 1}:${pos.startColumn}$sev$msg"
+    val sev = if (severity.isEmpty) "" else s" $severity:"
+    val msg = if (message.isEmpty) "" else s" $message"
+    val column = if (pos.startColumn < 0) "" else s":${pos.startColumn}"
+    s"${path}:${pos.startLine + 1}${column}$sev$msg"
   }
 
   final def lineCaret: String =
     pos match {
       case NoPosition => ""
-      case _ =>
-        val caret =
-          if (pos.startLine == pos.endLine) "^" * (pos.end - pos.start + 1)
-          else "^"
-        " " * pos.startColumn + caret
+      case range: RangePosition =>
+        endOfFileOffset(range) match {
+          case Some(offset) =>
+            offset.lineCaret
+          case None =>
+            val caret =
+              if (pos.startLine == pos.endLine) "^" * (pos.end - pos.start + 1)
+              else "^"
+            " " * pos.startColumn + caret
+        }
     }
 
   final def lineContent: String =
     pos match {
       case NoPosition => ""
       case range: RangePosition =>
-        val start = range.start - range.startColumn
-        val end = range.input.lineToOffset(range.endLine + 1) - 1
-        RangePosition(range.input, start, end).text
+        endOfFileOffset(range) match {
+          case Some(offset) =>
+            offset.lineContent
+          case None =>
+            val start =
+              range.start - range.startColumn
+            val endLine = math.min(range.input.lineCount - 1, range.endLine + 1)
+            val end = math.max(start, range.input.lineToOffset(endLine) - 1)
+            RangePosition(range.input, start, end).text
+        }
     }
+
+  private def endOfFileOffset(range: RangePosition): Option[RangePosition] = {
+    val size = range.input.chars.length
+    val isEndOfFile = {
+      range.start == size &&
+      range.end == size &&
+      range.input.chars.last == '\n'
+    }
+    if (isEndOfFile) {
+      Some(RangePosition(range.input, pos.end - 1, pos.end - 1))
+    } else {
+      None
+    }
+  }
 }
 
 case object NoPosition extends Position {
