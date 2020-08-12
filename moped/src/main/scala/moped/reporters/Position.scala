@@ -53,14 +53,13 @@ sealed abstract class Position { pos =>
     pos match {
       case NoPosition => ""
       case range: RangePosition =>
-        endOfFileOffset(range) match {
-          case Some(offset) =>
-            offset.lineCaret
-          case None =>
-            val caret =
-              if (pos.startLine == pos.endLine) "^" * (pos.end - pos.start + 1)
-              else "^"
-            " " * pos.startColumn + caret
+        if (isEndOfFile(range)) {
+          endOfFileOffset.lineCaret
+        } else {
+          val caret =
+            if (pos.startLine == pos.endLine) "^" * (pos.end - pos.start + 1)
+            else "^"
+          " " * pos.startColumn + caret
         }
     }
 
@@ -68,30 +67,26 @@ sealed abstract class Position { pos =>
     pos match {
       case NoPosition => ""
       case range: RangePosition =>
-        endOfFileOffset(range) match {
-          case Some(offset) =>
-            offset.lineContent
-          case None =>
-            val start =
-              range.start - range.startColumn
-            val endLine = math.min(range.input.lineCount - 1, range.endLine + 1)
-            val end = math.max(start, range.input.lineToOffset(endLine) - 1)
-            RangePosition(range.input, start, end).text
+        if (isEndOfFile(range)) {
+          endOfFileOffset.lineContent
+        } else {
+          val start =
+            range.start - range.startColumn
+          val endLine = math.min(range.input.lineCount - 1, range.endLine + 1)
+          val end = math.max(start, range.input.lineToOffset(endLine) - 1)
+          RangePosition(range.input, start, end).text
         }
     }
 
-  private def endOfFileOffset(range: RangePosition): Option[RangePosition] = {
+  def endOfFileOffset: RangePosition = {
+    val size = input.chars.length - 1
+    RangePosition(input, size, size)
+  }
+  private def isEndOfFile(range: RangePosition): Boolean = {
     val size = range.input.chars.length
-    val isEndOfFile = {
-      range.start == size &&
-      range.end == size &&
-      range.input.chars.last == '\n'
-    }
-    if (isEndOfFile) {
-      Some(RangePosition(range.input, pos.end - 1, pos.end - 1))
-    } else {
-      None
-    }
+    range.start == size &&
+    range.end == size &&
+    range.input.chars.last == '\n'
   }
 }
 

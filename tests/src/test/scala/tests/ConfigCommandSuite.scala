@@ -64,6 +64,18 @@ class ConfigCommandSuite extends BaseSuite {
                                 |""".stripMargin
   )
 
+  checkErrorOutput(
+    "toml-error".only,
+    List("config"),
+    """|/workingDirectory/.tests.toml:1:8 error: incomplete TOML
+       |foobar =
+       |        ^
+       |""".stripMargin,
+    workingDirectoryLayout = """|/.tests.toml
+                                |foobar =
+                                |""".stripMargin
+  )
+
   checkOutput(
     "yaml",
     List("config"),
