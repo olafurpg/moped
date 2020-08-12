@@ -86,7 +86,7 @@ class ConfigCommandSuite extends BaseSuite {
   )
 
   checkErrorOutput(
-    "yaml-error".only,
+    "yaml-error",
     List("config"),
     """|/workingDirectory/.tests.yaml:2:0 error: found unexpected end of stream
        |foobar: "
@@ -104,6 +104,19 @@ class ConfigCommandSuite extends BaseSuite {
     workingDirectoryLayout = """|/.tests.dhall
                                 |let hello = True in
                                 |{ foobar = hello }
+                                |""".stripMargin
+  )
+
+  checkErrorOutput(
+    "dhall-error".only,
+    List("config"),
+    """|/workingDirectory/.tests.dhall:3:0 error: Encountered unexpected token: <EOF>. Was expecting one of: "," "}"
+       |{ foobar = hel
+       |              ^
+       |""".stripMargin,
+    workingDirectoryLayout = """|/.tests.dhall
+                                |let hello = True in
+                                |{ foobar = hel
                                 |""".stripMargin
   )
 
