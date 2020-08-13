@@ -90,6 +90,19 @@ sealed abstract class Position { pos =>
   }
 }
 object Position {
+  def range(
+      input: Input,
+      startLine: Int,
+      startColumn: Int,
+      endLine: Int,
+      endColumn: Int
+  ): Position =
+    if (input.isEmpty) NoPosition
+    else {
+      val start = input.lineToOffset(startLine) + startColumn
+      val end = input.lineToOffset(endLine) + endColumn
+      RangePosition(input, start, end)
+    }
   def offset(input: Input, offset: Int): Position =
     if (offset < 0 || input.isEmpty) NoPosition
     else RangePosition(input, offset, offset)

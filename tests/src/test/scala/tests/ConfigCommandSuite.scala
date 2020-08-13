@@ -140,7 +140,7 @@ class ConfigCommandSuite extends BaseSuite {
   )
 
   checkErrorOutput(
-    "yaml-type-error".only,
+    "yaml-type-error",
     List("config"),
     """|/workingDirectory/.tests.yaml:1:8 error: Type mismatch;
        |  found    : JsonString
@@ -154,7 +154,7 @@ class ConfigCommandSuite extends BaseSuite {
   )
 
   checkOutput(
-    "dhall",
+    "dhall".only,
     List("config"),
     "foobar",
     workingDirectoryLayout = """|/.tests.dhall
@@ -173,6 +173,19 @@ class ConfigCommandSuite extends BaseSuite {
     workingDirectoryLayout = """|/.tests.dhall
                                 |let hello = True in
                                 |{ foobar = hel
+                                |""".stripMargin
+  )
+
+  checkErrorOutput(
+    "dhall-type-error".only,
+    List("config"),
+    """|/workingDirectory/.tests.dhall:3:0 error: Encountered unexpected token: <EOF>. Was expecting one of: "," "}"
+       |{ foobar = hel
+       |              ^
+       |""".stripMargin,
+    workingDirectoryLayout = """|/.tests.dhall
+                                |let hello = "message" in
+                                |{ foobar = hello }
                                 |""".stripMargin
   )
 

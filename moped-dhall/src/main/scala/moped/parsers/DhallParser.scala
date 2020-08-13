@@ -10,7 +10,6 @@ import moped.reporters.Input
 import moped.reporters.RangePosition
 import org.dhallj.parser.support.JavaCCParserException
 import org.dhallj.parser.support.JavaCCParserInternals
-import org.dhallj.syntax._
 
 object DhallParser extends DhallParser
 class DhallParser extends ConfigurationParser {
@@ -18,18 +17,15 @@ class DhallParser extends ConfigurationParser {
   def parse(input: Input): DecodingResult[JsonElement] =
     DecodingResult.fromUnsafe { () =>
       try {
-        JavaCCParserInternals.parse(input.text)
+        val value = JavaCCParserInternals.parse(input.text)
+        new DhallTransformer(input)
+          .transform(value.normalize(), new JsonTransformer(input))
       } catch {
         case e: JavaCCParserException =>
           val start = input.lineToOffset(e.startLine - 1) + e.startColumn
           val end = input.lineToOffset(e.endLine - 1) + e.endColumn
           val pos = RangePosition(input, start, end)
           throw new DiagnosticException(Diagnostic.error(e.getMessage(), pos))
-      }
-      input.text.parseExpr match {
-        case Left(value) => throw value
-        case Right(value) =>
-          DhallTransformer.transform(value.normalize(), JsonTransformer)
       }
     }
 }

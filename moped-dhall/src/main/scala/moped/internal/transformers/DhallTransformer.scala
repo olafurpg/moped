@@ -1,5 +1,8 @@
 package moped.internal.transformers
 
+import moped.internal.diagnostics.DiagnosticException
+import moped.reporters.Diagnostic
+import moped.reporters.Input
 import org.dhallj.ast
 import org.dhallj.core.Expr
 import ujson.AstTransformer
@@ -8,15 +11,21 @@ import upickle.core.ObjVisitor
 import upickle.core.Util
 import upickle.core.Visitor
 
-object DhallTransformer extends AstTransformer[Expr] {
+object DhallTransformer extends DhallTransformer(Input.none)
+class DhallTransformer(input: Input) extends AstTransformer[Expr] {
   def transform[T](j: Expr, f: Visitor[_, T]): T = {
+    val index = -1
     j match {
-      case ast.BoolLiteral(c) => if (c) f.visitTrue(-1) else f.visitFalse(-1)
-      case ast.DoubleLiteral(c) => f.visitFloat64(c, -1)
-      case ast.TextLiteral(c, _) => f.visitString(c, -1)
-      // case ast.NullLiteral(c) => f.visitNull(c, -1) // Does not exist
+      case ast.BoolLiteral(c) =>
+        if (c) f.visitTrue(index) else f.visitFalse(index)
+      case ast.DoubleLiteral(c) => f.visitFloat64(c, index)
+      case ast.TextLiteral(c, _) => f.visitString(c, index)
+      // case ast.NullLiteral(c) => f.visitNull(c, index) // Does not exist
       case ast.ListLiteral(c) => transformArray(f, c)
       case ast.RecordLiteral(c) => transformObject(f, c)
+      case _ =>
+        val message = s"can't convert this Dhall expression into JSON: $j"
+        throw new DiagnosticException(Diagnostic.error(message))
     }
   }
   def visitArray(length: Int, index: Int): ArrVisitor[Expr, Expr] =
