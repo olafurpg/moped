@@ -13,6 +13,9 @@ import upickle.core.Visitor
 
 object DhallTransformer extends DhallTransformer(Input.none)
 class DhallTransformer(input: Input) extends AstTransformer[Expr] {
+  def fail(message: String): Nothing = {
+    throw new DiagnosticException(Diagnostic.error(message))
+  }
   def transform[T](j: Expr, f: Visitor[_, T]): T = {
     val index = -1
     j match {
@@ -23,9 +26,8 @@ class DhallTransformer(input: Input) extends AstTransformer[Expr] {
       // case ast.NullLiteral(c) => f.visitNull(c, index) // Does not exist
       case ast.ListLiteral(c) => transformArray(f, c)
       case ast.RecordLiteral(c) => transformObject(f, c)
-      case _ =>
-        val message = s"can't convert this Dhall expression into JSON: $j"
-        throw new DiagnosticException(Diagnostic.error(message))
+      case ast.Identifier(c) => fail(s"unresolved identifier: $j")
+      case _ => fail(s"can't convert this Dhall expression into JSON: $j")
     }
   }
   def visitArray(length: Int, index: Int): ArrVisitor[Expr, Expr] =

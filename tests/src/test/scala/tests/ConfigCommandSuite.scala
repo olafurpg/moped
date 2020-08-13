@@ -154,7 +154,7 @@ class ConfigCommandSuite extends BaseSuite {
   )
 
   checkOutput(
-    "dhall".only,
+    "dhall",
     List("config"),
     "foobar",
     workingDirectoryLayout = """|/.tests.dhall
@@ -177,11 +177,11 @@ class ConfigCommandSuite extends BaseSuite {
   )
 
   checkErrorOutput(
-    "dhall-type-error".only,
+    "dhall-type-error",
     List("config"),
-    """|/workingDirectory/.tests.dhall:3:0 error: Encountered unexpected token: <EOF>. Was expecting one of: "," "}"
-       |{ foobar = hel
-       |              ^
+    """|<none>:0 error: Type mismatch;
+       |  found    : JsonString
+       |  expected : JsonBoolean
        |""".stripMargin,
     workingDirectoryLayout = """|/.tests.dhall
                                 |let hello = "message" in
@@ -196,6 +196,42 @@ class ConfigCommandSuite extends BaseSuite {
     workingDirectoryLayout = """|/.tests.jsonnet
                                 |local hello(enabled) = {foobar: enabled};
                                 |hello(true)
+                                |""".stripMargin
+  )
+
+  checkOutput(
+    "jsonnet",
+    List("config"),
+    "foobar",
+    workingDirectoryLayout = """|/.tests.jsonnet
+                                |local hello(enabled) = {foobar: enabled};
+                                |hello(true)
+                                |""".stripMargin
+  )
+
+  checkErrorOutput(
+    "jsonnet-error",
+    List("config"),
+    """|/workingDirectory/.tests.jsonnet:1:31 error: Parse error: Expected StringIn(":::", "::", ":"):1:32, found "enabled};\n"
+       |local hello(enabled) = {foobar enabled};
+       |                               ^
+       |""".stripMargin,
+    workingDirectoryLayout = """|/.tests.jsonnet
+                                |local hello(enabled) = {foobar enabled};
+                                |hello(true)
+                                |""".stripMargin
+  )
+
+  checkErrorOutput(
+    "jsonnet-type-error".only,
+    List("config"),
+    """|<none>:0 error: Type mismatch;
+       |  found    : JsonString
+       |  expected : JsonBoolean
+       |""".stripMargin,
+    workingDirectoryLayout = """|/.tests.jsonnet
+                                |local hello(enabled) = {foobar: enabled};
+                                |hello("message")
                                 |""".stripMargin
   )
 

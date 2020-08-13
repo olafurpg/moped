@@ -7,6 +7,9 @@ import moped.json.DecodingResult
 import moped.json.JsonElement
 import moped.reporters.Diagnostic
 import moped.reporters.Input
+import fastparse.Parsed.Failure
+import moped.reporters.Position
+import moped.reporters.NoPosition
 
 object JsonnetParser extends JsonnetParser(JsonnetInterpreter())
 class JsonnetParser(interpreter: JsonnetInterpreter)
@@ -27,9 +30,16 @@ class JsonnetParser(interpreter: JsonnetInterpreter)
       )
       interpreted match {
         case Left(error) =>
-          throw new DiagnosticException(Diagnostic.error(error))
+          val pos: Position =
+            fastparse.parse(input.text, sjsonnet.Parser.document(_)) match {
+              case f: Failure =>
+                Position.offset(input, f.index)
+              case _ =>
+                NoPosition
+            }
+          throw new DiagnosticException(Diagnostic.error(error, pos))
         case Right(value) =>
-          value.transform(JsonTransformer)
+          value.transform(new JsonTransformer(input))
       }
     }
   }
