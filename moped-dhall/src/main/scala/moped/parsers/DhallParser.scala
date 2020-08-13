@@ -2,6 +2,7 @@ package moped.parsers
 
 import moped.internal.diagnostics.DiagnosticException
 import moped.internal.transformers.DhallTransformer
+import moped.internal.transformers.JsonTransformer
 import moped.json.DecodingResult
 import moped.json.JsonElement
 import moped.reporters.Diagnostic
@@ -11,7 +12,8 @@ import org.dhallj.parser.support.JavaCCParserException
 import org.dhallj.parser.support.JavaCCParserInternals
 import org.dhallj.syntax._
 
-object DhallParser extends ConfigurationParser {
+object DhallParser extends DhallParser
+class DhallParser extends ConfigurationParser {
   def supportedFileExtensions: List[String] = List("dhall")
   def parse(input: Input): DecodingResult[JsonElement] =
     DecodingResult.fromUnsafe { () =>
@@ -27,7 +29,7 @@ object DhallParser extends ConfigurationParser {
       input.text.parseExpr match {
         case Left(value) => throw value
         case Right(value) =>
-          DhallTransformer.transform(value.normalize(), JsonElement)
+          DhallTransformer.transform(value.normalize(), JsonTransformer)
       }
     }
 }

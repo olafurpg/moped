@@ -5,6 +5,7 @@ import scala.meta.internal.fastparse.core.Parsed.Failure
 import scala.meta.internal.fastparse.core.Parsed.Success
 
 import moped.internal.diagnostics.DiagnosticException
+import moped.internal.transformers.JsonTransformer
 import moped.internal.transformers.TomlTransformer
 import moped.json.Cursor
 import moped.json.DecodingResult
@@ -15,7 +16,8 @@ import moped.reporters.RangePosition
 import toml.Embed
 import toml.Rules
 
-object TomlParser extends ConfigurationParser {
+object TomlParser extends TomlParser
+class TomlParser extends ConfigurationParser {
   def supportedFileExtensions: List[String] = List("toml")
   def parse(input: Input): DecodingResult[JsonElement] = {
     DecodingResult.fromUnsafe { () =>
@@ -38,7 +40,7 @@ object TomlParser extends ConfigurationParser {
               val cursor = Cursor.fromPath(address)
               throw new DiagnosticException(Diagnostic.error(message))
             case Right(value) =>
-              TomlTransformer.transform(value, JsonElement)
+              TomlTransformer.transform(value, JsonTransformer)
           }
       }
     }

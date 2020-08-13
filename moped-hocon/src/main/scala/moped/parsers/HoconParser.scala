@@ -4,6 +4,7 @@ import scala.util.control.NonFatal
 
 import moped.internal.diagnostics.DiagnosticException
 import moped.internal.transformers.HoconTransformer
+import moped.internal.transformers.JsonTransformer
 import moped.json.DecodingResult
 import moped.json.JsonElement
 import moped.reporters.Diagnostic
@@ -22,7 +23,7 @@ object HoconParser extends ConfigurationParser {
         val options =
           ConfigParseOptions.defaults.setOriginDescription(input.filename)
         val root = ConfigFactory.parseString(input.text, options).resolve().root
-        HoconTransformer.transform(root, JsonElement)
+        HoconTransformer.transform(root, JsonTransformer)
       } catch {
         case e: ConfigException.Parse
             if e.getMessage != null &&

@@ -34,6 +34,20 @@ class ConfigCommandSuite extends BaseSuite {
                                 |""".stripMargin
   )
 
+  checkErrorOutput(
+    "json-type-error".only,
+    List("config"),
+    """|/workingDirectory/.tests.json:1:1 error: incomplete JSON
+       |{
+       | ^
+       |""".stripMargin,
+    workingDirectoryLayout = """|/.tests.json
+                                |{
+                                |  "foobar": "message"
+                                |}
+                                |""".stripMargin
+  )
+
   checkOutput(
     "hocon",
     List("config"),

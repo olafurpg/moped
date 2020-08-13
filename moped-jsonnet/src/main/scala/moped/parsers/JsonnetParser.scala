@@ -1,6 +1,7 @@
 package moped.parsers
 
 import moped.internal.diagnostics.DiagnosticException
+import moped.internal.transformers.JsonTransformer
 import moped.internal.transformers.JsonnetInterpreter
 import moped.json.DecodingResult
 import moped.json.JsonElement
@@ -28,7 +29,7 @@ class JsonnetParser(interpreter: JsonnetInterpreter)
         case Left(error) =>
           throw new DiagnosticException(Diagnostic.error(error))
         case Right(value) =>
-          value.transform(JsonElement)
+          value.transform(JsonTransformer)
       }
     }
   }
