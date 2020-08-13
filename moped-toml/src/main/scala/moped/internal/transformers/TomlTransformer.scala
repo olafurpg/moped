@@ -1,12 +1,12 @@
 package moped.internal.transformers
 
+import moped.reporters.Input
 import toml.Value
 import ujson.AstTransformer
 import upickle.core.ArrVisitor
 import upickle.core.ObjVisitor
 import upickle.core.Util
 import upickle.core.Visitor
-import moped.reporters.Input
 
 object TomlTransformer extends TomlTransformer(Input.none)
 class TomlTransformer(input: Input) extends AstTransformer[toml.Value] {

@@ -3,6 +3,7 @@ package org.ekrich.config.impl
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
+import moped.reporters.Input
 import org.ekrich.config.ConfigList
 import org.ekrich.config.ConfigObject
 import org.ekrich.config.ConfigValue
@@ -11,7 +12,6 @@ import upickle.core.ArrVisitor
 import upickle.core.ObjVisitor
 import upickle.core.Util
 import upickle.core.Visitor
-import moped.reporters.Input
 
 class SconfigTransformerImpl(input: Input) extends AstTransformer[ConfigValue] {
   val origin: SimpleConfigOrigin = SimpleConfigOrigin.newSimple("origin")

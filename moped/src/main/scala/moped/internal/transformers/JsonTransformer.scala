@@ -3,12 +3,12 @@ package moped.internal.transformers
 import scala.collection.mutable
 
 import moped.json._
+import moped.reporters.Input
+import moped.reporters.Position
 import ujson.AstTransformer
 import upickle.core.ArrVisitor
 import upickle.core.ObjVisitor
 import upickle.core.Visitor
-import moped.reporters.Input
-import moped.reporters.Position
 
 object JsonTransformer extends JsonTransformer(Input.none)
 class JsonTransformer(input: Input) extends AstTransformer[JsonElement] {

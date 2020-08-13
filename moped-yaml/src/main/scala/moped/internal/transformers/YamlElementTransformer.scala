@@ -6,15 +6,16 @@ import java.{util => ju}
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
+import moped.reporters.Input
 import ujson.AstTransformer
 import upickle.core.ArrVisitor
 import upickle.core.ObjVisitor
 import upickle.core.Util
 import upickle.core.Visitor
-import moped.reporters.Input
 
-object YamlTransformer extends YamlTransformer(Input.none)
-class YamlTransformer(input: Input) extends AstTransformer[YamlElement] {
+object YamlElementTransformer extends YamlElementTransformer(Input.none)
+
+class YamlElementTransformer(input: Input) extends AstTransformer[YamlElement] {
   override def transform[T](j: YamlElement, f: Visitor[_, T]): T = {
     j.value match {
       case c: ju.Map[_, _] =>

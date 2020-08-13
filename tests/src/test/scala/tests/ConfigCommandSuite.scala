@@ -142,9 +142,11 @@ class ConfigCommandSuite extends BaseSuite {
   checkErrorOutput(
     "yaml-type-error".only,
     List("config"),
-    """|<none>:0 error: Type mismatch;
+    """|/workingDirectory/.tests.yaml:1:8 error: Type mismatch;
        |  found    : JsonString
        |  expected : JsonBoolean
+       |foobar: "message"
+       |        ^
        |""".stripMargin,
     workingDirectoryLayout = """|/.tests.yaml
                                 |foobar: "message"
