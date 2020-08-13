@@ -23,7 +23,7 @@ object HoconParser extends ConfigurationParser {
         val options =
           ConfigParseOptions.defaults.setOriginDescription(input.filename)
         val root = ConfigFactory.parseString(input.text, options).resolve().root
-        HoconTransformer.transform(root, JsonTransformer)
+        new HoconTransformer(input).transform(root, new JsonTransformer(input))
       } catch {
         case e: ConfigException.Parse
             if e.getMessage != null &&

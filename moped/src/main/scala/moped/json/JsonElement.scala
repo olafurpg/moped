@@ -11,9 +11,12 @@ sealed abstract class JsonElement extends Product with Serializable {
   private var myPosition: Position = NoPosition
   def position = myPosition
   def withPosition(newPosition: Position): JsonElement = {
-    val copy = copyThis()
-    copy.myPosition = newPosition
-    copy
+    if (myPosition.isNone && newPosition.isNone) this
+    else {
+      val copy = copyThis()
+      copy.myPosition = newPosition
+      copy
+    }
   }
 
   def isArray: Boolean = this.isInstanceOf[JsonArray]

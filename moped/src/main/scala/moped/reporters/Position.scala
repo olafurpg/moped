@@ -1,7 +1,5 @@
 package moped.reporters
 
-
-
 sealed abstract class Position { pos =>
   def input: Input
   def start: Int
@@ -11,6 +9,8 @@ sealed abstract class Position { pos =>
   def endLine: Int
   def endColumn: Int
   def text: String
+
+  final def isNone: Boolean = this == NoPosition
 
   /** Returns true if this position encloses the other position */
   final def encloses(other: Position): Boolean =
@@ -88,6 +88,11 @@ sealed abstract class Position { pos =>
     range.end == size &&
     range.input.chars.last == '\n'
   }
+}
+object Position {
+  def offset(input: Input, offset: Int): Position =
+    if (offset < 0 || input.isEmpty) NoPosition
+    else RangePosition(input, offset, offset)
 }
 
 case object NoPosition extends Position {

@@ -11,10 +11,10 @@ import upickle.core.ArrVisitor
 import upickle.core.ObjVisitor
 import upickle.core.Util
 import upickle.core.Visitor
+import moped.reporters.Input
 
-class YamlElement(val value: Any)
-
-object YamlTransformer extends AstTransformer[YamlElement] {
+object YamlTransformer extends YamlTransformer(Input.none)
+class YamlTransformer(input: Input) extends AstTransformer[YamlElement] {
   override def transform[T](j: YamlElement, f: Visitor[_, T]): T = {
     j.value match {
       case c: ju.Map[_, _] =>

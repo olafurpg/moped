@@ -52,6 +52,8 @@ final class Input private (
     buf.toArray
   }
 
+  def isEmpty: Boolean = text.isEmpty()
+
   def lineCount: Int = cachedLineIndices.length
 
   def lineToOffset(line: Int): Int = {

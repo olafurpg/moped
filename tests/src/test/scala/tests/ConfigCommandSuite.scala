@@ -35,11 +35,13 @@ class ConfigCommandSuite extends BaseSuite {
   )
 
   checkErrorOutput(
-    "json-type-error".only,
+    "json-type-error",
     List("config"),
-    """|/workingDirectory/.tests.json:1:1 error: incomplete JSON
-       |{
-       | ^
+    """|/workingDirectory/.tests.json:2:12 error: Type mismatch;
+       |  found    : JsonString
+       |  expected : JsonBoolean
+       |  "foobar": "message"
+       |            ^
        |""".stripMargin,
     workingDirectoryLayout = """|/.tests.json
                                 |{
@@ -69,6 +71,20 @@ class ConfigCommandSuite extends BaseSuite {
                                 |""".stripMargin
   )
 
+  checkErrorOutput(
+    "hocon-type-error",
+    List("config"),
+    """|/workingDirectory/.tests.conf:1:0 error: Type mismatch;
+       |  found    : JsonString
+       |  expected : JsonBoolean
+       |foobar = message
+       |^
+       |""".stripMargin,
+    workingDirectoryLayout = """|/.tests.conf
+                                |foobar = message
+                                |""".stripMargin
+  )
+
   checkOutput(
     "toml",
     List("config"),
@@ -87,6 +103,18 @@ class ConfigCommandSuite extends BaseSuite {
        |""".stripMargin,
     workingDirectoryLayout = """|/.tests.toml
                                 |foobar =
+                                |""".stripMargin
+  )
+
+  checkErrorOutput(
+    "toml-type-error",
+    List("config"),
+    """|<none>:0 error: Type mismatch;
+       |  found    : JsonString
+       |  expected : JsonBoolean
+       |""".stripMargin,
+    workingDirectoryLayout = """|/.tests.toml
+                                |foobar = "message"
                                 |""".stripMargin
   )
 
@@ -111,6 +139,18 @@ class ConfigCommandSuite extends BaseSuite {
                                 |""".stripMargin
   )
 
+  checkErrorOutput(
+    "yaml-type-error".only,
+    List("config"),
+    """|<none>:0 error: Type mismatch;
+       |  found    : JsonString
+       |  expected : JsonBoolean
+       |""".stripMargin,
+    workingDirectoryLayout = """|/.tests.yaml
+                                |foobar: "message"
+                                |""".stripMargin
+  )
+
   checkOutput(
     "dhall",
     List("config"),
@@ -122,7 +162,7 @@ class ConfigCommandSuite extends BaseSuite {
   )
 
   checkErrorOutput(
-    "dhall-error".only,
+    "dhall-error",
     List("config"),
     """|/workingDirectory/.tests.dhall:3:0 error: Encountered unexpected token: <EOF>. Was expecting one of: "," "}"
        |{ foobar = hel

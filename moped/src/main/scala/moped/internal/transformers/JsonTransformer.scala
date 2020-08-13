@@ -6,10 +6,13 @@ import moped.json._
 import ujson.AstTransformer
 import upickle.core.ArrVisitor
 import upickle.core.ObjVisitor
-import upickle.core.Util
 import upickle.core.Visitor
+import moped.reporters.Input
+import moped.reporters.Position
 
-object JsonTransformer extends AstTransformer[JsonElement] {
+object JsonTransformer extends JsonTransformer(Input.none)
+class JsonTransformer(input: Input) extends AstTransformer[JsonElement] {
+  private def pos(index: Int): Position = Position.offset(input, index)
   def transform[T](j: JsonElement, f: Visitor[_, T]): T =
     j match {
       case JsonNull() => f.visitNull(-1)
@@ -24,7 +27,9 @@ object JsonTransformer extends AstTransformer[JsonElement] {
       length: Int,
       index: Int
   ): ArrVisitor[JsonElement, JsonElement] =
-    new AstArrVisitor[mutable.ListBuffer](buf => JsonArray(buf.toList))
+    new AstArrVisitor[mutable.ListBuffer](buf =>
+      JsonArray(buf.toList).withPosition(Position.offset(input, index))
+    )
   def visitObject(
       length: Int,
       index: Int
@@ -32,11 +37,13 @@ object JsonTransformer extends AstTransformer[JsonElement] {
     new AstObjVisitor[mutable.ListBuffer[(String, JsonElement)]](buf =>
       JsonObject(buf.iterator.map {
         case (key, value) => JsonMember(JsonString(key), value)
-      }.toList)
+      }.toList).withPosition(pos(index))
     )
-  def visitNull(index: Int): JsonElement = JsonNull()
-  def visitFalse(index: Int): JsonElement = JsonBoolean(false)
-  def visitTrue(index: Int): JsonElement = JsonBoolean(true)
+  def visitNull(index: Int): JsonElement = JsonNull().withPosition(pos(index))
+  def visitFalse(index: Int): JsonElement =
+    JsonBoolean(false).withPosition(pos(index))
+  def visitTrue(index: Int): JsonElement =
+    JsonBoolean(true).withPosition(pos(index))
   def visitFloat64StringParts(
       s: CharSequence,
       decIndex: Int,
@@ -44,9 +51,8 @@ object JsonTransformer extends AstTransformer[JsonElement] {
       index: Int
   ): JsonElement =
     JsonNumber(
-      if (decIndex != -1 || expIndex != -1) s.toString.toDouble
-      else Util.parseIntegralNum(s, decIndex, expIndex, index)
-    )
+      TransformerUtils.parseFloat64StringParts(s, decIndex, expIndex, index)
+    ).withPosition(pos(index))
   def visitString(s: CharSequence, index: Int): JsonElement =
-    JsonString(s.toString())
+    JsonString(s.toString()).withPosition(pos(index))
 }

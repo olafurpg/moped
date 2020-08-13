@@ -11,22 +11,29 @@ import upickle.core.ArrVisitor
 import upickle.core.ObjVisitor
 import upickle.core.Util
 import upickle.core.Visitor
+import moped.reporters.Input
 
-class SconfigTransformerImpl extends AstTransformer[ConfigValue] {
+class SconfigTransformerImpl(input: Input) extends AstTransformer[ConfigValue] {
   val origin: SimpleConfigOrigin = SimpleConfigOrigin.newSimple("origin")
   override def transform[T](j: ConfigValue, f: Visitor[_, T]): T = {
+    val index =
+      if (j.origin != null && j.origin.lineNumber >= 0 && !input.isEmpty) {
+        input.lineToOffset(j.origin.lineNumber - 1)
+      } else {
+        -1
+      }
     j match {
       case c: ConfigObject => transformObject(f, c.asScala)
       case c: ConfigList => transformArray(f, c.asScala)
       case o =>
         o.unwrapped match {
-          case java.lang.Boolean.TRUE => f.visitTrue(-1)
-          case java.lang.Boolean.FALSE => f.visitFalse(-1)
-          case c: java.lang.String => f.visitString(c, -1)
-          case c: java.lang.Integer => f.visitInt32(c, -1)
-          case c: java.lang.Double => f.visitFloat64(c, -1)
-          case c: java.lang.Float => f.visitFloat32(c, -1)
-          case c: java.lang.Long => f.visitInt64(c, -1)
+          case java.lang.Boolean.TRUE => f.visitTrue(index)
+          case java.lang.Boolean.FALSE => f.visitFalse(index)
+          case c: java.lang.String => f.visitString(c, index)
+          case c: java.lang.Integer => f.visitInt32(c, index)
+          case c: java.lang.Double => f.visitFloat64(c, index)
+          case c: java.lang.Float => f.visitFloat32(c, index)
+          case c: java.lang.Long => f.visitInt64(c, index)
         }
     }
   }

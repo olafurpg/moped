@@ -6,8 +6,10 @@ import upickle.core.ArrVisitor
 import upickle.core.ObjVisitor
 import upickle.core.Util
 import upickle.core.Visitor
+import moped.reporters.Input
 
-object TomlTransformer extends AstTransformer[toml.Value] {
+object TomlTransformer extends TomlTransformer(Input.none)
+class TomlTransformer(input: Input) extends AstTransformer[toml.Value] {
   override def transform[T](j: Value, f: Visitor[_, T]): T =
     j match {
       case Value.Str(value) => f.visitString(value, -1)

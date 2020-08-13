@@ -13,7 +13,7 @@ class JsonParser extends ConfigurationParser {
   override def parse(input: Input): DecodingResult[JsonElement] = {
     DecodingResult.fromUnsafe[JsonElement] { () =>
       val readable = Readable.fromTransformer(input, InputTransformer)
-      readable.transform(JsonTransformer)
+      readable.transform(new JsonTransformer(input))
     }
   }
 }
