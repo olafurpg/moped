@@ -23,7 +23,6 @@ final class InputTransformer[J](input: Input)
   val wrapped: CharBuffer = CharBuffer.wrap(chars)
 
   override def die(i: Int, msg: String): Nothing = {
-    pprint.log(msg)
     val pos = RangePosition(input, i, i)
     val error = pos.pretty("error", msg)
     throw new ParseException(error, i, pos.startLine, pos.startColumn) {
