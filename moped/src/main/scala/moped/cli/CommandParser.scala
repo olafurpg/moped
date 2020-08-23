@@ -7,7 +7,7 @@ import scala.language.experimental.macros
 
 import moped.annotations.CommandName
 import moped.annotations.Hidden
-import moped.annotations.NestedCommand
+import moped.annotations.Subcommand
 import moped.annotations.TabCompleter
 import moped.internal.console.Cases
 import moped.internal.console.HelpMessage
@@ -30,8 +30,10 @@ final case class CommandParser[A <: BaseCommand](
   type Value = A
   def asClassShaper: ClassShaper[Value] = this
   def asDecoder: JsonDecoder[Value] = this
-  // TODO(olafur): remove this hack.
-  def withApplication(app: Application): CommandParser[A] = this
+  def withApplication(app: Application): CommandParser[A] =
+    copy(
+      shape = app.preProcessClassShape(shape)
+    )
   def description: Doc =
     commandLineDescription.getOrElse(Doc.empty)
   def longDescription: Doc =
@@ -62,7 +64,7 @@ final case class CommandParser[A <: BaseCommand](
   }
   def nestedCommands: List[CommandParser[_]] =
     annotations.collect {
-      case NestedCommand(cmd) => cmd
+      case Subcommand(cmd) => cmd
     }
   def subcommandName: String =
     subcommandNames.headOption.getOrElse(fallbackSubcommandName)

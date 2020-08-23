@@ -41,5 +41,5 @@ final case class Section(name: String) extends StaticAnnotation
 final case class CatchInvalidFlags() extends StaticAnnotation
 final case class TabCompleteAsOneOf(options: String*) extends StaticAnnotation
 final case class TabCompleter(fn: Completer[_]) extends StaticAnnotation
-final case class NestedCommand(ev: CommandParser[_ <: BaseCommand])
+final case class Subcommand(ev: CommandParser[_ <: BaseCommand])
     extends StaticAnnotation

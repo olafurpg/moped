@@ -66,6 +66,12 @@ sealed abstract class JsonElement extends Product with Serializable {
 }
 
 object JsonElement {
+  def fromMembers(members: (String, JsonElement)*): JsonObject =
+    JsonObject(
+      members.iterator.map {
+        case (key, value) => JsonMember(JsonString(key), value)
+      }.toList
+    )
   def merge(elements: Iterable[JsonElement]): JsonElement = {
     if (elements.hasDefiniteSize && elements.size == 1) {
       // TODO(olafur): figure out why this special case is needed
@@ -88,6 +94,8 @@ final case class JsonArray(elements: List[JsonElement]) extends JsonElement
 final case class JsonObject(members: List[JsonMember]) extends JsonElement {
   val value: ListMap[String, JsonElement] =
     ListMap(members.map(m => m.key.value -> m.value): _*)
+  def +(member: JsonMember): JsonObject =
+    JsonObject(members :+ member)
   def getMember(key: String): Option[JsonElement] = {
     value.get(key)
   }
