@@ -89,7 +89,7 @@ class Macros(val c: blackbox.Context) {
 
     val (head :: params) :: Nil = paramss
     def next(param: Symbol): Tree = {
-      if (param.info <:< typeOf[Application]) {
+      if (param.info <:< typeOf[AlwaysDerivedParameter]) {
         q"_root_.moped.json.ValueResult(context.app)"
       } else {
         val P = param.info.resultType
@@ -179,7 +179,7 @@ class Macros(val c: blackbox.Context) {
             Nil
           }
         val hidden =
-          if (paramTpe <:< typeOf[Application]) {
+          if (paramTpe <:< typeOf[AlwaysHiddenParameter]) {
             q"new _root_.moped.annotations.Hidden" :: Nil
           } else {
             Nil

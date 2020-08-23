@@ -13,8 +13,6 @@ import moped.reporters.Diagnostic
 trait JsonDecoder[A] { self =>
 
   def decode(context: DecodingContext): DecodingResult[A]
-  // final def decode(elem: JsonElement): DecodingResult[A] =
-  //   decode(DecodingContext(elem))
 
   final def map[B](fn: A => B): JsonDecoder[B] =
     context => decode(context).map(fn)
