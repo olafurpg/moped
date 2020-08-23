@@ -1,14 +1,14 @@
 package tests
 
-import munit.TestOptions
-import moped.json.JsonElement
-import moped.console.CommandParser
-import moped.json.JsonDecoder
-import moped.json.DecodingContext
-import moped.console.Command
 import moped.console.Application
-import moped.json.ValueResult
+import moped.console.Command
+import moped.console.CommandParser
+import moped.json.DecodingContext
 import moped.json.ErrorResult
+import moped.json.JsonDecoder
+import moped.json.JsonElement
+import moped.json.ValueResult
+import munit.TestOptions
 
 case class MyClass(
     a: Int = 1
@@ -16,8 +16,8 @@ case class MyClass(
   def run(app: Application): Int = 0
 }
 object MyClass {
-  val default = MyClass()
-  implicit lazy val parser = CommandParser.derive[MyClass](default)
+  val default: MyClass = MyClass()
+  implicit lazy val parser: CommandParser[MyClass] = CommandParser.derive[MyClass](default)
 }
 
 class JsonDecoderSuite extends BaseSuite {

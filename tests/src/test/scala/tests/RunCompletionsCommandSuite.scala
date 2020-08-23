@@ -1,7 +1,6 @@
 package tests
 
 import munit.TestOptions
-import os.makeDir.all
 
 class RunCompletionsCommandSuite extends BaseSuite {
   def checkCompletions(
@@ -56,7 +55,7 @@ class RunCompletionsCommandSuite extends BaseSuite {
     List()
   )
 
-  val allFlags =
+  val allFlags: List[String] =
     List(
       "--help",
       "--no-lowercase",

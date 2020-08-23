@@ -1,9 +1,10 @@
 package moped.internal.diagnostics
 
+import scala.collection.immutable.Nil
+
 import moped.reporters.Diagnostic
 import moped.reporters.ErrorSeverity
 import moped.reporters.NoPosition
-import scala.collection.immutable.Nil
 
 class AggregateDiagnostic(head: Diagnostic, tail: List[Diagnostic])
     extends Diagnostic(ErrorSeverity, "", NoPosition, None, head :: tail) {

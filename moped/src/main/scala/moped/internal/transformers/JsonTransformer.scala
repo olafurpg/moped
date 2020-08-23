@@ -9,7 +9,6 @@ import ujson.AstTransformer
 import upickle.core.ArrVisitor
 import upickle.core.ObjVisitor
 import upickle.core.Visitor
-import scala.reflect.internal.Depth
 
 object JsonTransformer extends JsonTransformer(Input.none)
 class JsonTransformer(input: Input)

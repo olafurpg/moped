@@ -1,12 +1,14 @@
 package moped.internal.transformers
 
-import upickle.core.Util
 import scala.collection.compat._
-import upickle.core.ObjVisitor
-import ujson.AstTransformer
+
 import moped.json.JsonString
 import moped.reporters.Position
+import ujson.AstTransformer
+import upickle.core.ObjVisitor
 import upickle.core.SimpleVisitor
+import upickle.core.Util
+import moped.json.JsonElement
 
 trait TransformerUtils[I] { outer: AstTransformer[_] =>
   def pos(index: Int): Position
@@ -35,11 +37,11 @@ trait TransformerUtils[I] { outer: AstTransformer[_] =>
 
     def visitValue(v: I, index: Int): Unit = vs += (key -> v)
 
-    def visitEnd(index: Int) = build(vs.result)
+    def visitEnd(index: Int): I = build(vs.result)
   }
   object JsonStringVisitor extends SimpleVisitor[Nothing, Any] {
     def expectedMsg = "expected string"
-    override def visitString(s: CharSequence, index: Int) =
+    override def visitString(s: CharSequence, index: Int): JsonElement =
       JsonString(s.toString()).withPosition(pos(index))
   }
 }

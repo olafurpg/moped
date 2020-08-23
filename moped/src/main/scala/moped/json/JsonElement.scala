@@ -86,7 +86,7 @@ final case class JsonBoolean(value: Boolean) extends JsonPrimitive
 final case class JsonString(value: String) extends JsonPrimitive
 final case class JsonArray(elements: List[JsonElement]) extends JsonElement
 final case class JsonObject(members: List[JsonMember]) extends JsonElement {
-  val value: Map[String, JsonElement] =
+  val value: ListMap[String, JsonElement] =
     ListMap(members.map(m => m.key.value -> m.value): _*)
   def getMember(key: String): Option[JsonElement] = {
     value.get(key)
