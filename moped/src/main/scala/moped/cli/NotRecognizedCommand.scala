@@ -3,18 +3,18 @@ import scala.collection.immutable.Nil
 
 import moped.internal.reporters.Levenshtein
 
-object NotRecognizedCommand extends Command {
+class NotRecognizedCommand(app: Application) extends Command {
 
-  def run(app: Application): Int = {
+  def run(): Int = {
     app.arguments match {
       case Nil =>
       case head :: _ =>
-        notRecognized(head, app)
+        notRecognized(head)
     }
     1
   }
 
-  def notRecognized(subcommand: String, app: Application): Unit = {
+  def notRecognized(subcommand: String): Unit = {
     val closestSubcommand = Levenshtein.closestCandidate(
       subcommand,
       app.commands.map(_.subcommandName)

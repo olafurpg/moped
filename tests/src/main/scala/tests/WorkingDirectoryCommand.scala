@@ -12,9 +12,10 @@ object WorkingDirectoryCommand {
 }
 
 case class WorkingDirectoryCommand(
-    home: Option[Path] = None
+    home: Option[Path] = None,
+    app: Application = Application.default
 ) extends Command {
 
-  override def run(app: Application): Int = ???
+  override def run(): Int = ???
 
 }

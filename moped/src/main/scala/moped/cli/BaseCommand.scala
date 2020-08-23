@@ -4,11 +4,11 @@ import scala.concurrent.Future
 import scala.util.Try
 
 abstract class BaseCommand {
-  def runAsFuture(app: Application): Future[Int]
+  def runAsFuture(): Future[Int]
 }
 
 abstract class Command extends BaseCommand {
-  final override def runAsFuture(app: Application): Future[Int] =
-    Future.fromTry(Try(run(app)))
-  def run(app: Application): Int
+  final override def runAsFuture(): Future[Int] =
+    Future.fromTry(Try(run()))
+  def run(): Int
 }

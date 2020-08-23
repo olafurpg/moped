@@ -13,7 +13,7 @@ import moped.macros.ClassShape
 import moped.macros.ClassShaper
 
 object VersionCommand {
-  val default = new VersionCommand()
+  val default = new VersionCommand(Application.default)
 
   implicit lazy val parser: CommandParser[VersionCommand] =
     new CodecCommandParser[VersionCommand](
@@ -36,8 +36,8 @@ object VersionCommand {
     )
 }
 
-class VersionCommand extends Command {
-  override def run(app: Application): Int = {
+class VersionCommand(app: Application) extends Command {
+  override def run(): Int = {
     app.out.println(app.version)
     0
   }

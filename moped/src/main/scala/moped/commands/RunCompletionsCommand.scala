@@ -32,7 +32,7 @@ import moped.macros.ParameterShape
 object RunCompletionsCommand {
 
   implicit lazy val parser: CommandParser[RunCompletionsCommand] = {
-    val default = new RunCompletionsCommand()
+    val default = new RunCompletionsCommand(Application.default)
     new CodecCommandParser[RunCompletionsCommand](
       JsonCodec.encoderDecoderJsonCodec(
         ClassShaper(
@@ -56,15 +56,17 @@ object RunCompletionsCommand {
           )
         ),
         JsonEncoder.stringJsonEncoder.contramap[RunCompletionsCommand](_ => ""),
-        JsonDecoder.constant(default)
+        JsonDecoder.applicationJsonDecoder.map(app =>
+          new RunCompletionsCommand(app)
+        )
       ),
       default
     )
   }
 }
 
-class RunCompletionsCommand() extends Command {
-  def run(app: Application): Int = {
+class RunCompletionsCommand(app: Application) extends Command {
+  def run(): Int = {
     val (format, argumentLength, arguments) = app.relativeArguments match {
       case "zsh" :: NumberExtractor(argumentLength) :: tail =>
         (new ZshCompletion(app), argumentLength.toInt, tail)

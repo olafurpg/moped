@@ -30,9 +30,10 @@ case class EchoCommand(
     @TrailingArguments()
     trailing: List[String] = Nil,
     @PositionalArguments()
-    args: List[String] = Nil
+    args: List[String] = Nil,
+    app: Application = Application.default
 ) extends Command {
-  def run(app: Application): Int = {
+  def run(): Int = {
     val out = app.env.standardOutput
     val toPrint =
       if (!unchanged) List("--no-unchanged")

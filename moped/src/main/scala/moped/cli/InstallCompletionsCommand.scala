@@ -8,8 +8,8 @@ import moped.json.JsonEncoder
 import moped.macros.ClassShape
 import moped.macros.ClassShaper
 
-class InstallCompletionsCommand extends Command {
-  override def run(app: Application): Int = {
+class InstallCompletionsCommand(app: Application) extends Command {
+  override def run(): Int = {
     ShellCompletion.all(app).foreach { shell =>
       shell.uninstall()
       shell.install()
@@ -19,7 +19,6 @@ class InstallCompletionsCommand extends Command {
 }
 
 object InstallCompletionsCommand {
-  val default = new InstallCompletionsCommand()
 
   implicit lazy val parser: CommandParser[InstallCompletionsCommand] =
     new CodecCommandParser[InstallCompletionsCommand](
@@ -37,8 +36,10 @@ object InstallCompletionsCommand {
         ),
         JsonEncoder.stringJsonEncoder
           .contramap[InstallCompletionsCommand](_ => ""),
-        JsonDecoder.constant(default)
+        JsonDecoder.applicationJsonDecoder.map(app =>
+          new InstallCompletionsCommand(app)
+        )
       ),
-      default
+      new InstallCompletionsCommand(Application.default)
     )
 }

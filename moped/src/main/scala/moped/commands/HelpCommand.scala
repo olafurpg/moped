@@ -83,7 +83,7 @@ object HelpCommand {
     loop(arguments)
   }
 
-  def parser(help: HelpCommand): CommandParser[HelpCommand] =
+  def parser(help: Application => HelpCommand): CommandParser[HelpCommand] =
     new CodecCommandParser[HelpCommand](
       JsonCodec.encoderDecoderJsonCodec(
         ClassShaper(
@@ -111,22 +111,23 @@ object HelpCommand {
           )
         ),
         JsonEncoder.stringJsonEncoder.contramap[HelpCommand](_ => ""),
-        JsonDecoder.constant(help)
+        JsonDecoder.applicationJsonDecoder.map(app => help(app))
       ),
-      help
+      help(Application.default)
     )
   implicit lazy val parser: CommandParser[HelpCommand] =
-    parser(new HelpCommand())
+    parser(app => new HelpCommand(app))
 }
 
 class HelpCommand(
+    app: Application,
     screenWidth: Int = Terminals.screenWidth(),
     appUsage: Application => Doc = app =>
       Doc.text(s"${app.binaryName} COMMAND [OPTIONS]"),
     appDescription: Application => Doc = _ => Doc.empty,
     appExamples: Application => Doc = _ => Doc.empty
 ) extends Command {
-  override def run(app: Application): Int = {
+  override def run(): Int = {
     app.relativeArguments match {
       case Nil =>
         val usage = appUsage(app)
@@ -169,7 +170,7 @@ class HelpCommand(
             command.helpMessage(app.out, screenWidth)
             0
           case None =>
-            NotRecognizedCommand.notRecognized(subcommand, app)
+            new NotRecognizedCommand(app).notRecognized(subcommand)
             1
         }
       case obtained =>

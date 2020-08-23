@@ -6,6 +6,7 @@ import java.nio.file.Paths
 import scala.collection.compat._
 import scala.collection.mutable
 
+import moped.cli.Application
 import moped.internal.diagnostics.TypeMismatchDiagnostic
 import moped.reporters.Diagnostic
 
@@ -62,6 +63,8 @@ object JsonDecoder {
     stringJsonDecoder.flatMap(path =>
       DecodingResult.fromUnsafe(() => Paths.get(path))
     )
+  implicit val applicationJsonDecoder: JsonDecoder[Application] =
+    context => ValueResult(context.app)
 
   implicit def arrayJsonDecoder[C[_], A](implicit
       ev: JsonDecoder[A],

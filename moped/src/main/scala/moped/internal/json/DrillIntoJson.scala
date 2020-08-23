@@ -1,6 +1,5 @@
 package moped.internal.json
 
-import moped.cli.Environment
 import moped.internal.diagnostics.MissingFieldDiagnostic
 import moped.internal.diagnostics.TypeMismatchDiagnostic
 import moped.json._

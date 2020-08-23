@@ -7,8 +7,10 @@ import moped.cli.CommandParser
 import moped.reporters.Terminals
 
 @Description("Print the console screen width")
-final case class TerminalsCommand() extends Command {
-  def run(app: Application): Int = {
+final case class TerminalsCommand(
+    app: Application = Application.default
+) extends Command {
+  def run(): Int = {
     app.out.println(Terminals.screenWidth())
     0
   }

@@ -1,6 +1,5 @@
 package tests
 
-import moped.cli.Application
 import moped.cli.Command
 import moped.cli.CommandParser
 import moped.json.DecodingContext
@@ -13,7 +12,7 @@ import munit.TestOptions
 case class MyClass(
     a: Int = 1
 ) extends Command {
-  def run(app: Application): Int = 0
+  def run(): Int = 0
 }
 object MyClass {
   val default: MyClass = MyClass()

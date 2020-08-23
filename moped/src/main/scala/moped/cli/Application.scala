@@ -38,8 +38,9 @@ case class Application(
         HelpCommand.moveFlagsBehindSubcommand(args)
       )
     },
-    onEmptyArguments: BaseCommand = new HelpCommand(),
-    onNotRecognoziedCommand: BaseCommand = NotRecognizedCommand,
+    onEmptyArguments: Application => BaseCommand = app => new HelpCommand(app),
+    onNotRecognoziedCommand: Application => BaseCommand = app =>
+      new NotRecognizedCommand(app),
     parsers: List[ConfigurationParser] = List(JsonParser),
     executionContext: ExecutionContext = ExecutionContext.global,
     searcher: ConfigurationSearcher = new AggregateSearcher(
@@ -91,7 +92,7 @@ case class Application(
 }
 
 object Application {
-  val default = Application.fromName(
+  val default: Application = Application.fromName(
     "moped-default-application-please-change-me",
     "moped-default-version-please-change-me",
     List()
@@ -130,7 +131,7 @@ object Application {
       val remainingArguments = args.drop(n)
       remainingArguments match {
         case Nil =>
-          app.onEmptyArguments.runAsFuture(app)
+          app.onEmptyArguments(app).runAsFuture()
         case subcommand :: tail =>
           relativeCommands.find(_.matchesName(subcommand)) match {
             case Some(command) =>
@@ -153,7 +154,7 @@ object Application {
                   )
                   exit <- configured match {
                     case ValueResult(value) =>
-                      value.runAsFuture(app)
+                      value.runAsFuture()
                     case ErrorResult(error) =>
                       error.all.foreach {
                         case _: AggregateDiagnostic =>
@@ -165,7 +166,7 @@ object Application {
                 } yield exit
               }
             case None =>
-              app.onNotRecognoziedCommand.runAsFuture(app)
+              app.onNotRecognoziedCommand(app).runAsFuture()
           }
       }
     }

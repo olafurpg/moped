@@ -2,6 +2,8 @@ package moped.json
 
 import java.nio.file.Path
 
+import moped.cli.Application
+
 trait JsonEncoder[A] {
   def encode(value: A): JsonElement
 
@@ -32,6 +34,8 @@ object JsonEncoder {
     _ => JsonNull()
   implicit val pathJsonEncoder: JsonEncoder[Path] =
     value => JsonString(value.toString())
+  implicit val applicationJsonEncoder: JsonEncoder[Application] =
+    value => JsonString(value.binaryName)
 
   implicit def iterableJsonEncoder[A, C[x] <: Iterable[x]](implicit
       ev: JsonEncoder[A]
