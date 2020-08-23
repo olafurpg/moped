@@ -2,7 +2,7 @@ package tests
 
 import java.nio.file.Path
 
-import moped.console.Completer
+import moped.cli.Completer
 import moped.internal.console.PathCompleter
 import moped.macros.ClassShaper
 import munit.FunSuite

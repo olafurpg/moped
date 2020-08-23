@@ -2,10 +2,10 @@ package moped.commands
 
 import moped.annotations.CommandName
 import moped.annotations.Description
-import moped.console.Application
-import moped.console.CodecCommandParser
-import moped.console.Command
-import moped.console.CommandParser
+import moped.cli.Application
+import moped.cli.CodecCommandParser
+import moped.cli.Command
+import moped.cli.CommandParser
 import moped.json.JsonCodec
 import moped.json.JsonDecoder
 import moped.json.JsonEncoder

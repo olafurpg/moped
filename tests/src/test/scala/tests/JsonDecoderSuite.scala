@@ -1,8 +1,8 @@
 package tests
 
-import moped.console.Application
-import moped.console.Command
-import moped.console.CommandParser
+import moped.cli.Application
+import moped.cli.Command
+import moped.cli.CommandParser
 import moped.json.DecodingContext
 import moped.json.ErrorResult
 import moped.json.JsonDecoder
@@ -17,7 +17,8 @@ case class MyClass(
 }
 object MyClass {
   val default: MyClass = MyClass()
-  implicit lazy val parser: CommandParser[MyClass] = CommandParser.derive[MyClass](default)
+  implicit lazy val parser: CommandParser[MyClass] =
+    CommandParser.derive[MyClass](default)
 }
 
 class JsonDecoderSuite extends BaseSuite {

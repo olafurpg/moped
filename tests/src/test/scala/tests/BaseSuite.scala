@@ -3,8 +3,8 @@ package tests
 import moped.commands.CompletionsCommand
 import moped.commands.HelpCommand
 import moped.commands.VersionCommand
-import moped.console.Application
-import moped.console.CommandParser
+import moped.cli.Application
+import moped.cli.CommandParser
 import moped.parsers._
 
 abstract class BaseSuite

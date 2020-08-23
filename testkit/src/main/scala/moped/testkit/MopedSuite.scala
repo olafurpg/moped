@@ -8,8 +8,8 @@ import java.nio.file.Path
 
 import scala.collection.immutable.Nil
 
-import moped.console.Application
-import moped.console.CommandParser
+import moped.cli.Application
+import moped.cli.CommandParser
 import moped.internal.console.Utils
 import moped.json.JsonElement
 import moped.parsers.JsonParser

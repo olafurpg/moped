@@ -3,10 +3,10 @@ import moped.annotations.CatchInvalidFlags
 import moped.annotations.CommandName
 import moped.annotations.Description
 import moped.annotations.PositionalArguments
-import moped.console.CodecCommandParser
-import moped.console.CommandParser
-import moped.console.InstallCompletionsCommand
-import moped.console.UninstallCompletionsCommand
+import moped.cli.CodecCommandParser
+import moped.cli.CommandParser
+import moped.cli.InstallCompletionsCommand
+import moped.cli.UninstallCompletionsCommand
 import moped.json.JsonCodec
 import moped.json.JsonDecoder
 import moped.json.JsonEncoder

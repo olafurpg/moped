@@ -1,4 +1,4 @@
-package moped.console
+package moped.cli
 
 import java.io.BufferedReader
 import java.io.PrintStream

@@ -2,7 +2,7 @@ package moped.internal.transformers
 
 import java.nio.file.Path
 
-import moped.console.Environment
+import moped.cli.Environment
 import sjsonnet.Cli
 import sjsonnet.Interpreter
 import sjsonnet.SjsonnetMain

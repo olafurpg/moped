@@ -1,4 +1,4 @@
-package moped.console
+package moped.cli
 
 import scala.concurrent.Promise
 import scala.util.Success

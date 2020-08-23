@@ -1,6 +1,6 @@
 package moped.json
 
-import moped.console.Environment
+import moped.cli.Environment
 
 final class DecodingContext private (
     val json: JsonElement,

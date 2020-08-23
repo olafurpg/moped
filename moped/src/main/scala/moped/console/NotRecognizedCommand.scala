@@ -1,4 +1,4 @@
-package moped.console
+package moped.cli
 import scala.collection.immutable.Nil
 
 import moped.internal.reporters.Levenshtein

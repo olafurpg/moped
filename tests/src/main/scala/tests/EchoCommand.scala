@@ -5,9 +5,9 @@ import moped.annotations._
 import moped.commands.CompletionsCommand
 import moped.commands.HelpCommand
 import moped.commands.VersionCommand
-import moped.console.Application
-import moped.console.Command
-import moped.console.CommandParser
+import moped.cli.Application
+import moped.cli.Command
+import moped.cli.CommandParser
 import moped.internal.console.Utils
 import moped.json.JsonArray
 import moped.json.JsonString

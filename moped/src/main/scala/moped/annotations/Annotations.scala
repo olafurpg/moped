@@ -2,9 +2,9 @@ package moped.annotations
 
 import scala.annotation.StaticAnnotation
 
-import moped.console.BaseCommand
-import moped.console.CommandParser
-import moped.console.Completer
+import moped.cli.BaseCommand
+import moped.cli.CommandParser
+import moped.cli.Completer
 import org.typelevel.paiges.Doc
 
 final case class ShortName(value: Char) extends StaticAnnotation

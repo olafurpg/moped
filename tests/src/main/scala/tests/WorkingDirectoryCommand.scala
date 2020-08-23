@@ -2,12 +2,13 @@ package tests
 
 import java.nio.file.Path
 
-import moped.console.Application
-import moped.console.Command
-import moped.console.CommandParser
+import moped.cli.Application
+import moped.cli.Command
+import moped.cli.CommandParser
 
 object WorkingDirectoryCommand {
-  implicit val parser: CommandParser[WorkingDirectoryCommand] = CommandParser.derive(WorkingDirectoryCommand())
+  implicit val parser: CommandParser[WorkingDirectoryCommand] =
+    CommandParser.derive(WorkingDirectoryCommand())
 }
 
 case class WorkingDirectoryCommand(

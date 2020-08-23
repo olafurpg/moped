@@ -1,4 +1,4 @@
-package moped.console
+package moped.cli
 
 import scala.concurrent.Await
 import scala.concurrent.Future

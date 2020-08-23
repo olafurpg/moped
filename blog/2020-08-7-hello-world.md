@@ -66,7 +66,7 @@ application that prints its arguments to standard output.
 
 ```scala mdoc
 import moped.annotations._
-import moped.console._
+import moped.cli._
 
 @Description("Writes arguments to standard output")
 @ExampleUsage(

@@ -3,7 +3,7 @@ package moped.internal.macros
 import scala.annotation.StaticAnnotation
 import scala.reflect.macros.blackbox
 
-import moped.console._
+import moped.cli._
 import moped.json._
 import moped.macros.ClassShaper
 import moped.macros._
@@ -45,7 +45,7 @@ class Macros(val c: blackbox.Context) {
 
   def deriveCommandParserImpl[T: c.WeakTypeTag](default: Tree): Tree = {
     val T = assumeClass[T]
-    q"_root_.moped.console.CommandParser.fromCodec(_root_.moped.macros.deriveCodec[$T]($default), $default)"
+    q"_root_.moped.cli.CommandParser.fromCodec(_root_.moped.macros.deriveCodec[$T]($default), $default)"
   }
 
   def deriveJsonEncoderImpl[T: c.WeakTypeTag]: Tree = {

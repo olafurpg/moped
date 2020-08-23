@@ -1,4 +1,4 @@
-package moped.console
+package moped.cli
 
 import moped.internal.console.HelpMessage
 import moped.json.DecodingContext

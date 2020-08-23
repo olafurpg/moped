@@ -5,9 +5,9 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
-import moped.console.Completer
-import moped.console.TabCompletionContext
-import moped.console.TabCompletionItem
+import moped.cli.Completer
+import moped.cli.TabCompletionContext
+import moped.cli.TabCompletionItem
 
 case object PathCompleter extends Completer[Path] {
 

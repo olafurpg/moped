@@ -65,7 +65,7 @@ Next, write a case class for your user configuration.
 ```scala mdoc
 import moped.annotations._
 import moped.commands._
-import moped.console._
+import moped.cli._
 
 @Description("Writes arguments to standard output")
 @ExampleUsage(

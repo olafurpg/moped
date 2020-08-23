@@ -3,7 +3,7 @@ package moped.macros
 import scala.annotation.StaticAnnotation
 
 import moped.annotations._
-import moped.console.Completer
+import moped.cli.Completer
 import moped.internal.console.CommandLineParser
 import org.typelevel.paiges.Doc
 
