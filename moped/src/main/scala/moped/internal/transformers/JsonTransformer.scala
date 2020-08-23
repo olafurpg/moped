@@ -9,10 +9,13 @@ import ujson.AstTransformer
 import upickle.core.ArrVisitor
 import upickle.core.ObjVisitor
 import upickle.core.Visitor
+import scala.reflect.internal.Depth
 
 object JsonTransformer extends JsonTransformer(Input.none)
-class JsonTransformer(input: Input) extends AstTransformer[JsonElement] {
-  private def pos(index: Int): Position = Position.offset(input, index)
+class JsonTransformer(input: Input)
+    extends AstTransformer[JsonElement]
+    with TransformerUtils[JsonElement] {
+  def pos(index: Int): Position = Position.offset(input, index)
   def transform[T](j: JsonElement, f: Visitor[_, T]): T =
     j match {
       case JsonNull() => f.visitNull(-1)
@@ -30,14 +33,16 @@ class JsonTransformer(input: Input) extends AstTransformer[JsonElement] {
     new AstArrVisitor[mutable.ListBuffer](buf =>
       JsonArray(buf.toList).withPosition(Position.offset(input, index))
     )
+
   def visitObject(
       length: Int,
       index: Int
   ): ObjVisitor[JsonElement, JsonElement] =
-    new AstObjVisitor[mutable.ListBuffer[(String, JsonElement)]](buf =>
-      JsonObject(buf.iterator.map {
-        case (key, value) => JsonMember(JsonString(key), value)
-      }.toList).withPosition(pos(index))
+    new AstMopedObjectVisitor[mutable.ListBuffer[(JsonString, JsonElement)]](
+      buf =>
+        JsonObject(buf.iterator.map {
+          case (key, value) => JsonMember(key, value)
+        }.toList).withPosition(pos(index))
     )
   def visitNull(index: Int): JsonElement = JsonNull().withPosition(pos(index))
   def visitFalse(index: Int): JsonElement =
@@ -51,7 +56,7 @@ class JsonTransformer(input: Input) extends AstTransformer[JsonElement] {
       index: Int
   ): JsonElement =
     JsonNumber(
-      TransformerUtils.parseFloat64StringParts(s, decIndex, expIndex, index)
+      parseFloat64StringParts(s, decIndex, expIndex, index)
     ).withPosition(pos(index))
   def visitString(s: CharSequence, index: Int): JsonElement =
     JsonString(s.toString()).withPosition(pos(index))

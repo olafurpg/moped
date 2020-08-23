@@ -1,6 +1,7 @@
 package tests
 
 import munit.TestOptions
+import os.makeDir.all
 
 class RunCompletionsCommandSuite extends BaseSuite {
   def checkCompletions(
@@ -33,7 +34,8 @@ class RunCompletionsCommandSuite extends BaseSuite {
       "version",
       "completions",
       "working-directory",
-      "echo"
+      "echo",
+      "config"
     )
 
   checkCompletions(
@@ -54,16 +56,25 @@ class RunCompletionsCommandSuite extends BaseSuite {
     List()
   )
 
+  val allFlags =
+    List(
+      "--help",
+      "--no-lowercase",
+      "--trailing",
+      "--unchanged",
+      "--uppercase"
+    )
+
   checkCompletions(
     "echo-flag",
     List("echo", "-"),
-    List("--uppercase")
+    allFlags
   )
 
   checkCompletions(
     "echo-uppercase",
     List("echo", "--uppercase"),
-    List("--uppercase")
+    allFlags
   )
 
   checkCompletions(

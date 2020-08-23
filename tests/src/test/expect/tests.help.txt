@@ -53,8 +53,11 @@ DESCRIPTION:
   Write arguments to the standard output
 
 OPTIONS:
-  --help: Boolean              Print this help message
-  --uppercase: Boolean = false If true, the output will be all UPPERCASE
+  --help: Boolean                Print this help message
+  --uppercase: Boolean = false   If true, the output will be all UPPERCASE
+  --unchanged: Boolean = true    If false, the output will be changed to '--no-unchanged'
+  --no-lowercase: Boolean = true If false, the output will be all lowercase
+  --trailing: List[String] = []
   --args: List[String] = []
 
 EXAMPLES:
@@ -63,4 +66,9 @@ EXAMPLES:
   $ echo --uppercase hello world!
   HELLO WORLD!
 
+
+$ tests config --help
+OPTIONS:
+  --help: Boolean           Print this help message
+  --foobar: Boolean = false
 

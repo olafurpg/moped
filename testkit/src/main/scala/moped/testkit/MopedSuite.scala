@@ -148,8 +148,10 @@ abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
   override def assertNoDiff(obtained: String, expected: String, clue: => Any)(
       implicit loc: Location
   ): Unit = {
+    val obtained2 = obtained.replace(temporaryDirectory().toString(), "")
     super.assertNoDiff(
-      obtained.replace(temporaryDirectory().toString(), ""),
+      // NOTE(olafur) workaround for https://github.com/scalameta/munit/issues/179
+      if (obtained2 == "\n") "" else obtained2,
       expected,
       clue
     )
@@ -165,7 +167,7 @@ abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
     }
 
   def parseJson(json: String): JsonElement = {
-    JsonParser.parse(Input.string(json.replace("'", "\""))).get
+    JsonParser.parse(Input.filename("moped.json", json.replace("'", "\""))).get
 
   }
 }

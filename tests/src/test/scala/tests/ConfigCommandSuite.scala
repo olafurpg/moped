@@ -225,7 +225,7 @@ class ConfigCommandSuite extends BaseSuite {
   checkErrorOutput(
     "jsonnet-type-error".only,
     List("config"),
-    """|<none>:0 error: Type mismatch;
+    """|error: Type mismatch;
        |  found    : JsonString
        |  expected : JsonBoolean
        |""".stripMargin,

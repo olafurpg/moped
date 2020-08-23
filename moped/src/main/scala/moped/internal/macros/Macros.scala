@@ -130,6 +130,10 @@ class Macros(val c: blackbox.Context) {
          ): ${weakTypeOf[DecodingResult[T]]} = {
            val conf = context.json
            val settings = $settings
+           _root_.moped.internal.json.FatalUnknownFieldDecoder.check(settings, context) match {
+             case _root_.scala.Some(error) => return _root_.moped.json.ErrorResult(error)
+             case _ =>
+           }
            val tmp = $default
            $product.map { t =>
              $ctor

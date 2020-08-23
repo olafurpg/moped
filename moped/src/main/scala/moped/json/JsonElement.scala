@@ -49,31 +49,34 @@ sealed abstract class JsonElement extends Product with Serializable {
           Doc.text("[]")
         } else {
           val parts = Doc.intercalate(
-            Doc.comma,
-            elements.map { j =>
-              (Doc.line + j.toDoc).grouped
-            }
+            Doc.comma + Doc.lineOrSpace,
+            elements.map(_.toDoc)
           )
-          "[" +: ((parts :+ " ]").nested(2))
+          parts.bracketBy(Doc.text("["), Doc.text("]"))
         }
       case obj @ JsonObject(members) =>
         val keyValues = obj.value.map {
           case (s, j) =>
-            JsonString(s).toDoc + Doc.text(":") + ((Doc.lineOrSpace + j.toDoc)
-              .nested(2))
+            JsonString(s).toDoc + Doc.text(":") +
+              Doc.space + j.toDoc
         }
-        val parts = Doc.fill(Doc.comma, keyValues)
+        val parts = Doc.intercalate(Doc.comma + Doc.line, keyValues)
         parts.bracketBy(Doc.text("{"), Doc.text("}"))
     }
 }
 
 object JsonElement {
   def merge(elements: Iterable[JsonElement]): JsonElement = {
-    val merger = new ObjectMergerTraverser()
-    elements.foreach { elem =>
-      merger.mergeElement(elem)
+    if (elements.hasDefiniteSize && elements.size == 1) {
+      // TODO(olafur): figure out why this special case is needed
+      elements.head
+    } else {
+      val merger = new ObjectMergerTraverser()
+      elements.foreach { elem =>
+        merger.mergeElement(elem)
+      }
+      merger.result()
     }
-    merger.result()
   }
 }
 sealed abstract class JsonPrimitive extends JsonElement

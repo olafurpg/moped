@@ -7,6 +7,8 @@ import moped.json.JsonDecoder
 import moped.json.DecodingContext
 import moped.console.Command
 import moped.console.Application
+import moped.json.ValueResult
+import moped.json.ErrorResult
 
 case class MyClass(
     a: Int = 1
@@ -22,11 +24,30 @@ class JsonDecoderSuite extends BaseSuite {
   def checkDecoded(
       name: TestOptions,
       original: JsonElement,
-      expected: MyClass
+      expected: MyClass,
+      context: DecodingContext => DecodingContext = identity
   ): Unit = {
     test(name) {
-      val obtained = JsonDecoder[MyClass].decode(DecodingContext(original)).get
+      val obtained =
+        JsonDecoder[MyClass].decode(context(DecodingContext(original))).get
       assertEquals(obtained, expected)
+    }
+  }
+
+  def checkErrorDecoded(
+      name: TestOptions,
+      original: JsonElement,
+      expected: String,
+      context: DecodingContext => DecodingContext = identity
+  )(implicit loc: munit.Location): Unit = {
+    test(name) {
+      JsonDecoder[MyClass].decode(context(DecodingContext(original))) match {
+        case ValueResult(value) =>
+          fail(s"expected error, obtained success $value")
+        case ErrorResult(error) =>
+          val obtained = error.position.pretty("error", error.message)
+          assertNoDiff(obtained, expected)
+      }
     }
   }
 
@@ -36,10 +57,14 @@ class JsonDecoderSuite extends BaseSuite {
     MyClass(a = 2)
   )
 
-  checkDecoded(
-    "a",
+  checkErrorDecoded(
+    "fatal-unknown-field",
     parseJson("{'a': 2, 'b': 42}"),
-    MyClass(a = 2)
+    """|moped.json:1:9 error: unknown field name 'b'
+       |{"a": 2, "b": 42
+       |         ^
+       |""".stripMargin,
+    context = _.withFatalUnknownFields(true)
   )
 
 }

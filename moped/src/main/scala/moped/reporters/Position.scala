@@ -39,14 +39,33 @@ sealed abstract class Position { pos =>
   }
 
   final def lineInput(severity: String, message: String): String = {
-    val path = pos.input.path match {
-      case Some(path) => path.toString()
-      case None => pos.input.filename
+    val out = new StringBuilder()
+    if (!pos.isNone) {
+      val path = pos.input.path match {
+        case Some(path) => path.toString()
+        case None => pos.input.filename
+      }
+      out
+        .append(path)
+        .append(":")
+        .append(pos.startLine + 1)
+      if (pos.startColumn > 0) {
+        out.append(":").append(pos.startColumn)
+      }
     }
-    val sev = if (severity.isEmpty) "" else s" $severity:"
-    val msg = if (message.isEmpty) "" else s" $message"
-    val column = if (pos.startColumn < 0) "" else s":${pos.startColumn}"
-    s"${path}:${pos.startLine + 1}${column}$sev$msg"
+
+    if (!severity.isEmpty) {
+      out
+        .append(" ")
+        .append(severity)
+        .append(":")
+    }
+    if (!message.isEmpty) {
+      out
+        .append(" ")
+        .append(message)
+    }
+    out.toString()
   }
 
   final def lineCaret: String =

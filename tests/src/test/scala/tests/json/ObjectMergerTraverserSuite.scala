@@ -17,6 +17,14 @@ class ObjectMergerTraverserSuite extends BaseSuite {
   }
 
   check(
+    "single",
+    List(
+      parseJson("""{"a": {"b": 42}}""")
+    ),
+    parseJson("""{"a": {"b": 42}}""")
+  )
+
+  check(
     "object-object",
     List(
       parseJson("""{"a": {"b": 42}}"""),

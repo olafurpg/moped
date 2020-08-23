@@ -5,8 +5,8 @@ def isCI = "true".equalsIgnoreCase(System.getenv("CI"))
 inThisBuild(
   List(
     useSuperShell := false,
-    scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.4.0",
     scalaVersion := scala212,
+    scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.4.0",
     scalafixCaching := true,
     semanticdbEnabled := true,
     semanticdbVersion := scalafixSemanticdb.revision,

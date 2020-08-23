@@ -33,14 +33,15 @@ case class EchoCommand(
     args: List[String] = Nil
 ) extends Command {
   def run(app: Application): Int = {
+    val out = app.env.standardOutput
     val toPrint =
       if (!unchanged) List("--no-unchanged")
       else if (uppercase) args.map(_.toUpperCase())
       else if (!noLowercase) args.map(_.toLowerCase())
       else args
-    app.env.standardOutput.println(toPrint.mkString(" "))
+    out.println(toPrint.mkString(" "))
     if (trailing.nonEmpty) {
-      app.env.standardOutput.println(trailing.mkString(" "))
+      out.println(trailing.mkString(" "))
     }
     0
   }
