@@ -1,6 +1,7 @@
 package moped.cli
 
 import scala.concurrent.Await
+import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 
@@ -40,6 +41,7 @@ case class Application(
     onEmptyArguments: BaseCommand = new HelpCommand(),
     onNotRecognoziedCommand: BaseCommand = NotRecognizedCommand,
     parsers: List[ConfigurationParser] = List(JsonParser),
+    executionContext: ExecutionContext = ExecutionContext.global,
     searcher: ConfigurationSearcher = new AggregateSearcher(
       List(ProjectSearcher, SystemSearcher)
     ),
@@ -106,6 +108,7 @@ object Application {
     )
   }
   def run(app: Application): Int = {
+    implicit val ec = app.executionContext
     val args = app.preProcessArguments(app.arguments)
     val base = app.copy(commands = app.commands.map(_.withApplication(app)))
     val params =
@@ -136,24 +139,25 @@ object Application {
                   CommandLineParser.parseArgs[command.Value](tail)(
                     command.asClassShaper
                   )
-                val configs =
-                  DecodingResult.fromResults(conf :: app.searcher.find(app))
-                val mergedConfig = configs.map(JsonElement.merge)
-                val configured: DecodingResult[BaseCommand] =
-                  mergedConfig.flatMap(elem =>
+                for {
+                  parsedConfig <- app.searcher.findAsync(app)
+                  configs = DecodingResult.fromResults(conf :: parsedConfig)
+                  mergedConfig = configs.map(JsonElement.merge)
+                  configured = mergedConfig.flatMap(elem =>
                     command.decodeCommand(DecodingContext(elem, app.env))
                   )
-                configured match {
-                  case ValueResult(value) =>
-                    value.runAsFuture(app)
-                  case ErrorResult(error) =>
-                    error.all.foreach {
-                      case _: AggregateDiagnostic =>
-                      case diagnostic =>
-                        app.reporter.log(diagnostic)
-                    }
-                    Future.successful(1)
-                }
+                  exit <- configured match {
+                    case ValueResult(value) =>
+                      value.runAsFuture(app)
+                    case ErrorResult(error) =>
+                      error.all.foreach {
+                        case _: AggregateDiagnostic =>
+                        case diagnostic =>
+                          app.reporter.log(diagnostic)
+                      }
+                      Future.successful(1)
+                  }
+                } yield exit
               }
             case None =>
               app.onNotRecognoziedCommand.runAsFuture(app)

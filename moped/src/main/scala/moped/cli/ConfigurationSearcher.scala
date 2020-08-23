@@ -4,13 +4,15 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 import scala.collection.mutable
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
 import moped.json.DecodingResult
 import moped.json.JsonElement
 import moped.reporters.Input
 
 trait ConfigurationSearcher {
-  def find(app: Application): List[DecodingResult[JsonElement]]
+  def findAsync(app: Application): Future[List[DecodingResult[JsonElement]]]
 }
 object ConfigurationSearcher {
   def candidates(
@@ -26,12 +28,20 @@ object ConfigurationSearcher {
     } yield parser.parse(Input.path(file))
   }
 }
+abstract class BlockingConfigurationSearcher extends ConfigurationSearcher {
+  final def findAsync(
+      app: Application
+  ): Future[List[DecodingResult[JsonElement]]] = {
+    Future.successful(find(app))
+  }
+  def find(app: Application): List[DecodingResult[JsonElement]]
+}
 
-object EmptySearcher extends ConfigurationSearcher {
+object EmptySearcher extends BlockingConfigurationSearcher {
   def find(app: Application): List[DecodingResult[JsonElement]] = List()
 }
 
-object SystemSearcher extends ConfigurationSearcher {
+object SystemSearcher extends BlockingConfigurationSearcher {
   def find(app: Application): List[DecodingResult[JsonElement]] = {
     ConfigurationSearcher.candidates(
       app,
@@ -41,7 +51,7 @@ object SystemSearcher extends ConfigurationSearcher {
   }
 }
 
-object ProjectSearcher extends ConfigurationSearcher {
+object ProjectSearcher extends BlockingConfigurationSearcher {
   def find(app: Application): List[DecodingResult[JsonElement]] = {
     val buf = mutable.ListBuffer.empty[DecodingResult[JsonElement]]
     val cwd = app.env.workingDirectory
@@ -60,8 +70,15 @@ object ProjectSearcher extends ConfigurationSearcher {
   }
 }
 
-class AggregateSearcher(val underlying: List[ConfigurationSearcher])
-    extends ConfigurationSearcher {
-  def find(app: Application): List[DecodingResult[JsonElement]] =
-    underlying.flatMap(_.find(app))
+class AggregateSearcher(
+    val underlying: List[ConfigurationSearcher],
+    val ec: ExecutionContext
+) extends ConfigurationSearcher {
+  def this(underlying: List[ConfigurationSearcher]) =
+    // TODO(olafur): use parasitic execution context here by default.
+    this(underlying, ExecutionContext.global)
+  def findAsync(app: Application): Future[List[DecodingResult[JsonElement]]] = {
+    implicit val e = ec
+    Future.sequence(underlying.map(_.findAsync(app))).map(_.flatten)
+  }
 }
