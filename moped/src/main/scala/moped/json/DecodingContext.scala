@@ -1,13 +1,15 @@
 package moped.json
 
 import moped.cli.Environment
+import moped.cli.Application
 
 final class DecodingContext private (
     val json: JsonElement,
     val cursor: Cursor,
-    val environment: Environment,
+    val app: Application,
     val fatalUnknownFields: Boolean
 ) {
+  def environment: Environment = app.env
   def withJson(value: JsonElement): DecodingContext =
     copy(json = value)
   def withCursor(value: Cursor): DecodingContext =
@@ -18,13 +20,13 @@ final class DecodingContext private (
   private[this] def copy(
       json: JsonElement = this.json,
       cursor: Cursor = this.cursor,
-      environment: Environment = this.environment,
+      app: Application = this.app,
       fatalUnknownFields: Boolean = this.fatalUnknownFields
   ): DecodingContext = {
     new DecodingContext(
       json,
       cursor,
-      environment,
+      app,
       fatalUnknownFields
     )
   }
@@ -34,20 +36,20 @@ final class DecodingContext private (
 
 object DecodingContext {
   def apply(json: JsonElement): DecodingContext = {
-    apply(json, Environment.default)
+    apply(json, Application.default)
   }
-  def apply(json: JsonElement, env: Environment): DecodingContext = {
-    DecodingContext(json, env, NoCursor())
+  def apply(json: JsonElement, app: Application): DecodingContext = {
+    DecodingContext(json, app, NoCursor())
   }
   def apply(
       json: JsonElement,
-      env: Environment,
+      app: Application,
       cursor: Cursor
   ): DecodingContext = {
     new DecodingContext(
       json,
       cursor,
-      env,
+      app,
       fatalUnknownFields = false
     )
   }

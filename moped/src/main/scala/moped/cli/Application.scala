@@ -91,6 +91,11 @@ case class Application(
 }
 
 object Application {
+  val default = Application.fromName(
+    "moped-default-application-please-change-me",
+    "moped-default-version-please-change-me",
+    List()
+  )
   def fromName(
       binaryName: String,
       version: String,
@@ -144,7 +149,7 @@ object Application {
                   configs = DecodingResult.fromResults(conf :: parsedConfig)
                   mergedConfig = configs.map(JsonElement.merge)
                   configured = mergedConfig.flatMap(elem =>
-                    command.decodeCommand(DecodingContext(elem, app.env))
+                    command.decodeCommand(DecodingContext(elem, app))
                   )
                   exit <- configured match {
                     case ValueResult(value) =>
