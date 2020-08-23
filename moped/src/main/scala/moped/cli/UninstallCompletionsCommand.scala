@@ -22,7 +22,7 @@ object UninstallCompletionsCommand {
   val default = new UninstallCompletionsCommand(Application.default)
 
   implicit lazy val parser: CommandParser[UninstallCompletionsCommand] =
-    new CodecCommandParser[UninstallCompletionsCommand](
+    new CommandParser[UninstallCompletionsCommand](
       JsonCodec.encoderDecoderJsonCodec(
         ClassShaper(
           new ClassShape(

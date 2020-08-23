@@ -21,7 +21,7 @@ class InstallCompletionsCommand(app: Application) extends Command {
 object InstallCompletionsCommand {
 
   implicit lazy val parser: CommandParser[InstallCompletionsCommand] =
-    new CodecCommandParser[InstallCompletionsCommand](
+    new CommandParser[InstallCompletionsCommand](
       JsonCodec.encoderDecoderJsonCodec(
         ClassShaper(
           new ClassShape(

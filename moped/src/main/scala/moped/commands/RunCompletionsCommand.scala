@@ -8,7 +8,6 @@ import moped.annotations.Description
 import moped.annotations.PositionalArguments
 import moped.cli.Application
 import moped.cli.BashCompletion
-import moped.cli.CodecCommandParser
 import moped.cli.Command
 import moped.cli.CommandParser
 import moped.cli.FishCompletion
@@ -33,7 +32,7 @@ object RunCompletionsCommand {
 
   implicit lazy val parser: CommandParser[RunCompletionsCommand] = {
     val default = new RunCompletionsCommand(Application.default)
-    new CodecCommandParser[RunCompletionsCommand](
+    new CommandParser[RunCompletionsCommand](
       JsonCodec.encoderDecoderJsonCodec(
         ClassShaper(
           new ClassShape(

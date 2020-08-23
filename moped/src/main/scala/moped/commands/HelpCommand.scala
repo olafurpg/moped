@@ -10,7 +10,6 @@ import moped.annotations.ExtraName
 import moped.annotations.PositionalArguments
 import moped.annotations.TabCompleter
 import moped.cli.Application
-import moped.cli.CodecCommandParser
 import moped.cli.Command
 import moped.cli.CommandParser
 import moped.cli.Completer
@@ -84,7 +83,7 @@ object HelpCommand {
   }
 
   def parser(help: Application => HelpCommand): CommandParser[HelpCommand] =
-    new CodecCommandParser[HelpCommand](
+    new CommandParser[HelpCommand](
       JsonCodec.encoderDecoderJsonCodec(
         ClassShaper(
           new ClassShape(

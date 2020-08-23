@@ -10,21 +10,34 @@ import moped.annotations.Hidden
 import moped.annotations.NestedCommand
 import moped.annotations.TabCompleter
 import moped.internal.console.Cases
+import moped.internal.console.HelpMessage
 import moped.json._
 import moped.macros._
 import org.typelevel.paiges.Doc
 
-trait CommandParser[A <: BaseCommand] extends JsonCodec[A] {
+final case class CommandParser[A <: BaseCommand](
+    encoder: JsonEncoder[A],
+    decoder: JsonDecoder[A],
+    default: A,
+    shape: ClassShape
+) extends JsonCodec[A] {
+  def this(codec: JsonCodec[A], default: A) =
+    this(codec, codec, default, codec.shape)
+  override def decode(context: DecodingContext): DecodingResult[A] =
+    decoder.decode(context)
+  override def encode(value: A): JsonElement =
+    encoder.encode(value)
   type Value = A
   def asClassShaper: ClassShaper[Value] = this
   def asDecoder: JsonDecoder[Value] = this
+  // TODO(olafur): remove this hack.
   def withApplication(app: Application): CommandParser[A] = this
   def description: Doc =
     commandLineDescription.getOrElse(Doc.empty)
   def longDescription: Doc =
     commandLineLongDescription.getOrElse(description)
   def usage: Doc = commandLineUsage.getOrElse(Doc.empty)
-  def options: Doc = Doc.empty
+  def options: Doc = HelpMessage.generate(default)(encoder, ClassShaper(shape))
   def examples: Doc = Doc.intercalate(Doc.line, commandLineExamples)
   def isHidden: Boolean = annotations.contains(Hidden())
   def matchesName(name: String): Boolean =
@@ -95,6 +108,6 @@ object CommandParser {
       codec: JsonCodec[A],
       default: A
   ): CommandParser[A] =
-    new CodecCommandParser(codec, default)
+    new CommandParser(codec, default)
 
 }

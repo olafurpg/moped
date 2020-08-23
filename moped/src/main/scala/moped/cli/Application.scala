@@ -11,12 +11,12 @@ import fansi.Str
 import moped.commands.HelpCommand
 import moped.internal.console.CommandLineParser
 import moped.internal.diagnostics.AggregateDiagnostic
+import moped.json.AlwaysDerivedParameter
+import moped.json.AlwaysHiddenParameter
 import moped.json.DecodingContext
 import moped.json.DecodingResult
 import moped.json.ErrorResult
 import moped.json.JsonElement
-import moped.json.AlwaysHiddenParameter
-import moped.json.AlwaysDerivedParameter
 import moped.json.JsonObject
 import moped.json.ValueResult
 import moped.macros.ClassShape

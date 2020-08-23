@@ -3,7 +3,6 @@ import moped.annotations.CatchInvalidFlags
 import moped.annotations.CommandName
 import moped.annotations.Description
 import moped.annotations.PositionalArguments
-import moped.cli.CodecCommandParser
 import moped.cli.CommandParser
 import moped.cli.InstallCompletionsCommand
 import moped.cli.UninstallCompletionsCommand
@@ -18,7 +17,7 @@ object CompletionsCommand {
   val default = new CompletionsCommand()
 
   implicit lazy val parser: CommandParser[CompletionsCommand] =
-    new CodecCommandParser[CompletionsCommand](
+    new CommandParser[CompletionsCommand](
       JsonCodec.encoderDecoderJsonCodec(
         ClassShaper(
           new ClassShape(
