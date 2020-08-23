@@ -89,8 +89,8 @@ class Macros(val c: blackbox.Context) {
 
     val (head :: params) :: Nil = paramss
     def next(param: Symbol): Tree = {
-      if (param.info <:< typeOf[Environment]) {
-        q"context.environment"
+      if (param.info <:< typeOf[Application]) {
+        q"_root_.moped.json.ValueResult(context.app)"
       } else {
         val P = param.info.resultType
         val name = param.name.decodedName.toString
@@ -178,6 +178,12 @@ class Macros(val c: blackbox.Context) {
           } else {
             Nil
           }
+        val hidden =
+          if (paramTpe <:< typeOf[Application]) {
+            q"new _root_.moped.annotations.Hidden" :: Nil
+          } else {
+            Nil
+          }
 
         val completerType = c.internal.typeRef(
           NoPrefix,
@@ -194,7 +200,7 @@ class Macros(val c: blackbox.Context) {
           }
 
         val finalAnnots =
-          repeated ::: dynamic ::: flag ::: tabCompletePath ::: baseAnnots
+          repeated ::: dynamic ::: flag ::: hidden ::: tabCompletePath ::: baseAnnots
         val fieldsParamTpe = c.internal.typeRef(
           NoPrefix,
           weakTypeOf[ClassShaper[_]].typeSymbol,

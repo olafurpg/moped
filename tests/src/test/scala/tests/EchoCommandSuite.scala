@@ -12,7 +12,7 @@ class EchoCommandSuite extends BaseSuite {
     "HELLO WORLD"
   )
   checkErrorOutput(
-    "--lowercase does not exist",
+    "--lowercase does not exist".only,
     List("echo", "--upper", "Hello World"),
     """|error: found argument '--upper' which wasn't expected, or isn't valid in this context.
        |	Did you mean '--uppercase'?

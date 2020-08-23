@@ -26,6 +26,8 @@ trait ClassShaper[T] extends Product {
   def annotations = shape.annotations
 
   def names: List[String] = parametersFlat.map(_.name)
+  def nonHiddenNames: List[String] =
+    parametersFlat.filterNot(_.isHidden).map(_.name)
   def allNames: List[String] =
     for {
       setting <- parametersFlat

@@ -17,7 +17,7 @@ class NotRecognizedCommand(app: Application) extends Command {
   def notRecognized(subcommand: String): Unit = {
     val closestSubcommand = Levenshtein.closestCandidate(
       subcommand,
-      app.commands.map(_.subcommandName)
+      app.commands.filterNot(_.isHidden).map(_.subcommandName)
     )
     val didYouMean = closestSubcommand match {
       case None => ""

@@ -193,7 +193,9 @@ class RunCompletionsCommand(app: Application) extends Command {
   ): List[TabCompletionItem] = {
     context.allSettings
       .filterNot {
-        case (_, setting) => setting.isPositionalArgument
+        case (_, setting) =>
+          setting.isPositionalArgument ||
+            setting.isHidden
       }
       .keys
       .toList
