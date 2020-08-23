@@ -2,13 +2,13 @@ package moped.internal.transformers
 
 import scala.collection.compat._
 
+import moped.json.JsonElement
 import moped.json.JsonString
 import moped.reporters.Position
 import ujson.AstTransformer
 import upickle.core.ObjVisitor
 import upickle.core.SimpleVisitor
 import upickle.core.Util
-import moped.json.JsonElement
 
 trait TransformerUtils[I] { outer: AstTransformer[_] =>
   def pos(index: Int): Position

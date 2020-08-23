@@ -1,10 +1,10 @@
 package tests
 
+import moped.cli.Application
+import moped.cli.CommandParser
 import moped.commands.CompletionsCommand
 import moped.commands.HelpCommand
 import moped.commands.VersionCommand
-import moped.cli.Application
-import moped.cli.CommandParser
 import moped.parsers._
 
 abstract class BaseSuite
