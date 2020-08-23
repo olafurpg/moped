@@ -26,7 +26,11 @@ object HelpMessage {
     }
     val keyValues = settings.parametersFlat.flatMap { setting =>
       val value = defaultConf.getOrElse(setting.name, JsonNull())
-      if (setting.isHidden) {
+      if (
+        setting.isHidden ||
+        setting.isPositionalArgument ||
+        setting.isTrailingArgument
+      ) {
         Nil
       } else if (setting.annotations.exists(_.isInstanceOf[Inline])) {
         for {

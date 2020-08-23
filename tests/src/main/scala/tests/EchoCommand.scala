@@ -42,7 +42,7 @@ case class EchoCommand(
       else args
     out.println(toPrint.mkString(" "))
     if (trailing.nonEmpty) {
-      out.println(trailing.mkString(" "))
+      out.println(trailing.mkString("-- ", " ", ""))
     }
     0
   }

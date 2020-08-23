@@ -85,5 +85,11 @@ final case class ParameterShape(
       case _: PositionalArguments => true
       case _ => false
     }
+  def isTrailingArgument: Boolean =
+    annotations.exists {
+      case ExampleValue(CommandLineParser.TrailingArgument) => true
+      case _: TrailingArguments => true
+      case _ => false
+    }
 
 }

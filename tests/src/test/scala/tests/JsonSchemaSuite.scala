@@ -21,7 +21,6 @@ class JsonSchemaSuite extends FunSuite {
         default
       )
       val obtained = schema.get.toDoc.render(40)
-      println(obtained)
       assertNoDiff(obtained, expected)
     }
   }

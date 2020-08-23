@@ -41,8 +41,8 @@ class ApplicationSuite extends BaseSuite {
   )
 
   checkOutput(
-    "trailing-argument".only,
+    "trailing-argument",
     List("echo", "hello", "--uppercase", "--", "world", "--uppercase", "--"),
-    "HELLO\nworld --uppercase --"
+    "HELLO\n-- world --uppercase --"
   )
 }

@@ -40,6 +40,20 @@ final case class CommandParser[A <: BaseCommand](
     commandLineLongDescription.getOrElse(description)
   def usage: Doc = commandLineUsage.getOrElse(Doc.empty)
   def options: Doc = HelpMessage.generate(default)(encoder, ClassShaper(shape))
+  def positional: Doc =
+    parametersFlat
+      .collectFirst {
+        case param if param.isPositionalArgument => param.description
+      }
+      .flatten
+      .getOrElse(Doc.empty)
+  def trailing: Doc =
+    parametersFlat
+      .collectFirst {
+        case param if param.isTrailingArgument => param.description
+      }
+      .flatten
+      .getOrElse(Doc.empty)
   def examples: Doc = Doc.intercalate(Doc.line, commandLineExamples)
   def isHidden: Boolean = annotations.contains(Hidden())
   def matchesName(name: String): Boolean =
@@ -49,6 +63,8 @@ final case class CommandParser[A <: BaseCommand](
       "USAGE:" -> usage,
       "DESCRIPTION:" -> longDescription,
       "OPTIONS:" -> options,
+      "POSITIONAL ARGUMENTS:" -> positional,
+      "TRAILING ARGUMENTS:" -> trailing,
       "EXAMPLES:" -> examples
     )
   def helpMessage: Doc = {

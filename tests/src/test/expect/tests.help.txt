@@ -3,8 +3,7 @@ DESCRIPTION:
   Print this help message
 
 OPTIONS:
-  --help: Boolean           Print this help message
-  --arguments: List[String]
+  --help: Boolean Print this help message
 
 $ tests version --help
 DESCRIPTION:
@@ -17,31 +16,17 @@ $ tests completions help --help
 DESCRIPTION:
   Print this help message
 
-OPTIONS:
-  --help: Boolean           Print this help message
-  --arguments: List[String]
-
 $ tests completions install --help
 DESCRIPTION:
   Install tab completions scripts
-
-OPTIONS:
-  --help: Boolean Print this help message
 
 $ tests completions uninstall --help
 DESCRIPTION:
   Uninstall tab completion scripts
 
-OPTIONS:
-  --help: Boolean Print this help message
-
 $ tests completions run --help
 DESCRIPTION:
   Print tab completions given command arguments
-
-OPTIONS:
-  --help: Boolean           Print this help message
-  --arguments: List[String]
 
 $ tests working-directory --help
 OPTIONS:
@@ -57,8 +42,6 @@ OPTIONS:
   --uppercase: Boolean = false   If true, the output will be all UPPERCASE
   --unchanged: Boolean = true    If false, the output will be changed to '--no-unchanged'
   --no-lowercase: Boolean = true If false, the output will be all lowercase
-  --trailing: List[String] = []
-  --args: List[String] = []
 
 EXAMPLES:
   $ echo hello world!
