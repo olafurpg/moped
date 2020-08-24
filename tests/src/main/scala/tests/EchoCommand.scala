@@ -27,10 +27,12 @@ case class EchoCommand(
     unchanged: Boolean = true,
     @Description("If false, the output will be all lowercase")
     noLowercase: Boolean = true,
-    @TrailingArguments()
-    trailing: List[String] = Nil,
     @PositionalArguments()
+    @Description("The arguments to write out to standard output")
     args: List[String] = Nil,
+    @TrailingArguments()
+    @Description("The arguments after `--` to write out to a separate line")
+    trailing: List[String] = Nil,
     app: Application = Application.default
 ) extends Command {
   def run(): Int = {

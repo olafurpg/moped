@@ -43,6 +43,12 @@ OPTIONS:
   --unchanged: Boolean = true    If false, the output will be changed to '--no-unchanged'
   --no-lowercase: Boolean = true If false, the output will be all lowercase
 
+POSITIONAL ARGUMENTS:
+  The arguments to write out to standard output
+
+TRAILING ARGUMENTS:
+  The arguments after `--` to write out to a separate line
+
 EXAMPLES:
   $ echo hello world!
   hello world!

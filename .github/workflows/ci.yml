@@ -11,42 +11,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macOS-latest, ubuntu-latest]
+        os: [ubuntu-latest]
         java: [8, 11]
-        exclude:
-          - os: macOS-latest
-            java: 8
-        include:
-          - os: ubuntu-latest
-            CACHE_PATH: ~/.cache/coursier/v1
-          - os: macOS-latest
-            CACHE_PATH: ~/Library/Caches/Coursier/v1
     steps:
       - uses: actions/checkout@v2
       - uses: olafurpg/setup-scala@v7
         with:
           java-version: "adopt@1.${{ matrix.java }}"
-      - uses: actions/cache@v1
-        with:
-          path: $CACHE_PATH
-          key: ${{ runner.os }}-coursier-${{ hashFiles('**/*.sbt') }}
-          restore-keys: |
-            ${{ runner.os }}-coursier-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.sbt
-          key: |
-            ${{ runner.os }}-sbt-${{ hashFiles('project/build.properties') }}-${{ hashFiles('project/plugins.sbt') }}
-          restore-keys: ${{ runner.os }}-sbt-
-      - uses: actions/cache@v1
-        with:
-          path: tests/slow/target/pants
-          key: ${{ runner.os }}-pants-repo-${{ hashFiles('project/PantsRepo.scala') }}
-          restore-keys: ${{ runner.os }}-pants-repo-${{ hashFiles('project/PantsRepo.scala') }}
-      - uses: actions/cache@v1
-        with:
-          path: ~/.cache/pants
-          key: ${{ runner.os }}-pants-cache
-          restore-keys: ${{ runner.os }}-pants-cache
-      - run: sbt test
+      - run: sbt coverage test coverageReport
         shell: bash
+      - run: pip install --user coverage
+        shell: bash
+      - run: codecov
+        shell: bash
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
