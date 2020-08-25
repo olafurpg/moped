@@ -1,55 +1,55 @@
 $ tests help --help
-DESCRIPTION:
+DESCRIPTION
   Print this help message
 
-OPTIONS:
+OPTIONS
   --help: Boolean Print this help message
 
 $ tests version --help
-DESCRIPTION:
+DESCRIPTION
   Print the version of this program
 
-OPTIONS:
+OPTIONS
   --help: Boolean Print this help message
 
 $ tests completions help --help
-DESCRIPTION:
+DESCRIPTION
   Print this help message
 
 $ tests completions install --help
-DESCRIPTION:
+DESCRIPTION
   Install tab completions scripts
 
 $ tests completions uninstall --help
-DESCRIPTION:
+DESCRIPTION
   Uninstall tab completion scripts
 
 $ tests completions run --help
-DESCRIPTION:
+DESCRIPTION
   Print tab completions given command arguments
 
 $ tests working-directory --help
-OPTIONS:
+OPTIONS
   --help: Boolean      Print this help message
   --home: Option[Path]
 
 $ tests echo --help
-DESCRIPTION:
+DESCRIPTION
   Write arguments to the standard output
 
-OPTIONS:
+OPTIONS
   --help: Boolean                Print this help message
   --uppercase: Boolean = false   If true, the output will be all UPPERCASE
   --unchanged: Boolean = true    If false, the output will be changed to '--no-unchanged'
   --no-lowercase: Boolean = true If false, the output will be all lowercase
 
-POSITIONAL ARGUMENTS:
+POSITIONAL ARGUMENTS
   The arguments to write out to standard output
 
-TRAILING ARGUMENTS:
+TRAILING ARGUMENTS
   The arguments after `--` to write out to a separate line
 
-EXAMPLES:
+EXAMPLES
   $ echo hello world!
   hello world!
   $ echo --uppercase hello world!
@@ -57,7 +57,19 @@ EXAMPLES:
 
 
 $ tests config --help
-OPTIONS:
+OPTIONS
   --help: Boolean           Print this help message
   --foobar: Boolean = false
+
+$ tests man-page install --help
+DESCRIPTION
+  Install man page documentation
+
+$ tests man-page uninstall --help
+DESCRIPTION
+  Uninstall man page documentation
+
+$ tests man-page help --help
+DESCRIPTION
+  Print this help message
 

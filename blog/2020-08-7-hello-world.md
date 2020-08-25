@@ -27,7 +27,7 @@ I have tried to use alternative libraries such as
 [case-app](https://github.com/alexarchambault/case-app) (was used by Scalafix
 for a long time) and [Picocli](https://picocli.info/). These libraries work
 great for what they're advertised to do but in my particular use-cases I have
-always found something missingj:
+always found something missing:
 
 - **Low-boilerplate**: after using scopt for Scalafmt I observed that it
   required a lot of manual work to introduce a new command-line argument. This

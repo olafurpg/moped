@@ -13,7 +13,6 @@ import moped.cli.Application
 import moped.cli.Command
 import moped.cli.CommandParser
 import moped.cli.Completer
-import moped.cli.NotRecognizedCommand
 import moped.cli.TabCompletionItem
 import moped.json.JsonCodec
 import moped.json.JsonDecoder
@@ -117,55 +116,21 @@ object HelpCommand {
     parser(app => new HelpCommand(app))
 }
 
-class HelpCommand(
-    app: Application,
-    appUsage: Application => Doc = app =>
-      Doc.text(s"${app.binaryName} COMMAND [OPTIONS]"),
-    appDescription: Application => Doc = _ => Doc.empty,
-    appExamples: Application => Doc = _ => Doc.empty
-) extends Command {
-  def screenWidth = app.terminal.screenWidth
+class HelpCommand(app: Application) extends Command {
   override def run(): Int = {
     app.relativeArguments match {
       case Nil =>
-        val usage = appUsage(app)
-        if (usage.nonEmpty) {
-          app.out.println(s"USAGE:")
-          app.out.println(
-            usage.indent(2).renderTrim(screenWidth)
-          )
+        val sections = app.documentation.collect {
+          case (key, value) if value.nonEmpty =>
+            Doc.text(key) + Doc.line + value.indent(2)
         }
-        val description = appDescription(app)
-        if (description.nonEmpty) {
-          if (usage.nonEmpty) app.out.println()
-          app.out.println(s"DESCRIPTION:")
-          app.out.println(description.indent(2).renderTrim(screenWidth))
-        }
-        if (app.relativeCommands.nonEmpty) {
-          val rows = app.relativeCommands.map { command =>
-            command.subcommandName -> command.description
-          }
-          val message = Doc.tabulate(' ', "  ", rows).indent(2)
-          if (usage.nonEmpty) app.out.println()
-          app.out.println(s"COMMANDS:")
-          app.out.println(message.renderTrim(screenWidth))
-          app.out.println(
-            (Doc.text(s"See '${app.binaryName} help COMMAND' ") +
-              Doc.paragraph(s"for more information on a specific command."))
-              .renderTrim(screenWidth)
-          )
-        }
-        val examples = appExamples(app)
-        if (examples.nonEmpty) {
-          if (app.relativeCommands.nonEmpty) app.out.println()
-          app.out.println(s"EXAMPLES:")
-          app.out.println(examples.indent(2).renderTrim(screenWidth))
-        }
+        val help = Doc.intercalate(Doc.line + Doc.line, sections)
+        app.out.println(help.renderTrim(app.terminal.screenWidth()))
         0
       case subcommand :: Nil =>
         app.relativeCommands.find(_.matchesName(subcommand)) match {
           case Some(command) =>
-            command.helpMessage(app.out, screenWidth)
+            command.helpMessage(app.out, app.terminal.screenWidth())
             0
           case None =>
             new NotRecognizedCommand(app).notRecognized(subcommand)

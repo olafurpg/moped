@@ -36,11 +36,6 @@ skip.in(publish) := true
 lazy val moped = project
   .settings(
     libraryDependencies ++= List(
-      // The GraalVM native-image dependency is necessary to avoid runtime
-      // exceptions when running native binaries. The dependency is
-      // "compile-internal" because downstream users don't need it on their
-      // compile or runtime classpaths.
-      "org.graalvm.nativeimage" % "svm" % graalvm % "compile-internal",
       "org.scala-lang" % "scala-reflect" % scalaVersion.value,
       "dev.dirs" % "directories" % "20",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.2",
@@ -119,12 +114,12 @@ lazy val tests = project
       "expectDirectory" -> sourceDirectory.in(Test).value./("expect")
     ),
     mainClass.in(Compile) := Some("tests.EchoCommand"),
-    mopedNativeImageOptions ++= List(
+    nativeImageOptions ++= List(
       "--initialize-at-build-time",
       "--report-unsupported-elements-at-runtime"
     )
   )
-  .enablePlugins(BuildInfoPlugin, MopedPlugin)
+  .enablePlugins(BuildInfoPlugin, NativeImagePlugin)
   .dependsOn(testkit, hocon, toml, yaml, dhall, jsonnet)
 
 val scalatagsVersion = Def.setting {

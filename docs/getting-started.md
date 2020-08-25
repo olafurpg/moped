@@ -203,7 +203,7 @@ Moped sbt plugin.
 
 ```diff
   // project/plugins.sbt
-+ addSbtPlugin("org.scalameta" % "sbt-moped" % "@VERSION@")
++ addSbtPlugin("org.scalameta" % "sbt-native-image" % "@NATIVE_IMAGE_PLUGIN@")
   // build.sbt
   lazy val echo = project
     .settings(
@@ -211,7 +211,7 @@ Moped sbt plugin.
       libraryDependencies += "org.scalameta" %% "moped-testkit" % "@VERSION@" % Test,
       testFrameworks += new TestFramework("munit.Framework"),
     )
-+   .enablePlugins(MopedPlugin)
++   .enablePlugins(NativeImagePlugin)
 ```
 
 Next, run `sbt echo/mopedNativeImage` to create a native-image binary. It's

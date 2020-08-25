@@ -1,6 +1,9 @@
-package moped.cli
+package moped.commands
+
 import scala.collection.immutable.Nil
 
+import moped.cli.Application
+import moped.cli.Command
 import moped.internal.reporters.Levenshtein
 
 class NotRecognizedCommand(app: Application) extends Command {

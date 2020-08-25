@@ -1,8 +1,11 @@
-package moped.cli
-// TODO(olafur): move to commands package
+package moped.commands
 
 import moped.annotations.CommandName
 import moped.annotations.Description
+import moped.cli.Application
+import moped.cli.Command
+import moped.cli.CommandParser
+import moped.cli.ShellCompletion
 import moped.json.JsonCodec
 import moped.json.JsonDecoder
 import moped.json.JsonEncoder

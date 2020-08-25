@@ -29,6 +29,12 @@ abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
   def cacheDirectory: Path = temporaryDirectory().resolve("cache")
   def dataDirectory: Path = temporaryDirectory().resolve("data")
   def homeDirectory: Path = temporaryDirectory().resolve("home")
+  def binDirectory: Path = temporaryDirectory().resolve("bin")
+  def manDirectory: Path = temporaryDirectory().resolve("man1")
+  def environmentVariables: Map[String, String] =
+    Map(
+      "PATH" -> binDirectory.toString()
+    )
   val app = new ApplicationFixture(applicationToTest)
 
   class DirectoryFixture extends Fixture[Path]("Directory") {
@@ -54,10 +60,11 @@ abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
           dataDirectory = dataDirectory,
           cacheDirectory = cacheDirectory,
           preferencesDirectory = preferencesDirectory,
-          workingDirectory = Files.createDirectories(workingDirectory),
+          workingDirectory = workingDirectory,
           homeDirectory = homeDirectory,
           standardOutput = ps,
-          standardError = ps
+          standardError = ps,
+          environmentVariables = environmentVariables
         ),
         tput = tput,
         reporter = reporter,
@@ -73,6 +80,8 @@ abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
       AnsiColors.filterAnsi(out.toString(StandardCharsets.UTF_8.name()))
     }
     override def beforeEach(context: BeforeEach): Unit = {
+      Files.createDirectories(workingDirectory)
+      Files.createDirectories(binDirectory)
       reset()
     }
   }
@@ -113,6 +122,11 @@ abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
       assertEquals(exit, expectedExit, clues(app.capturedOutput))
       assertNoDiff(app.capturedOutput, expectedOutput)
     }
+  }
+
+  def runSuccessfully(arguments: List[String]): Unit = {
+    val exit = app().run(arguments)
+    assertEquals(exit, 0, clues(app.capturedOutput))
   }
 
   def checkHelpMessage(

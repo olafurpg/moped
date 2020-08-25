@@ -12,7 +12,7 @@ import fansi.Str
 import moped.annotations.CatchInvalidFlags
 import moped.annotations.CommandName
 import moped.annotations.PositionalArguments
-import moped.commands.HelpCommand
+import moped.commands._
 import moped.internal.console.CommandLineParser
 import moped.internal.diagnostics.AggregateDiagnostic
 import moped.json.AlwaysDerivedParameter
@@ -30,9 +30,11 @@ import moped.macros.ParameterShape
 import moped.parsers.ConfigurationParser
 import moped.parsers.JsonParser
 import moped.reporters.ConsoleReporter
+import moped.reporters.Diagnostic
 import moped.reporters.Reporter
 import moped.reporters.Terminals
 import moped.reporters.Tput
+import org.typelevel.paiges.Doc
 import os.Shellable
 
 case class Application(
@@ -41,6 +43,10 @@ case class Application(
     commands: List[CommandParser[_]],
     env: Environment,
     reporter: Reporter,
+    tagline: String = "",
+    description: Doc = Doc.empty,
+    usage: String = s"{BINARY_NAME} COMMAND [OPTIONS]",
+    examples: Doc = Doc.empty,
     relativeCommands: List[CommandParser[_]] = Nil,
     arguments: List[String] = Nil,
     relativeArguments: List[String] = Nil,
@@ -113,6 +119,26 @@ case class Application(
         1
     }
   }
+
+  def usageDoc: Doc = Doc.text(usage.replace("{BINARY_NAME}", binaryName))
+
+  def documentation: List[(String, Doc)] =
+    List[(String, Doc)](
+      // TODO(olafur): avoid this hacky replace.
+      "USAGE" -> usageDoc,
+      "DESCRIPTION" -> description,
+      "COMMANDS" -> {
+        val rows = relativeCommands.map { command =>
+          command.subcommandName -> command.description
+        }
+        val commands = Doc.tabulate(' ', "  ", rows)
+        val moreInfo =
+          (Doc.text(s"Use '${binaryName} help COMMAND' ") +
+            Doc.paragraph(s"for more information on a specific command."))
+        commands + Doc.line + Doc.line + moreInfo
+      },
+      "EXAMPLES" -> examples
+    )
 }
 
 object Application {
@@ -194,7 +220,19 @@ object Application {
     implicit val ec = app.executionContext
     val args = app.preProcessArguments(app.arguments)
     val base = app.copy(commands = app.commands.map(_.withApplication(app)))
-    def loop(n: Int, relativeCommands: List[CommandParser[_]]): Future[Int] = {
+    def onError(error: Diagnostic): Future[Int] = {
+      error.all.foreach {
+        case _: AggregateDiagnostic =>
+        case diagnostic =>
+          app.reporter.log(diagnostic)
+      }
+      Future.successful(1)
+    }
+    def loop(
+        n: Int,
+        relativeCommands: List[CommandParser[_]],
+        baseCommand: Option[CommandParser[_]]
+    ): Future[Int] = {
       val app = base.copy(
         arguments = args,
         relativeArguments = args.drop(n + 1),
@@ -203,14 +241,27 @@ object Application {
       val remainingArguments = args.drop(n)
       remainingArguments match {
         case Nil =>
-          app.onEmptyArguments(app).runAsFuture()
+          baseCommand match {
+            case Some(parser) =>
+              parser.decodeCommand(
+                DecodingContext(JsonObject(Nil), app)
+              ) match {
+                case ValueResult(cmd) =>
+                  cmd.runAsFuture()
+                case ErrorResult(error) =>
+                  onError(error)
+              }
+            case None =>
+              app.onEmptyArguments.apply(app).runAsFuture()
+          }
         case subcommand :: tail =>
           relativeCommands.find(_.matchesName(subcommand)) match {
             case Some(command) =>
               if (command.nestedCommands.nonEmpty) {
                 loop(
                   n + 1,
-                  command.nestedCommands
+                  command.nestedCommands,
+                  Some[CommandParser[_]](command)
                 )
               } else {
                 val conf: DecodingResult[JsonObject] =
@@ -228,12 +279,7 @@ object Application {
                     case ValueResult(value) =>
                       value.runAsFuture()
                     case ErrorResult(error) =>
-                      error.all.foreach {
-                        case _: AggregateDiagnostic =>
-                        case diagnostic =>
-                          app.reporter.log(diagnostic)
-                      }
-                      Future.successful(1)
+                      onError(error)
                   }
                 } yield exit
               }
@@ -243,8 +289,7 @@ object Application {
       }
     }
     try {
-      val future =
-        loop(0, base.commands)
+      val future = loop(0, base.commands, None)
       val exit = future.value match {
         case Some(value) => value.get
         case None => Await.result(future, Duration.Inf)

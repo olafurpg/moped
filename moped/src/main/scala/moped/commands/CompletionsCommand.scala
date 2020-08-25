@@ -3,8 +3,6 @@ package moped.commands
 import moped.annotations.CommandName
 import moped.annotations.Description
 import moped.cli.CommandParser
-import moped.cli.InstallCompletionsCommand
-import moped.cli.UninstallCompletionsCommand
 import moped.json.JsonCodec
 import moped.json.JsonDecoder
 import moped.json.JsonEncoder
@@ -19,8 +17,8 @@ object CompletionsCommand {
       JsonCodec.encoderDecoderJsonCodec(
         ClassShaper(
           new ClassShape(
-            "CompleteCommand",
-            "moped.commands.CompleteCommand",
+            "CompletionsCommand",
+            "moped.commands.CompletionsCommand",
             List(),
             List(
               CommandName("completions"),

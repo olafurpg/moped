@@ -39,7 +39,10 @@ final case class CommandParser[A <: BaseCommand](
   def longDescription: Doc =
     commandLineLongDescription.getOrElse(description)
   def usage: Doc = commandLineUsage.getOrElse(Doc.empty)
-  def options: Doc = HelpMessage.generate(default)(encoder, ClassShaper(shape))
+  def options: Doc =
+    HelpMessage.generate(default)(encoder, ClassShaper(shape))
+  def optionsManpage: Doc =
+    HelpMessage.generateManpage(default)(encoder, ClassShaper(shape))
   def positional: Doc =
     parametersFlat
       .collectFirst {
@@ -56,16 +59,17 @@ final case class CommandParser[A <: BaseCommand](
       .getOrElse(Doc.empty)
   def examples: Doc = Doc.intercalate(Doc.line, commandLineExamples)
   def isHidden: Boolean = annotations.contains(Hidden())
+  def nonHidden: Boolean = !isHidden
   def matchesName(name: String): Boolean =
     subcommandNames.exists(_.equalsIgnoreCase(name))
   def helpMessageSections: List[(String, Doc)] =
     List(
-      "USAGE:" -> usage,
-      "DESCRIPTION:" -> longDescription,
-      "OPTIONS:" -> options,
-      "POSITIONAL ARGUMENTS:" -> positional,
-      "TRAILING ARGUMENTS:" -> trailing,
-      "EXAMPLES:" -> examples
+      "USAGE" -> usage,
+      "DESCRIPTION" -> longDescription,
+      "OPTIONS" -> options,
+      "POSITIONAL ARGUMENTS" -> positional,
+      "TRAILING ARGUMENTS" -> trailing,
+      "EXAMPLES" -> examples
     )
   def helpMessage: Doc = {
     val docs = helpMessageSections.collect {

@@ -7,6 +7,7 @@ import scala.collection.mutable
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
+import moped.internal.console.EagerExecutionContext
 import moped.json.DecodingResult
 import moped.json.JsonElement
 import moped.reporters.Input
@@ -76,7 +77,7 @@ class AggregateSearcher(
 ) extends ConfigurationSearcher {
   def this(underlying: List[ConfigurationSearcher]) =
     // TODO(olafur): use parasitic execution context here by default.
-    this(underlying, ExecutionContext.global)
+    this(underlying, EagerExecutionContext)
   def findAsync(app: Application): Future[List[DecodingResult[JsonElement]]] = {
     implicit val e = ec
     Future.sequence(underlying.map(_.findAsync(app))).map(_.flatten)
