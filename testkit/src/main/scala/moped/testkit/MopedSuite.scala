@@ -20,10 +20,18 @@ import munit.FunSuite
 import munit.Location
 import munit.TestOptions
 import munit.internal.console.AnsiColors
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneId
 
 abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
   val reporter: ConsoleReporter = ConsoleReporter(System.out)
   val temporaryDirectory = new DirectoryFixture
+  def clock: Clock =
+    Clock.fixed(
+      Instant.parse("2020-09-24T18:48:03.790Z"),
+      ZoneId.of("Europe/Oslo")
+    )
   def workingDirectory: Path = temporaryDirectory().resolve("workingDirectory")
   def preferencesDirectory: Path = temporaryDirectory().resolve("preferences")
   def cacheDirectory: Path = temporaryDirectory().resolve("cache")
@@ -64,7 +72,8 @@ abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
           homeDirectory = homeDirectory,
           standardOutput = ps,
           standardError = ps,
-          environmentVariables = environmentVariables
+          environmentVariables = environmentVariables,
+          clock = clock
         ),
         tput = tput,
         reporter = reporter,

@@ -39,10 +39,10 @@ class InstallManCommand(app: Application) extends Command {
     0
   }
   def formatManPage: String = {
-
+    val now =
+      LocalDateTime.now(app.env.clock).format(DateTimeFormatter.ISO_DATE)
     val header = TH + Doc.text(app.binaryName) + Doc.text(" 1 ") +
-      quoted(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE)) +
-      Doc.space + quoted(s"${app.binaryName.capitalize} Manual")
+      quoted(now) + Doc.space + quoted(s"${app.binaryName.capitalize} Manual")
 
     val name = {
       val tagline =
@@ -86,8 +86,8 @@ class InstallManCommand(app: Application) extends Command {
           SH + quoted(key) + Doc.line + value
       }
     )
-    val d = Doc.intercalate(Doc.line, List(header, trailing))
-    d.renderTrim(width = 10000)
+    val result = Doc.intercalate(Doc.line, List(header, trailing))
+    result.renderTrim(width = 10000)
   }
 }
 
@@ -101,7 +101,6 @@ object InstallManCommand {
       .getOrElse(Array.empty)
       .iterator
       .map(Paths.get(_))
-      .map(dir => { println(dir); dir })
       .filter(dir => Files.isDirectory(dir))
       .map(_.resolveSibling("man1"))
       .toList

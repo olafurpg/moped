@@ -50,7 +50,17 @@ object Diagnostic {
       case _ => new ThrowableDiagnostic(e)
     }
   def typeMismatch(expected: String, context: DecodingContext): Diagnostic =
-    new TypeMismatchDiagnostic(expected, context)
+    typeMismatch(
+      expected,
+      context.json.productPrefix.stripPrefix("Json"),
+      context
+    )
+  def typeMismatch(
+      expected: String,
+      obtained: String,
+      context: DecodingContext
+  ): Diagnostic =
+    new TypeMismatchDiagnostic(expected, obtained, context)
   def fromDiagnostics(head: Diagnostic, other: List[Diagnostic]): Diagnostic = {
     fromDiagnostics(head :: other).getOrElse(head)
   }

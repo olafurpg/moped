@@ -40,19 +40,19 @@ object JsonDecoder {
   implicit val jsonElementJsonDecoder: JsonDecoder[JsonElement] =
     context => ValueResult(context.json)
   implicit val intJsonDecoder: JsonDecoder[Int] =
-    fromJson[Int]("JsonNumber") {
+    fromJson[Int]("Int") {
       case JsonNumber(value) => ValueResult(value.toInt)
     }
   implicit val doubleJsonDecoder: JsonDecoder[Double] =
-    fromJson[Double]("JsonNumber") {
+    fromJson[Double]("Double") {
       case JsonNumber(value) => ValueResult(value)
     }
   implicit val stringJsonDecoder: JsonDecoder[String] =
-    fromJson[String]("JsonString") {
+    fromJson[String]("String") {
       case JsonString(value) => ValueResult(value)
     }
   implicit val booleanJsonDecoder: JsonDecoder[Boolean] =
-    fromJson[Boolean]("JsonBoolean") {
+    fromJson[Boolean]("Boolean") {
       case JsonBoolean(value) => ValueResult(value)
     }
   implicit val unitJsonDecoder: JsonDecoder[Unit] =
@@ -86,7 +86,7 @@ object JsonDecoder {
           case None => ValueResult(successValues.result())
         }
       case _ =>
-        ErrorResult(new TypeMismatchDiagnostic("JsonArray", context))
+        ErrorResult(new TypeMismatchDiagnostic("Array", context))
     }
   }
 
@@ -111,7 +111,7 @@ object JsonDecoder {
           case None => ValueResult(successValues.result())
         }
       case _ =>
-        ErrorResult(new TypeMismatchDiagnostic("JsonObject", context))
+        ErrorResult(new TypeMismatchDiagnostic("Object", context))
     }
   }
 

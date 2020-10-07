@@ -9,8 +9,16 @@ import moped.json.JsonElement
 import moped.json.ValueResult
 import munit.TestOptions
 
+case class NestedList(
+    a: String = ""
+)
+object NestedList {
+  implicit val codec = moped.macros.deriveCodec(NestedList())
+}
+
 case class MyClass(
-    a: Int = 1
+    a: Int = 1,
+    nested: List[NestedList] = Nil
 ) extends Command {
   def run(): Int = 0
 }
@@ -65,6 +73,17 @@ class JsonDecoderSuite extends BaseSuite {
        |         ^
        |""".stripMargin,
     context = _.withFatalUnknownFields(true)
+  )
+
+  checkErrorDecoded(
+    "fatal-unknown-field",
+    parseJson("{'nested': [{'a': []}]}"),
+    """|moped.json:1:18 error: Type mismatch at '.a[0]';
+       |  found    : Array
+       |  expected : String
+       |{"nested": [{"a": []}]
+       |                  ^
+       |""".stripMargin
   )
 
 }

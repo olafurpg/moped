@@ -19,13 +19,13 @@ sealed abstract class Cursor {
     buf.toList
   }
   def path: String = {
-    (this :: parents).iterator.map(_.syntax).mkString(".")
+    (this :: parents).iterator.map(_.syntax).mkString
   }
   def syntax: String =
     this match {
       case NoCursor() => ""
-      case SelectMemberCursor(value) => value
-      case SelectIndexCursor(value) => s"($value)"
+      case SelectMemberCursor(value) => s".$value"
+      case SelectIndexCursor(value) => s"[$value]"
     }
   def withParent(newParent: Cursor): Cursor = {
     val result = copyThis()

@@ -9,6 +9,7 @@ import java.{util => ju}
 import scala.collection.JavaConverters._
 
 import dev.dirs.ProjectDirectories
+import java.time.Clock
 
 final case class Environment(
     dataDirectory: Path,
@@ -21,7 +22,8 @@ final case class Environment(
     standardInput: BufferedReader = Console.in,
     systemProperties: ju.Properties = System.getProperties(),
     environmentVariables: collection.Map[String, String] =
-      System.getenv().asScala
+      System.getenv().asScala,
+    clock: Clock = Clock.systemDefaultZone()
 ) {
   def isColorEnabled: Boolean =
     environmentVariables.get("NO_COLOR").exists(_.equalsIgnoreCase("true"))
