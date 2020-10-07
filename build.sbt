@@ -98,7 +98,9 @@ lazy val jsonnet = project
   .dependsOn(moped)
 
 lazy val testkit = project
+  .in(file("moped-testkit"))
   .settings(
+    moduleName := "moped-testkit"
     libraryDependencies ++= List(
       "org.scalameta" %% "munit" % "0.7.10"
     )

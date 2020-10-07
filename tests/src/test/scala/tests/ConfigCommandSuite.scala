@@ -153,6 +153,21 @@ class ConfigCommandSuite extends BaseSuite {
                                 |""".stripMargin
   )
 
+  // TODO: handle unknown fields in YAML
+  // checkErrorOutput(
+  //   "yaml-unknown-field",
+  //   List("config"),
+  //   """|/workingDirectory/.tests.yaml:1:8 error: Type mismatch;
+  //      |  found    : String
+  //      |  expected : Boolean
+  //      |foobar: "message"
+  //      |        ^
+  //      |""".stripMargin,
+  //   workingDirectoryLayout = """|/.tests.yaml
+  //                               |foobar: "message"
+  //                               |""".stripMargin
+  // )
+
   checkOutput(
     "dhall",
     List("config"),

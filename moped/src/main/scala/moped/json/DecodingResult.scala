@@ -33,6 +33,7 @@ object DecodingResult {
     catch { case NonFatal(e) => ErrorResult(Diagnostic.exception(e)) }
 }
 
+// TODO(olafur): consider renaming this class to support non-decoding results.
 sealed abstract class DecodingResult[+A] extends Product with Serializable {
 
   def get: A =
