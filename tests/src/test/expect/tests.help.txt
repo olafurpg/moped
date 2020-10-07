@@ -61,15 +61,15 @@ OPTIONS
   --help: Boolean           Print this help message
   --foobar: Boolean = false
 
-$ tests man-page install --help
+$ tests man install --help
 DESCRIPTION
   Install man page documentation
 
-$ tests man-page uninstall --help
+$ tests man uninstall --help
 DESCRIPTION
   Uninstall man page documentation
 
-$ tests man-page help --help
+$ tests man help --help
 DESCRIPTION
   Print this help message
 

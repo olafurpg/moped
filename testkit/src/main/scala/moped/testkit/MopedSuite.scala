@@ -141,7 +141,7 @@ abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
   def checkHelpMessage(
       expectFile: Path,
       writeExpectOutput: Boolean = false
-  ): Unit = {
+  )(implicit loc: munit.Location): Unit = {
     test("help") {
       val expected =
         if (Files.isRegularFile(expectFile)) Utils.readFile(expectFile)

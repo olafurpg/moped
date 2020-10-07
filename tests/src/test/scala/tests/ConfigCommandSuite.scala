@@ -38,8 +38,8 @@ class ConfigCommandSuite extends BaseSuite {
     "json-type-error",
     List("config"),
     """|/workingDirectory/.tests.json:2:12 error: Type mismatch;
-       |  found    : JsonString
-       |  expected : JsonBoolean
+       |  found    : String
+       |  expected : Boolean
        |  "foobar": "message"
        |            ^
        |""".stripMargin,
@@ -75,8 +75,8 @@ class ConfigCommandSuite extends BaseSuite {
     "hocon-type-error",
     List("config"),
     """|/workingDirectory/.tests.conf:1 error: Type mismatch;
-       |  found    : JsonString
-       |  expected : JsonBoolean
+       |  found    : String
+       |  expected : Boolean
        |foobar = message
        |^
        |""".stripMargin,
@@ -110,8 +110,8 @@ class ConfigCommandSuite extends BaseSuite {
     "toml-type-error",
     List("config"),
     """|error: Type mismatch;
-       |  found    : JsonString
-       |  expected : JsonBoolean
+       |  found    : String
+       |  expected : Boolean
        |""".stripMargin,
     workingDirectoryLayout = """|/.tests.toml
                                 |foobar = "message"
@@ -143,8 +143,8 @@ class ConfigCommandSuite extends BaseSuite {
     "yaml-type-error",
     List("config"),
     """|/workingDirectory/.tests.yaml:1:8 error: Type mismatch;
-       |  found    : JsonString
-       |  expected : JsonBoolean
+       |  found    : String
+       |  expected : Boolean
        |foobar: "message"
        |        ^
        |""".stripMargin,
@@ -180,8 +180,8 @@ class ConfigCommandSuite extends BaseSuite {
     "dhall-type-error",
     List("config"),
     """|error: Type mismatch;
-       |  found    : JsonString
-       |  expected : JsonBoolean
+       |  found    : String
+       |  expected : Boolean
        |""".stripMargin,
     workingDirectoryLayout = """|/.tests.dhall
                                 |let hello = "message" in
@@ -226,8 +226,8 @@ class ConfigCommandSuite extends BaseSuite {
     "jsonnet-type-error",
     List("config"),
     """|error: Type mismatch;
-       |  found    : JsonString
-       |  expected : JsonBoolean
+       |  found    : String
+       |  expected : Boolean
        |""".stripMargin,
     workingDirectoryLayout = """|/.tests.jsonnet
                                 |local hello(enabled) = {foobar: enabled};

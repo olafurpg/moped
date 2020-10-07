@@ -35,7 +35,7 @@ class RunCompletionsCommandSuite extends BaseSuite {
       "working-directory",
       "echo",
       "config",
-      "man-page"
+      "man"
     )
 
   checkCompletions(
