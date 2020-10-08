@@ -33,12 +33,17 @@ object JsonDecoder {
       fn: PartialFunction[JsonElement, DecodingResult[A]]
   ): JsonDecoder[A] = { context =>
     fn.applyOrElse[JsonElement, DecodingResult[A]](
+      // TODO: missing context on success
       context.json,
       _ => ErrorResult(new TypeMismatchDiagnostic(expected, context))
     )
   }
   implicit val jsonElementJsonDecoder: JsonDecoder[JsonElement] =
     context => ValueResult(context.json)
+  implicit val jsonStringDecoder: JsonDecoder[JsonString] =
+    fromJson[JsonString]("String") {
+      case j: JsonString => ValueResult(j)
+    }
   implicit val intJsonDecoder: JsonDecoder[Int] =
     fromJson[Int]("Int") {
       case JsonNumber(value) => ValueResult(value.toInt)

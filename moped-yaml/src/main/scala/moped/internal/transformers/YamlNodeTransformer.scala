@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets
 import java.{util => ju}
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 
 import moped.reporters.Input
 import org.yaml.snakeyaml.constructor.Constructor
@@ -15,33 +16,41 @@ import ujson.AstTransformer
 import upickle.core.ArrVisitor
 import upickle.core.ObjVisitor
 import upickle.core.Visitor
+import moped.reporters.Position
+import org.yaml.snakeyaml.error.Mark
+import moped.json.JsonString
 
-class YamlNodeTransformer(input: Input) extends AstTransformer[Node] {
+class YamlNodeTransformer(input: Input)
+    extends AstTransformer[Node]
+    with TransformerUtils[Node] {
+  def pos(index: Int): Position = Position.offset(input, index)
   class YamlNodeConstructor extends Constructor() {
     def transformNode(n: Node): Object = constructObject(n)
   }
   val constructor = new YamlNodeConstructor()
+  private def markOffset(mark: Mark): Int =
+    if (
+      mark != null &&
+      mark.getIndex() >= 0 &&
+      !input.isEmpty
+    ) {
+      mark.getIndex()
+    } else {
+      -1
+    }
   override def transform[T](j: Node, f: Visitor[_, T]): T = {
-    val offset =
-      if (
-        j.getStartMark() != null &&
-        j.getStartMark().getIndex() >= 0 &&
-        !input.isEmpty
-      ) {
-        j.getStartMark().getIndex()
-      } else {
-        -1
-      }
+    val offset = markOffset(j.getStartMark())
     j match {
       case n: MappingNode =>
-        transformObject(
+        transformObjectWithPositionedKeys(
           f,
           n.getValue().asScala.map { t =>
             val key = t.getKeyNode() match {
               case s: ScalarNode => s.getValue()
               case o => o.toString()
             }
-            (key, t.getValueNode())
+            val keyPos = pos(markOffset(t.getKeyNode().getStartMark()))
+            (JsonString(key).withPosition(keyPos), t.getValueNode())
           }
         )
       case n: SequenceNode =>
@@ -73,17 +82,22 @@ class YamlNodeTransformer(input: Input) extends AstTransformer[Node] {
         }
     }
   }
-  override def visitArray(length: Int, index: Int): ArrVisitor[Node, Node] = ???
+  override def visitArray(length: Int, index: Int): ArrVisitor[Node, Node] =
+    ???
   override def visitObject(length: Int, index: Int): ObjVisitor[Node, Node] =
     ???
-  override def visitNull(index: Int): Node = ???
-  override def visitFalse(index: Int): Node = ???
-  override def visitTrue(index: Int): Node = ???
+  override def visitNull(index: Int): Node =
+    ???
+  override def visitFalse(index: Int): Node =
+    ???
+  override def visitTrue(index: Int): Node =
+    ???
   override def visitFloat64StringParts(
       s: CharSequence,
       decIndex: Int,
       expIndex: Int,
       index: Int
   ): Node = ???
-  override def visitString(s: CharSequence, index: Int): Node = ???
+  override def visitString(s: CharSequence, index: Int): Node =
+    ???
 }

@@ -9,8 +9,9 @@ import ujson.AstTransformer
 import upickle.core.ObjVisitor
 import upickle.core.SimpleVisitor
 import upickle.core.Util
+import upickle.core.Visitor
 
-trait TransformerUtils[I] { outer: AstTransformer[_] =>
+trait TransformerUtils[I] { outer: AstTransformer[I] =>
   def pos(index: Int): Position
   def parseFloat64StringParts(
       s: CharSequence,
@@ -20,6 +21,19 @@ trait TransformerUtils[I] { outer: AstTransformer[_] =>
   ): Double =
     if (decIndex != -1 || expIndex != -1) s.toString.toDouble
     else Util.parseIntegralNum(s, decIndex, expIndex, index)
+
+  def transformObjectWithPositionedKeys[T](
+      f: Visitor[_, T],
+      items: Iterable[(JsonString, I)]
+  ) = {
+    val ctx = f.visitObject(items.size, -1).narrow
+    for ((key, value) <- items) {
+      val keyVisitor = ctx.visitKey(-1)
+      ctx.visitKeyValue(keyVisitor.visitString(key.value, key.position.start))
+      ctx.visitValue(transform(value, ctx.subVisitor), -1)
+    }
+    ctx.visitEnd(-1)
+  }
 
   class AstMopedObjectVisitor[T](build: T => I)(implicit
       factory: Factory[(JsonString, I), T]

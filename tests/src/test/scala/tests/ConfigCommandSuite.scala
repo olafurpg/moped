@@ -37,7 +37,7 @@ class ConfigCommandSuite extends BaseSuite {
   checkErrorOutput(
     "json-type-error",
     List("config"),
-    """|/workingDirectory/.tests.json:2:12 error: Type mismatch;
+    """|/workingDirectory/.tests.json:2:12 error: Type mismatch at '.foobar';
        |  found    : String
        |  expected : Boolean
        |  "foobar": "message"
@@ -74,7 +74,7 @@ class ConfigCommandSuite extends BaseSuite {
   checkErrorOutput(
     "hocon-type-error",
     List("config"),
-    """|/workingDirectory/.tests.conf:1 error: Type mismatch;
+    """|/workingDirectory/.tests.conf:1 error: Type mismatch at '.foobar';
        |  found    : String
        |  expected : Boolean
        |foobar = message
@@ -109,7 +109,7 @@ class ConfigCommandSuite extends BaseSuite {
   checkErrorOutput(
     "toml-type-error",
     List("config"),
-    """|error: Type mismatch;
+    """|error: Type mismatch at '.foobar';
        |  found    : String
        |  expected : Boolean
        |""".stripMargin,
@@ -142,7 +142,7 @@ class ConfigCommandSuite extends BaseSuite {
   checkErrorOutput(
     "yaml-type-error",
     List("config"),
-    """|/workingDirectory/.tests.yaml:1:8 error: Type mismatch;
+    """|/workingDirectory/.tests.yaml:1:8 error: Type mismatch at '.foobar';
        |  found    : String
        |  expected : Boolean
        |foobar: "message"
@@ -194,7 +194,7 @@ class ConfigCommandSuite extends BaseSuite {
   checkErrorOutput(
     "dhall-type-error",
     List("config"),
-    """|error: Type mismatch;
+    """|error: Type mismatch at '.foobar';
        |  found    : String
        |  expected : Boolean
        |""".stripMargin,
@@ -240,7 +240,7 @@ class ConfigCommandSuite extends BaseSuite {
   checkErrorOutput(
     "jsonnet-type-error",
     List("config"),
-    """|error: Type mismatch;
+    """|error: Type mismatch at '.foobar';
        |  found    : String
        |  expected : Boolean
        |""".stripMargin,

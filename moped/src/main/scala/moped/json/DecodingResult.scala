@@ -37,7 +37,11 @@ object DecodingResult {
 sealed abstract class DecodingResult[+A] extends Product with Serializable {
 
   def get: A =
-    fold(identity, d => throw new NoSuchElementException(d.message))
+    fold(
+      identity,
+      d =>
+        throw new NoSuchElementException(d.position.pretty("error", d.message))
+    )
   def getOrElse[B >: A](other: => B): B =
     fold(identity, _ => other)
   def orElse[B >: A](other: => DecodingResult[B]): DecodingResult[B] =
