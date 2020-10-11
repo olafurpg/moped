@@ -2,9 +2,7 @@ package moped.internal.transformers
 
 import java.nio.charset.StandardCharsets
 import java.{util => ju}
-
 import scala.collection.JavaConverters._
-import scala.collection.mutable
 
 import moped.reporters.Input
 import org.yaml.snakeyaml.constructor.Constructor
