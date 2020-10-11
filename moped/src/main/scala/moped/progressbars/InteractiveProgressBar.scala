@@ -19,7 +19,7 @@ import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.ScheduledThreadPoolExecutor
 
 class InteractiveProgressBar(
-    writer: Writer,
+    out: Writer,
     renderer: ProgressRenderer,
     intervalDuration: Duration = Duration.ofMillis(1000),
     terminal: Terminals = new Terminals(Tput.system),
@@ -28,19 +28,19 @@ class InteractiveProgressBar(
   private val sh: ScheduledExecutorService = new ScheduledThreadPoolExecutor(1)
   InteractiveProgressBar.discardRejectedRunnables(sh)
   private implicit val ec = ExecutionContext.fromExecutorService(sh)
-  private val out = new PrintWriter(writer)
   private var printed = 0
   private def clear(): Unit = {
     for (_ <- 1 to printed) {
       out.clearLine(2)
-      out.down(1)
+      out.up(1)
     }
-    out.up(printed)
+    out.clearLine(2)
+    out.left(10000)
     out.flush()
     printed = 0
   }
   override def start(): Unit = {
-    emit(renderer.renderStart())
+    emit(ProgressStep(static = renderer.renderStart()))
     sh.scheduleAtFixedRate(
       () => {
         try emit(renderer.renderStep())
@@ -55,22 +55,26 @@ class InteractiveProgressBar(
     )
   }
   override def stop(): Unit = {
-    emit(renderer.renderStop())
+    emit(ProgressStep(static = renderer.renderStop()))
+    clear()
     sh.shutdownNow()
   }
+
   private def emit(step: ProgressStep): CancelToken = {
     CancelToken.fromJavaFuture(sh.submit[Unit] { () =>
       val size = terminal.screenSize()
+      val static = step.static.renderTrim(size.width)
       clear()
-      out.print(step.static.render(size.width))
-      if (!step.active.isEmpty) {
-        printed += 1
-        step.active.renderStream(size.width).foreach { line =>
-          printed != line.count(_ == '\n')
-          out.print(line)
-        }
-        out.flush()
+      out.write(static)
+      if (static.nonEmpty && !static.endsWith("\n")) {
+        out.write("\n")
       }
+      out.flush()
+      val active = step.active.renderTrim(size.width)
+      out.write(active)
+      printed = active.count(_ == '\n')
+      // out.write(s"<$printed> ")
+      out.flush()
     })
   }
 }

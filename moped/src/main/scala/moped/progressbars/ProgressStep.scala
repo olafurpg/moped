@@ -3,8 +3,8 @@ package moped.progressbars
 import org.typelevel.paiges.Doc
 
 final case class ProgressStep(
-    static: Doc,
-    active: Doc
+    static: Doc = Doc.empty,
+    active: Doc = Doc.empty
 )
 
 object ProgressStep {
