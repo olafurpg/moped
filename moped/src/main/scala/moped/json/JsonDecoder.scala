@@ -40,6 +40,8 @@ object JsonDecoder {
   }
   implicit val jsonElementJsonDecoder: JsonDecoder[JsonElement] =
     context => ValueResult(context.json)
+  // TODO(olafur): T <: JsonElement decoders
+  // TODO(olafur): Position decoder
   implicit val jsonStringDecoder: JsonDecoder[JsonString] =
     fromJson[JsonString]("String") {
       case j: JsonString => ValueResult(j)

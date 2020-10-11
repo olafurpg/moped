@@ -36,11 +36,13 @@ object DecodingResult {
 // TODO(olafur): consider renaming this class to support non-decoding results.
 sealed abstract class DecodingResult[+A] extends Product with Serializable {
 
+  def isError: Boolean = this.isInstanceOf[ErrorResult]
+  def isValue: Boolean = this.isInstanceOf[ValueResult[_]]
+
   def get: A =
     fold(
       identity,
-      d =>
-        throw new NoSuchElementException(d.position.pretty("error", d.message))
+      d => throw new NoSuchElementException(d.pretty)
     )
   def getOrElse[B >: A](other: => B): B =
     fold(identity, _ => other)

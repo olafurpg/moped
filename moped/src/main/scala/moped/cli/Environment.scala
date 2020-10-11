@@ -15,6 +15,7 @@ final case class Environment(
     dataDirectory: Path,
     cacheDirectory: Path,
     preferencesDirectory: Path,
+    // TODO(olafur): Make sure these system props don't get linked at build time.
     workingDirectory: Path = Paths.get(System.getProperty("user.dir")),
     homeDirectory: Path = Paths.get(System.getProperty("user.home")),
     standardOutput: PrintStream = Console.out,

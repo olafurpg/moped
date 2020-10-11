@@ -18,6 +18,7 @@ abstract class Diagnostic(
     Diagnostic.fromDiagnostics(this, other :: Nil)
   }
 
+  // TODO(olafur): should we use something like Doc instead of String? Union type?
   def message: String
 
   def all: List[Diagnostic] = {
@@ -29,6 +30,8 @@ abstract class Diagnostic(
     loop(this)
     buf.result()
   }
+
+  def pretty: String = position.pretty(severity.toString(), message)
 
   def overrideSeverity(why: String, newSeverity: Severity): Unit = {
     severityOverrides += new OverrideSeverityDiagnostic(why, newSeverity)

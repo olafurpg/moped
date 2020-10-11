@@ -85,6 +85,7 @@ case class Application(
   }
 
   def process(command: Shellable*): SpawnableProcess =
+    // TODO(olafur): support automatic logging of process
     new SpawnableProcess(command, env, mockedProcesses)
 
   def consumedArguments: List[String] =

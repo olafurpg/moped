@@ -21,6 +21,7 @@ object Input {
   def path(path: Path, charset: Charset): Input =
     new Input(
       path.toString(),
+      // TODO(olafur): support a method that returns DecodingResult[Input]
       new String(Files.readAllBytes(path), charset),
       Some(path),
       Some(StandardCharsets.UTF_8)

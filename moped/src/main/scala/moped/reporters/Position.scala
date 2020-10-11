@@ -22,6 +22,7 @@ sealed abstract class Position { pos =>
     // Predef.augmentString = work around scala/bug#11125 on JDK 11
     val content = augmentString(lineContent).lines
     val sb = new StringBuilder()
+    // TODO(olafur): check error when column number is huge like in auto-generated JSON
     sb.append(lineInput(severity, message))
       .append("\n")
     if (content.hasNext) {
@@ -35,6 +36,7 @@ sealed abstract class Position { pos =>
       sb.append(line)
         .append("\n")
     }
+    // TODO(olafur): trim away last newline
     sb.toString()
   }
 
@@ -56,6 +58,7 @@ sealed abstract class Position { pos =>
 
     if (!severity.isEmpty) {
       out
+      // TODO(olafur): out can be empty
         .append(" ")
         .append(severity)
         .append(":")

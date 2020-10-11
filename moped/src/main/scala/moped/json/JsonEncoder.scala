@@ -22,6 +22,8 @@ object JsonEncoder {
   implicit def jsonElementEncoder[A <: JsonElement]: JsonEncoder[A] =
     anyElementJsonEncoder.asInstanceOf[JsonEncoder[A]]
 
+  // TODO(olafur): T <: JsonElement encoders
+  // TODO(olafur): Position encoders
   implicit val booleanJsonEncoder: JsonEncoder[Boolean] =
     value => JsonBoolean(value)
   implicit val stringJsonEncoder: JsonEncoder[String] =

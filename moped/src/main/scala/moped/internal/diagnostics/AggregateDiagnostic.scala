@@ -11,15 +11,16 @@ class AggregateDiagnostic(head: Diagnostic, tail: List[Diagnostic])
   def message: String =
     causes match {
       case Nil => "AggregateDiagnostic(Nil)"
-      case head :: Nil => head.message
+      case head :: Nil => head.pretty
       case _ =>
         val count = causes.size
-        val summary = if (count > 1) s"$count errors\n" else ""
+        val summary = if (count > 1) s"\n$count errors" else ""
         causes.zipWithIndex
           .map {
             case (d, i) =>
-              s"[E$i] ${d.message}"
+              s"[E$i] ${d.pretty}"
           }
-          .mkString(summary, "\n", "")
+          // TODO(olafur): Tests output of aggregate error
+          .mkString("", "\n", summary)
     }
 }
