@@ -1,9 +1,12 @@
 package moped.reporters
 
 class Terminals(tput: Tput) {
-  def screenHeigth(): Int = {
-    screenWidth(lowerBound = 20, upperBound = 120)
+  def screenSize(): ScreenSize = {
+    tput
+      .size()
+      .getOrElse(ScreenSize.default)
   }
+  def screenHeigth(): Int = screenSize().width
   def screenWidth(): Int = {
     screenWidth(lowerBound = 40, upperBound = 100)
   }

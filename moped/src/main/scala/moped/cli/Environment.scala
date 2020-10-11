@@ -4,12 +4,12 @@ import java.io.BufferedReader
 import java.io.PrintStream
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.time.Clock
 import java.{util => ju}
 
 import scala.collection.JavaConverters._
 
 import dev.dirs.ProjectDirectories
-import java.time.Clock
 
 final case class Environment(
     dataDirectory: Path,

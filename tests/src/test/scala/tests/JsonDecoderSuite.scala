@@ -4,6 +4,7 @@ import moped.cli.Command
 import moped.cli.CommandParser
 import moped.json.DecodingContext
 import moped.json.ErrorResult
+import moped.json.JsonCodec
 import moped.json.JsonDecoder
 import moped.json.JsonElement
 import moped.json.ValueResult
@@ -13,7 +14,7 @@ case class NestedList(
     a: String = ""
 )
 object NestedList {
-  implicit val codec = moped.macros.deriveCodec(NestedList())
+  implicit val codec: JsonCodec[NestedList] = moped.macros.deriveCodec(NestedList())
 }
 
 case class MyClass(

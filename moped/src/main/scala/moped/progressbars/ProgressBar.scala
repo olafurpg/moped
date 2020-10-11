@@ -1,5 +1,6 @@
 package moped.progressbars
 
 abstract class ProgressBar {
-  def render(): ProgressStep
+  def start(): Unit
+  def stop(): Unit
 }

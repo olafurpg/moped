@@ -25,7 +25,7 @@ trait TransformerUtils[I] { outer: AstTransformer[I] =>
   def transformObjectWithPositionedKeys[T](
       f: Visitor[_, T],
       items: Iterable[(JsonString, I)]
-  ) = {
+  ): T = {
     val ctx = f.visitObject(items.size, -1).narrow
     for ((key, value) <- items) {
       val keyVisitor = ctx.visitKey(-1)

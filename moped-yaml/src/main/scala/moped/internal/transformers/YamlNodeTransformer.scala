@@ -2,10 +2,14 @@ package moped.internal.transformers
 
 import java.nio.charset.StandardCharsets
 import java.{util => ju}
+
 import scala.collection.JavaConverters._
 
+import moped.json.JsonString
 import moped.reporters.Input
+import moped.reporters.Position
 import org.yaml.snakeyaml.constructor.Constructor
+import org.yaml.snakeyaml.error.Mark
 import org.yaml.snakeyaml.nodes.MappingNode
 import org.yaml.snakeyaml.nodes.Node
 import org.yaml.snakeyaml.nodes.ScalarNode
@@ -14,9 +18,6 @@ import ujson.AstTransformer
 import upickle.core.ArrVisitor
 import upickle.core.ObjVisitor
 import upickle.core.Visitor
-import moped.reporters.Position
-import org.yaml.snakeyaml.error.Mark
-import moped.json.JsonString
 
 class YamlNodeTransformer(input: Input)
     extends AstTransformer[Node]

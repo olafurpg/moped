@@ -5,6 +5,9 @@ import java.io.PrintStream
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneId
 
 import scala.collection.immutable.Nil
 
@@ -20,9 +23,6 @@ import munit.FunSuite
 import munit.Location
 import munit.TestOptions
 import munit.internal.console.AnsiColors
-import java.time.Clock
-import java.time.Instant
-import java.time.ZoneId
 
 abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
   val reporter: ConsoleReporter = ConsoleReporter(System.out)
