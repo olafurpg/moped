@@ -23,7 +23,7 @@ class InteractiveProgressBarSuite extends FunSuite {
         i += 1
         val progress = ("#" * i).padTo(10, ' ')
         val bar = s"[$progress ${i.toString().padTo(2, ' ')}/10]"
-        val list = JsonArray(1.to(i * 100).map(i => JsonNumber(i)).toList).toDoc
+        val list = JsonArray(1.to(i * 10).map(i => JsonNumber(i)).toList).toDoc
         ProgressStep(
           static = Doc.empty, //Doc.text(i.toString()),
           active = Doc.text(bar) + Doc.line + list
