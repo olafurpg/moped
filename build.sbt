@@ -152,6 +152,7 @@ lazy val docs = project
     ),
     mdocVariables := Map(
       "VERSION" -> version.value.replaceFirst("\\+.*", ""),
+      "NATIVE_IMAGE_PLUGIN" -> "???",
       "SCALA_VERSION" -> scalaVersion.value
     ),
     mdocOut :=
