@@ -128,7 +128,7 @@ class InteractiveProgressBar(
     while (i < active.length) {
       active(i) match {
         case '\n' =>
-          if (h < size.height) {
+          if (h < (size.height - 3)) {
             out.write('\n')
             h += 1
             w = 0
