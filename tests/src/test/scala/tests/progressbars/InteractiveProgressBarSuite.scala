@@ -10,11 +10,9 @@ import moped.progressbars.ProgressStep
 import munit.FunSuite
 import org.typelevel.paiges.Doc
 import moped.reporters.Tput
+import java.time.Duration
 
 class InteractiveProgressBarSuite extends FunSuite {
-  test("tput".only) {
-    pprint.log(Tput.system.size())
-  }
   test("basic") {
     val renderer = new ProgressRenderer() {
       var i = 0
@@ -40,7 +38,11 @@ class InteractiveProgressBarSuite extends FunSuite {
         )
       }
     }
-    val p = new InteractiveProgressBar(new PrintWriter(System.out), renderer)
+    val p = new InteractiveProgressBar(
+      new PrintWriter(System.out),
+      renderer
+      // intervalDuration = Duration.ofMillis(100)
+    )
     p.start()
     Thread.sleep(3000)
     p.stop()

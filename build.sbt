@@ -23,6 +23,8 @@ inThisBuild(
     scalafixCaching := true,
     semanticdbEnabled := true,
     semanticdbVersion := scalafixSemanticdb.revision,
+    publishArtifact.in(Compile, packageDoc) := isCI,
+    publishArtifact.in(packageDoc) := isCI,
     scalacOptions ++= List(
       "-Ywarn-unused:imports",
       "-Yrangepos"
@@ -147,6 +149,7 @@ lazy val docs = project
   .settings(
     moduleName := "moped-docs",
     fork := isCI,
+    skip in publish := true,
     libraryDependencies ++= List(
       "com.lihaoyi" %% "scalatags" % scalatagsVersion.value
     ),

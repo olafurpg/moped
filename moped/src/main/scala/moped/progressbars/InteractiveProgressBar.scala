@@ -38,7 +38,7 @@ import moped.reporters.Tput
 class InteractiveProgressBar(
     out: Writer,
     renderer: ProgressRenderer,
-    intervalDuration: Duration = Duration.ofMillis(20),
+    intervalDuration: Duration = Duration.ofMillis(16),
     terminal: Terminals = new Terminals(Tput.system),
     reportFailure: Throwable => Unit = e => e.printStackTrace(System.out)
 ) extends ProgressBar {
@@ -118,6 +118,8 @@ class InteractiveProgressBar(
   private def writeActivePart(active: String, size: ScreenSize): Unit = {
     if (!isActive()) return
     var i, w, h = 0
+    def isHeightOk = h < (size.height - 3)
+    def isWidthOk = w < size.width
     // This while loop prints out the `active` string with truncated characters
     // outside the screen width/height constraints to avoid automatic line
     // wrapping from the terminal. When the terminal wraps text it introduces
@@ -128,13 +130,13 @@ class InteractiveProgressBar(
     while (i < active.length) {
       active(i) match {
         case '\n' =>
-          if (h < (size.height - 3)) {
+          if (isHeightOk) {
             out.write('\n')
             h += 1
             w = 0
           }
         case ch =>
-          if (w < size.width) {
+          if (isHeightOk && isWidthOk) {
             out.write(ch)
             w += 1
           }

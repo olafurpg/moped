@@ -8,6 +8,7 @@ sealed abstract class Severity(val name: String, val priority: Int)
   def compare(that: Severity): Int = {
     Integer.compare(this.priority, that.priority)
   }
+  final override def toString = name
 }
 object Severity {
   val all: List[Severity] = 0.to(4).toList.map(fromPriority)
@@ -29,8 +30,8 @@ object Severity {
       case ErrorSeverity => Color.LightRed
     }
 }
-case object SilentSeverity extends Severity("silent", 0)
-case object DebugSeverity extends Severity("debug", 1)
-case object InfoSeverity extends Severity("info", 2)
-case object WarningSeverity extends Severity("warning", 3)
-case object ErrorSeverity extends Severity("error", 4)
+object SilentSeverity extends Severity("silent", 0)
+object DebugSeverity extends Severity("debug", 1)
+object InfoSeverity extends Severity("info", 2)
+object WarningSeverity extends Severity("warning", 3)
+object ErrorSeverity extends Severity("error", 4)
