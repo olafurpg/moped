@@ -9,8 +9,12 @@ import moped.progressbars.ProgressRenderer
 import moped.progressbars.ProgressStep
 import munit.FunSuite
 import org.typelevel.paiges.Doc
+import moped.reporters.Tput
 
 class InteractiveProgressBarSuite extends FunSuite {
+  test("tput".only) {
+    pprint.log(Tput.system.size())
+  }
   test("basic") {
     val renderer = new ProgressRenderer() {
       var i = 0

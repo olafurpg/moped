@@ -2,7 +2,9 @@ package moped.reporters
 
 import scala.util.Try
 
-import org.jline.terminal.TerminalBuilder
+import java.nio.file.Files
+import java.nio.file.Paths
+import scala.util.control.NonFatal
 
 abstract class Tput {
   def size(): Option[ScreenSize]
@@ -11,13 +13,36 @@ abstract class Tput {
 object Tput {
   def constant(w: Int): Tput = () => Some(ScreenSize(w, w))
   def constant(w: Int, h: Int): Tput = () => Some(ScreenSize(w, h))
-  lazy val system: Tput = new Tput {
-    val terminal = Try(TerminalBuilder.builder().build())
+  val system: Tput = new Tput {
     def size(): Option[ScreenSize] = {
-      for {
-        t <- terminal
-        s <- Try(t.getSize())
-      } yield ScreenSize(s.getColumns(), s.getRows())
-    }.toOption
+      Try {
+        val tputPath =
+          if (Files.exists(Paths.get("/usr/bin/tput"))) "/usr/bin/tput"
+          else "tput"
+        try {
+          val output = scala.sys.process
+            .Process(
+              Seq(
+                "sh",
+                "-c",
+                s"""echo "cols\nlines" | $tputPath -S 2> /dev/tty"""
+              )
+            )
+            .!!
+            .linesIterator
+            .map(_.toInt)
+            .toList
+          output match {
+            case cols :: lines :: Nil =>
+              Some(ScreenSize(cols, lines))
+            case _ =>
+              None
+          }
+        } catch {
+          case NonFatal(_) =>
+            None
+        }
+      }.toOption.flatten
+    }
   }
 }

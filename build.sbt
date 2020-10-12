@@ -36,7 +36,6 @@ skip.in(publish) := true
 lazy val moped = project
   .settings(
     libraryDependencies ++= List(
-      "org.jline" % "jline" % "3.16.0",
       "org.scala-lang" % "scala-reflect" % scalaVersion.value,
       "dev.dirs" % "directories" % "20",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.2",

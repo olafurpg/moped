@@ -27,7 +27,7 @@ import moped.reporters.Tput
  *            are no guarantees what happens if this output stream is used concurrently while
  *            this progress bar is running.
  * @param renderer pretty-printer for this progress bar. The `renderStep()`
- *                 method runs on a single thread and shoudl not take longer than the
+ *                 method runs on a single thread and should not take longer than the
  *                 `intervalDuration` time to complete.
  * @param intervalDuration the duration for which
  * @param terminal the active part of the progress bar is truncated by the screen width/height
@@ -84,6 +84,7 @@ class InteractiveProgressBar(
     }
   }
   override def stop(): Unit = {
+    // TODO: Should we guarantee `state == AfterStop` here?
     if (state.compareAndSet(Active, AfterStop)) {
       emitNow(ProgressStep(static = renderer.renderStop()))
       sh.shutdownNow()
