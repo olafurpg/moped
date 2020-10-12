@@ -1,10 +1,11 @@
 package moped.cli
 
+import java.util.concurrent.Future
+
+import scala.collection.mutable
+import scala.concurrent.ExecutionContext
 import scala.concurrent.Promise
 import scala.util.Success
-import scala.concurrent.ExecutionContext
-import java.util.concurrent.Future
-import scala.collection.mutable
 import scala.util.control.NonFatal
 
 final class CancelToken private (val onCanceled: Promise[Boolean]) {

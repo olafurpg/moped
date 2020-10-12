@@ -8,5 +8,5 @@ final case class ProgressStep(
 )
 
 object ProgressStep {
-  val empty = ProgressStep(Doc.empty, Doc.empty)
+  val empty: ProgressStep = ProgressStep(Doc.empty, Doc.empty)
 }

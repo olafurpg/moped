@@ -25,7 +25,7 @@ final case class ScreenSize(
 }
 
 object ScreenSize {
-  val default = ScreenSize(width = 120, height = 40)
+  val default: ScreenSize = ScreenSize(width = 120, height = 40)
   private def maxMin(min: Int, n: Int, max: Int): Int =
     math.max(math.min(n, max), min)
 }

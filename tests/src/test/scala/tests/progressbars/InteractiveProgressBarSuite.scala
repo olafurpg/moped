@@ -1,13 +1,14 @@
 package tests.progressbars
 
-import munit.FunSuite
-import moped.progressbars.ProgressRenderer
-import org.typelevel.paiges.Doc
-import moped.progressbars.ProgressStep
+import java.io.PrintWriter
+
 import moped.json.JsonArray
 import moped.json.JsonNumber
 import moped.progressbars.InteractiveProgressBar
-import java.io.PrintWriter
+import moped.progressbars.ProgressRenderer
+import moped.progressbars.ProgressStep
+import munit.FunSuite
+import org.typelevel.paiges.Doc
 
 class InteractiveProgressBarSuite extends FunSuite {
   test("basic") {
@@ -21,18 +22,23 @@ class InteractiveProgressBarSuite extends FunSuite {
       }
       override def renderStep(): ProgressStep = {
         i += 1
-        val progress = ("#" * i).padTo(10, ' ')
-        val bar = s"[$progress ${i.toString().padTo(2, ' ')}/10]"
-        val list = JsonArray(1.to(i * 10).map(i => JsonNumber(i)).toList).toDoc
+        val N = math.max(i, 10)
+        val progress = ("#" * i).padTo(N, ' ')
+        val hash = Seq.fill(i)(Doc.char('#'))
+        val open = Doc.text("[")
+        val close = Doc.text(s"${i.toString().padTo(2, ' ')}/$N]")
+        val bar =
+          Doc.fill(Doc.lineOrEmpty, hash).tightBracketBy(open, close)
+        val list = JsonArray(1.to(i).map(i => JsonNumber(i)).toList).toDoc
         ProgressStep(
           static = Doc.empty, //Doc.text(i.toString()),
-          active = Doc.text(bar) + Doc.line + list
+          active = bar + Doc.line + list
         )
       }
     }
     val p = new InteractiveProgressBar(new PrintWriter(System.out), renderer)
     p.start()
-    Thread.sleep(10000)
+    Thread.sleep(3000)
     p.stop()
   }
 
