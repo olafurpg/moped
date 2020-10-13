@@ -18,7 +18,7 @@ class AggregateDiagnostic(head: Diagnostic, tail: List[Diagnostic])
         causes.zipWithIndex
           .map {
             case (d, i) =>
-              s"[E$i] ${d.pretty}"
+              s"[E${i + 1}] ${d.pretty}"
           }
           // TODO(olafur): Tests output of aggregate error
           .mkString("", "\n", summary)
