@@ -83,5 +83,8 @@ class CommandLineParserSuite extends BaseSuite {
     """|error: unexpected positional arguments ["false"]
        |""".stripMargin
   )
-  // TODO: --no- prefix
+  // TODO: catch fallback
+  // TODO: error aggregation?
+  // TODO: more combined arguments
+  // TODO: conflicting inlined fields are duplicated
 }
