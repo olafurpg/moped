@@ -27,17 +27,17 @@ class CommandLineParserSuite extends BaseSuite {
 
   checkOutput(
     "nested-no-boolean",
-    List("example-nested", "--no-nested.a", "--no-nested.b"),
-    """|nested.a=true
-       |nested.b=true
+    List("example-nested", "--no-nested.e", "--no-nested.g"),
+    """|nested.e=false
+       |nested.g=false
        |""".stripMargin
   )
 
   checkOutput(
-    "inline-no-boolean".only,
-    List("example-nested", "--no-ia", "--no-ib"),
-    """|inline.a=true
-       |inline.b=true
+    "inline-no-boolean",
+    List("example-nested", "--no-ie", "--no-ig"),
+    """|inline.ie=false
+       |inline.ig=false
        |""".stripMargin
   )
 

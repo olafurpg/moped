@@ -67,23 +67,7 @@ class CommandLineParser[T](
           val value = head.substring(equal + 1)
           loop(key :: value :: tail, NoFlag)
         } else if (head.startsWith("-")) {
-          tryFlag(head, tail, defaultBooleanValue = true)
-          // match {
-          //   case nok: ErrorResult if head.startsWith("--") =>
-          //     val fallbackFlag =
-          //       if (head.startsWith(noPrefix)) {
-          //         "--" + head.stripPrefix(noPrefix)
-          //       } else {
-          //         noPrefix + head.stripPrefix("--")
-          //       }
-          //     val fallback = tryFlag(
-          //       fallbackFlag,
-          //       tail,
-          //       defaultBooleanValue = false
-          //     )
-          //     fallback.orElse(nok)
-          //   case ok => ok
-          // }
+          loopFlag(head, tail)
         } else {
           appendValues(
             PositionalArgument,
@@ -100,22 +84,47 @@ class CommandLineParser[T](
           if (setting.shape.isRepeated) {
             appendValues(setting.keys, List(value))
           } else {
-            add(setting.keys, value)
+            addMember(setting.keys, value)
           }
         }
         loop(tail, NoFlag)
     }
   }
 
-  private def tryFlag(
-      head: String,
-      tail: List[String],
-      defaultBooleanValue: Boolean
+  private def loopFlag(
+      flag: String,
+      tail: List[String]
   ): Unit = {
-    val camel = Cases.kebabToCamel(dash.replaceFirstIn(head, ""))
+    tryFlag(flag, tail) match {
+      case Left(error) =>
+        if (flag.startsWith(negatedPrefix)) {
+          // Try to parse flag with "--no-" prefix removed.
+          val negatedHead = flag.stripPrefix(negatedPrefix)
+          tryFlag(negatedHead, tail) match {
+            case Left(_) =>
+              errors += error
+            case Right(Nil) => // Done.
+            case Right(settings) =>
+              // --no prefix succeeded, default boolean value is false.
+              loopSettings(tail, settings, defaultBooleanValue = false)
+          }
+        } else {
+          errors += error
+        }
+      case Right(Nil) => // Done.
+      case Right(settings) =>
+        loopSettings(tail, settings, defaultBooleanValue = true)
+    }
+  }
+
+  private def tryFlag(
+      flag: String,
+      tail: List[String]
+  ): Either[Diagnostic, List[InlinedFlag]] = {
+    val camel = Cases.kebabToCamel(dash.replaceFirstIn(flag, ""))
     camel.split("\\.").toList match {
       case Nil =>
-        errors += Diagnostic.error(s"Flag '$head' must not be empty")
+        Left(Diagnostic.error(s"Flag '$flag' must not be empty"))
       case flag :: Nil =>
         toInline.get(flag) match {
           case None =>
@@ -123,38 +132,39 @@ class CommandLineParser[T](
               case Some(param) =>
                 appendValues(
                   param.name,
-                  (head :: tail).map(JsonString(_))
+                  (flag :: tail).map(JsonString(_))
                 )
+                Right(Nil)
               case None =>
-                val closestCandidate =
-                  Levenshtein.closestCandidate(camel, settings.nonHiddenNames)
-                val didYouMean = closestCandidate match {
-                  case None =>
-                    ""
-                  case Some(candidate) =>
-                    val kebab = Cases.camelToKebab(candidate)
-                    s"\n\tDid you mean '--$kebab'?"
-                }
-                val kebabFlag = Cases.camelToKebab(flag)
-                errors += Diagnostic.error(
-                  s"found argument '--$kebabFlag' which wasn't expected, or isn't valid in this context.$didYouMean"
-                )
+                Left(didYouMean(flag, camel))
             }
           case Some(settings) =>
-            loopSettings(tail, settings, defaultBooleanValue)
+            Right(settings)
         }
       case flag :: flags =>
         settings.get(flag, flags) match {
           case Some(value) =>
-            loopSettings(
-              tail,
-              List(InlinedFlag(flag :: flags, value)),
-              defaultBooleanValue
-            )
+            Right(List(InlinedFlag(flag :: flags, value)))
           case None =>
-            ???
+            Left(didYouMean(flag, camel))
         }
     }
+  }
+
+  def didYouMean(flag: String, camel: String): Diagnostic = {
+    val closestCandidate =
+      Levenshtein.closestCandidate(camel, settings.nonHiddenNames)
+    val didYouMean = closestCandidate match {
+      case None =>
+        ""
+      case Some(candidate) =>
+        val kebab = Cases.camelToKebab(candidate)
+        s"\n\tDid you mean '--$kebab'?"
+    }
+    val kebabFlag = Cases.camelToKebab(flag)
+    Diagnostic.error(
+      s"found argument '--$kebabFlag' which wasn't expected, or isn't valid in this context.$didYouMean"
+    )
   }
 
   def loopSettings(
@@ -162,11 +172,12 @@ class CommandLineParser[T](
       settings: List[InlinedFlag],
       defaultBooleanValue: Boolean
   ): Unit = {
+    require(settings.nonEmpty)
     val hasBoolean = settings.exists(_.shape.isBoolean)
     val isOnlyBoolean = settings.forall(_.shape.isBoolean)
     if (isOnlyBoolean) {
       settings.map { setting =>
-        add(setting.keys, JsonBoolean(defaultBooleanValue))
+        addMember(setting.keys, JsonBoolean(defaultBooleanValue))
       }
       loop(tail, NoFlag)
     } else {
@@ -180,14 +191,14 @@ class CommandLineParser[T](
     }
   }
 
-  private def add(
+  private def addMember(
       key: String,
       value: JsonElement
   ): Unit = {
-    add(List(key), value)
+    addMember(List(key), value)
   }
 
-  private def add(
+  private def addMember(
       keys: List[String],
       value: JsonElement
   ): Unit = {
@@ -231,8 +242,8 @@ object CommandLineParser {
     parser.parseArgs(args)
   }
 
-  val noPrefix = "--no-"
-  def isNegatedBoolean(flag: String): Boolean = flag.startsWith(noPrefix)
+  val negatedPrefix = "--no-"
+  def isNegatedBoolean(flag: String): Boolean = flag.startsWith(negatedPrefix)
 
   def inlinedSettings(
       settings: ClassShaper[_]
