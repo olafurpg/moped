@@ -141,18 +141,24 @@ class RunCompletionsCommand(app: Application) extends Command {
       app: Application
   ): List[TabCompletionItem] = {
     val last = tail.lastOption.getOrElse(head)
-    val inlined =
-      CommandLineParser.allSettings(subcommand).filter {
-        case (_, param) =>
-          !param.isHidden ||
-            !param.isPositionalArgument
+    val inlined = CommandLineParser
+      .allSettings(subcommand)
+      .filter {
+        case (_, params) =>
+          params.exists { param =>
+            !param.shape.isHidden ||
+            !param.shape.isPositionalArgument
+          }
       }
     val secondLast = (head :: tail).takeRight(2) match {
       case flag :: _ :: Nil => Some(flag)
       case _ => None
     }
     val setting = secondLast.flatMap(flag =>
-      inlined.get(Cases.kebabToCamel(flag.stripPrefix("--")))
+      inlined
+        .getOrElse(Cases.kebabToCamel(flag.stripPrefix("--")), Nil)
+        .headOption
+        .map(_.shape)
     )
     val context = TabCompletionContext(
       shell,
@@ -195,9 +201,11 @@ class RunCompletionsCommand(app: Application) extends Command {
   ): List[TabCompletionItem] = {
     context.allSettings
       .filterNot {
-        case (_, setting) =>
-          setting.isPositionalArgument ||
-            setting.isHidden
+        case (_, settings) =>
+          settings.exists { setting =>
+            setting.shape.isPositionalArgument ||
+            setting.shape.isHidden
+          }
       }
       .keys
       .toList

@@ -10,16 +10,40 @@ class CommandLineParserSuite extends BaseSuite {
   )
 
   checkOutput(
-    "nested-flag".only,
+    "nested-flag",
     List("example-nested", "--nested.a", "--nested.b"),
-    """|NestedOption(true)
+    """|nested.a=true
+       |nested.b=true
+       |inline.a=false
+       |inline.b=false
        |""".stripMargin
   )
 
   checkOutput(
-    "positional-boolean",
-    List("example-nested", "--nested.a", "false"),
-    """|NestedOption(true)
+    "inline-flag",
+    List("example-nested", "--ia", "--ib"),
+    """|nested.a=false
+       |nested.b=false
+       |inline.a=true
+       |inline.b=true
        |""".stripMargin
   )
+
+  checkOutput(
+    "inline-nested-mix-flag",
+    List("example-nested", "--ia", "--nested.a"),
+    """|nested.a=true
+       |nested.b=false
+       |inline.a=true
+       |inline.b=false
+       |""".stripMargin
+  )
+
+  checkErrorOutput(
+    "positional-boolean",
+    List("example-nested", "--nested.a", "false"),
+    """|error: unexpected positional arguments ["false"]
+       |""".stripMargin
+  )
+  // TODO: concat arrays
 }

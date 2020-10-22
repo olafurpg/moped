@@ -8,6 +8,9 @@ import java.{util => ju}
 class ObjectMergerTraverser extends JsonTraverser {
   val stack = new ju.ArrayDeque[JsonBuilder]
   private var isReuseBuilder: Boolean = true
+  def mergeMember(member: JsonMember): Unit = {
+    mergeElement(JsonObject(List(member)))
+  }
   def mergeElement(elem: JsonElement): Unit = {
     isReuseBuilder = !stack.isEmpty() &&
       elem.isObject &&

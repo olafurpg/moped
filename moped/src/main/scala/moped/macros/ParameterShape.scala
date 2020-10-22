@@ -79,6 +79,8 @@ final case class ParameterShape(
     annotations.exists(_.isInstanceOf[TabCompleter])
   def isCatchInvalidFlags: Boolean =
     annotations.exists(_.isInstanceOf[CatchInvalidFlags])
+  def isInline: Boolean =
+    annotations.exists(_.isInstanceOf[Inline])
   def isPositionalArgument: Boolean =
     annotations.exists {
       case ExampleValue(CommandLineParser.PositionalArgument) => true
