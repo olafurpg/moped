@@ -36,7 +36,7 @@ class CommandLineParser[T](
       case None =>
         JsonElement.merge(pendingMembers) match {
           case o: JsonObject =>
-            pprint.log(o.toDoc.render(10))
+            // pprint.log(o.toDoc.render(10))
             ValueResult(o)
           case e =>
             ErrorResult(Diagnostic.typeMismatch("Object", DecodingContext(e)))

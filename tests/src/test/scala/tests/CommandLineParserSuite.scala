@@ -10,7 +10,7 @@ class CommandLineParserSuite extends BaseSuite {
   )
 
   checkOutput(
-    "nested-flag",
+    "nested-boolean",
     List("example-nested", "--nested.a", "--nested.b"),
     """|nested.a=true
        |nested.b=true
@@ -18,7 +18,7 @@ class CommandLineParserSuite extends BaseSuite {
   )
 
   checkOutput(
-    "inline-flag",
+    "inline-boolean",
     List("example-nested", "--ia", "--ib"),
     """|inline.a=true
        |inline.b=true
@@ -26,7 +26,23 @@ class CommandLineParserSuite extends BaseSuite {
   )
 
   checkOutput(
-    "inline-nested-mix-flag",
+    "nested-no-boolean",
+    List("example-nested", "--no-nested.a", "--no-nested.b"),
+    """|nested.a=true
+       |nested.b=true
+       |""".stripMargin
+  )
+
+  checkOutput(
+    "inline-no-boolean".only,
+    List("example-nested", "--no-ia", "--no-ib"),
+    """|inline.a=true
+       |inline.b=true
+       |""".stripMargin
+  )
+
+  checkOutput(
+    "inline-nested-mix-boolean",
     List("example-nested", "--ia", "--nested.a"),
     """|nested.a=true
        |inline.a=true
@@ -67,6 +83,5 @@ class CommandLineParserSuite extends BaseSuite {
     """|error: unexpected positional arguments ["false"]
        |""".stripMargin
   )
-  // TODO: concat arrays
   // TODO: --no- prefix
 }
