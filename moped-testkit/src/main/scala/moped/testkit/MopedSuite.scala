@@ -25,6 +25,7 @@ import munit.TestOptions
 import munit.internal.console.AnsiColors
 
 abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
+  def fatalUnknownFields = false
   val reporter: ConsoleReporter = ConsoleReporter(System.out)
   val temporaryDirectory = new DirectoryFixture
   def clock: Clock =
@@ -75,6 +76,7 @@ abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
           environmentVariables = environmentVariables,
           clock = clock
         ),
+        fatalUnknownFields = fatalUnknownFields,
         tput = tput,
         reporter = reporter,
         mockedProcesses = app.mockedProcesses.map(

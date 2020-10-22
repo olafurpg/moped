@@ -29,15 +29,6 @@ sealed abstract class JsonElement extends Product with Serializable {
   def isNull: Boolean = this.isInstanceOf[JsonNull]
   def isPrimitive: Boolean = this.isInstanceOf[JsonPrimitive]
 
-  //   val result = this match {
-  //     case JsonNull() => JsonNull()
-  //     case JsonNumber(value) => JsonNumber(value)
-  //     case JsonBoolean(value) => JsonBoolean(value)
-  //     case JsonString(value) => JsonString(value)
-  //     case JsonArray(value) => JsonArray(value)
-  //     case JsonObject(value) => JsonObject(value)
-  //   }
-  // }
   final def toDoc: Doc =
     this match {
       case JsonNull() => Doc.text("null")
@@ -54,7 +45,7 @@ sealed abstract class JsonElement extends Product with Serializable {
             Doc.comma + Doc.lineOrSpace,
             elements.map(_.toDoc)
           )
-          parts.bracketBy(Doc.text("["), Doc.text("]"))
+          parts.tightBracketBy(Doc.text("["), Doc.text("]"))
         }
       case obj @ JsonObject(members) =>
         val keyValues = obj.value.map {
@@ -63,7 +54,7 @@ sealed abstract class JsonElement extends Product with Serializable {
               Doc.space + j.toDoc
         }
         val parts = Doc.intercalate(Doc.comma + Doc.line, keyValues)
-        parts.bracketBy(Doc.text("{"), Doc.text("}"))
+        parts.tightBracketBy(Doc.text("{"), Doc.text("}"))
     }
 }
 

@@ -25,6 +25,7 @@ object TestsApplication {
         CommandParser[WorkingDirectoryCommand],
         CommandParser[EchoCommand],
         CommandParser[ConfigCommand],
+        CommandParser[ExampleNestedCommand],
         CommandParser[ManCommand]
       )
     )

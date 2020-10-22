@@ -5,6 +5,7 @@ import moped.json.DecodingContext
 import moped.json.JsonObject
 import moped.macros.ClassShaper
 import moped.reporters.Diagnostic
+import moped.json.JsonMember
 
 object FatalUnknownFieldDecoder {
   def check(
@@ -12,16 +13,16 @@ object FatalUnknownFieldDecoder {
       context: DecodingContext
   ): Option[Diagnostic] = {
     if (!context.fatalUnknownFields) return None
-    val keys = context.json match {
-      case JsonObject(members) =>
-        members.map(_.key)
+    val members: List[JsonMember] = context.json match {
+      case obj: JsonObject =>
+        obj.members
       case _ =>
-        Nil
+        List()
     }
     val validKeys = ev.allNames.toSet
-    val invalidKeys = keys.collect {
-      case name if !validKeys.contains(name.value) =>
-        new UnknownFieldDiagnostic(name)
+    val invalidKeys = members.collect {
+      case member if !validKeys.contains(member.key.value) =>
+        new UnknownFieldDiagnostic(member)
     }
     Diagnostic.fromDiagnostics(invalidKeys)
   }

@@ -9,12 +9,13 @@ import moped.json._
 import moped.macros.ClassShaper
 import moped.macros.ParameterShape
 import moped.reporters._
+import scala.collection.immutable.Nil
 
 class CommandLineParser[T](
     settings: ClassShaper[T],
     toInline: Map[String, ParameterShape]
 ) {
-  def loop(
+  private def loop(
       curr: JsonObject,
       xs: List[String],
       s: State
@@ -130,13 +131,16 @@ class CommandLineParser[T](
             }
           case Some(setting) =>
             val prefix = toInline.get(flag).fold("")(_.name + ".")
-            val toAdd = prefix + camel
+            val keys = toInline.get(flag) match {
+              case Some(i) => i.name :: flag :: Nil
+              case None => flag :: Nil
+            }
             if (setting.isBoolean) {
               val newCurr =
-                add(curr, toAdd, JsonBoolean(defaultBooleanValue))
+                add(curr, keys, JsonBoolean(defaultBooleanValue))
               loop(newCurr, tail, NoFlag)
             } else {
-              loop(curr, tail, Flag(toAdd, setting))
+              loop(curr, tail, Flag(flag, setting))
             }
         }
     }
@@ -152,7 +156,8 @@ object CommandLineParser {
   )(implicit settings: ClassShaper[T]): DecodingResult[JsonObject] = {
     val toInline = inlinedSettings(settings)
     val parser = new CommandLineParser[T](settings, toInline)
-    parser.loop(JsonObject(Nil), args, NoFlag)
+    val x = parser.loop(JsonObject(Nil), args, NoFlag)
+    x
   }
 
   private def add(
@@ -160,10 +165,23 @@ object CommandLineParser {
       key: String,
       value: JsonElement
   ): JsonObject = {
-    val values = curr.members.filterNot {
-      case JsonMember(k, _) => k.value == key
-    }
-    JsonObject(JsonMember(JsonString(key), value) :: values)
+    add(curr, List(key), value)
+  }
+
+  private def add(
+      curr: JsonObject,
+      keys: List[String],
+      value: JsonElement
+  ): JsonObject = {
+    def loop(ks: List[String]): JsonMember =
+      ks match {
+        case Nil => throw new IllegalArgumentException("Nil")
+        case head :: Nil =>
+          JsonMember(JsonString(head), value)
+        case head :: tail =>
+          JsonMember(JsonString(head), JsonObject(List(loop(tail))))
+      }
+    curr + loop(keys)
   }
 
   val noPrefix = "--no-"

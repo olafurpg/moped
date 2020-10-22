@@ -47,6 +47,7 @@ case class Application(
     description: Doc = Doc.empty,
     usage: String = s"{BINARY_NAME} COMMAND [OPTIONS]",
     examples: Doc = Doc.empty,
+    fatalUnknownFields: Boolean = false,
     relativeCommands: List[CommandParser[_]] = Nil,
     arguments: List[String] = Nil,
     relativeArguments: List[String] = Nil,
@@ -246,6 +247,7 @@ object Application {
             case Some(parser) =>
               parser.decodeCommand(
                 DecodingContext(JsonObject(Nil), app)
+                  .withFatalUnknownFields(app.fatalUnknownFields)
               ) match {
                 case ValueResult(cmd) =>
                   cmd.runAsFuture()
@@ -274,7 +276,10 @@ object Application {
                   configs = DecodingResult.fromResults(conf :: parsedConfig)
                   mergedConfig = configs.map(JsonElement.merge)
                   configured = mergedConfig.flatMap(elem =>
-                    command.decodeCommand(DecodingContext(elem, app))
+                    command.decodeCommand(
+                      DecodingContext(elem, app)
+                        .withFatalUnknownFields(app.fatalUnknownFields)
+                    )
                   )
                   exit <- configured match {
                     case ValueResult(value) =>

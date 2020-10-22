@@ -1,5 +1,6 @@
 package tests
 
+import junit.framework.ComparisonFailure
 import moped.cli.Command
 import moped.cli.CommandParser
 import moped.json.DecodingContext
@@ -59,6 +60,13 @@ class JsonDecoderSuite extends BaseSuite {
           assertNoDiff(obtained, expected)
       }
     }
+  }
+
+  test("bar") {
+    println("Hello world!")
+    new AssertionError()
+    throw new ComparisonFailure();
+    throw new AssertionError("FOO")
   }
 
   checkDecoded(
