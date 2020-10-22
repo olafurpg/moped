@@ -1,9 +1,9 @@
 package moped.internal.diagnostics
 
-import moped.reporters.Diagnostic
-import moped.reporters.ErrorSeverity
 import moped.internal.console.CommandLineParser
 import moped.json.JsonMember
+import moped.reporters.Diagnostic
+import moped.reporters.ErrorSeverity
 
 class UnknownFieldDiagnostic(member: JsonMember)
     extends Diagnostic(
@@ -12,7 +12,7 @@ class UnknownFieldDiagnostic(member: JsonMember)
       member.key.position
     ) {
   def fieldName = member.key.value
-  def value = member.value.toDoc.render(10000)
+  def value: String = member.value.toDoc.render(10000)
   def message: String = {
     if (fieldName == CommandLineParser.PositionalArgument) {
       s"unexpected positional arguments ${value}"

@@ -12,6 +12,7 @@ class ObjectMergerTraverser extends JsonTraverser {
     mergeElement(JsonObject(List(member)))
   }
   def mergeElement(elem: JsonElement): Unit = {
+    pprint.log(elem)
     isReuseBuilder = !stack.isEmpty() &&
       elem.isObject &&
       stack.getFirst().isInstanceOf[ObjectBuilder]

@@ -1,29 +1,40 @@
 package moped.internal.console
 
+import scala.collection.immutable.Nil
+import scala.collection.mutable
 import scala.util.Try
 
-import moped.annotations.Inline
 import moped.internal.console.CommandLineParser._
 import moped.internal.reporters.Levenshtein
 import moped.json._
 import moped.macros.ClassShaper
-import moped.macros.ParameterShape
 import moped.reporters._
-import scala.collection.immutable.Nil
-import scala.collection.mutable
 
 class CommandLineParser[T](
     settings: ClassShaper[T],
     toInline: Map[String, List[InlinedFlag]]
 ) {
-  val merger = new ObjectMergerTraverser()
-  val errors = mutable.ListBuffer.empty[Diagnostic]
+  private val pendingMembers = mutable.ListBuffer.empty[JsonElement]
+  private val pendingArrays =
+    mutable.Map.empty[List[String], mutable.ListBuffer[JsonElement]]
+  private val errors = mutable.ListBuffer.empty[Diagnostic]
+  private def flushArrays(): Unit = {
+    pendingArrays.foreach {
+      case (keys, values) =>
+        pushMember(newMember(keys, JsonArray(values.toList)))
+    }
+    pendingArrays.clear()
+  }
+  private def pushMember(member: JsonMember): Unit = {
+    pendingMembers += JsonObject(List(member))
+  }
   def parseArgs(args: List[String]): DecodingResult[JsonObject] = {
     loop(args, NoFlag)
+    flushArrays()
     Diagnostic.fromDiagnostics(errors.toList) match {
       case Some(d) => ErrorResult(d)
       case None =>
-        merger.result() match {
+        JsonElement.merge(pendingMembers) match {
           case o: JsonObject =>
             pprint.log(o.toDoc.render(10))
             ValueResult(o)
@@ -89,10 +100,10 @@ class CommandLineParser[T](
           if (setting.shape.isRepeated) {
             appendValues(setting.keys, List(value))
           } else {
-            add(setting.shape.name, value)
-            loop(tail, NoFlag)
+            add(setting.keys, value)
           }
         }
+        loop(tail, NoFlag)
     }
   }
 
@@ -180,7 +191,7 @@ class CommandLineParser[T](
       keys: List[String],
       value: JsonElement
   ): Unit = {
-    merger.mergeMember(newMember(keys, value))
+    pushMember(newMember(keys, value))
   }
 
   private def newMember(keys: List[String], value: JsonElement): JsonMember = {
@@ -203,7 +214,8 @@ class CommandLineParser[T](
       keys: List[String],
       values: List[JsonElement]
   ): Unit = {
-    merger.mergeMember(newMember(keys, JsonArray(values)))
+    val buf = pendingArrays.getOrElseUpdate(keys, mutable.ListBuffer.empty)
+    buf ++= values
   }
 }
 

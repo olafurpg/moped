@@ -1,9 +1,10 @@
 package tests
 
-import moped.cli.CommandParser
-import moped.cli.Command
-import moped.cli.Application
 import moped.annotations.Inline
+import moped.cli.Application
+import moped.cli.Command
+import moped.cli.CommandParser
+import moped.json.JsonCodec
 
 final case class NestedOptions(
     a: Boolean = false,
@@ -12,7 +13,7 @@ final case class NestedOptions(
     d: List[String] = Nil
 )
 object NestedOptions {
-  implicit val codec = moped.macros.deriveCodec(NestedOptions())
+  implicit val codec: JsonCodec[NestedOptions] = moped.macros.deriveCodec(NestedOptions())
 }
 
 final case class InlinedOptions(
@@ -22,7 +23,7 @@ final case class InlinedOptions(
     id: List[String] = Nil
 )
 object InlinedOptions {
-  implicit val codec = moped.macros.deriveCodec(InlinedOptions())
+  implicit val codec: JsonCodec[InlinedOptions] = moped.macros.deriveCodec(InlinedOptions())
 }
 
 final case class ExampleNestedCommand(
@@ -31,14 +32,18 @@ final case class ExampleNestedCommand(
     app: Application = Application.default
 ) extends Command {
   def run(): Int = {
-    app.out.println(s"nested.a=${nested.a}")
-    app.out.println(s"nested.b=${nested.b}")
+    if (nested.a)
+      app.out.println(s"nested.a=${nested.a}")
+    if (nested.b)
+      app.out.println(s"nested.b=${nested.b}")
     if (nested.c.nonEmpty)
       app.out.println(s"nested.c=${nested.c}")
     if (nested.d.nonEmpty)
       app.out.println(s"nested.d=${nested.d.mkString(",")}")
-    app.out.println(s"inline.a=${inlined.ia}")
-    app.out.println(s"inline.b=${inlined.ib}")
+    if (inlined.ia)
+      app.out.println(s"inline.a=${inlined.ia}")
+    if (inlined.ib)
+      app.out.println(s"inline.b=${inlined.ib}")
     if (inlined.ic.nonEmpty)
       app.out.println(s"inline.ic=${inlined.ic}")
     if (inlined.id.nonEmpty)
@@ -47,5 +52,5 @@ final case class ExampleNestedCommand(
   }
 }
 object ExampleNestedCommand {
-  implicit val parser = CommandParser.derive(ExampleNestedCommand())
+  implicit val parser: CommandParser[ExampleNestedCommand] = CommandParser.derive(ExampleNestedCommand())
 }

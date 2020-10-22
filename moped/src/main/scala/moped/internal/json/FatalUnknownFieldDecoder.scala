@@ -2,10 +2,10 @@ package moped.internal.json
 
 import moped.internal.diagnostics.UnknownFieldDiagnostic
 import moped.json.DecodingContext
+import moped.json.JsonMember
 import moped.json.JsonObject
 import moped.macros.ClassShaper
 import moped.reporters.Diagnostic
-import moped.json.JsonMember
 
 object FatalUnknownFieldDecoder {
   def check(

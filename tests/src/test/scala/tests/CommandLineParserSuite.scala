@@ -14,17 +14,13 @@ class CommandLineParserSuite extends BaseSuite {
     List("example-nested", "--nested.a", "--nested.b"),
     """|nested.a=true
        |nested.b=true
-       |inline.a=false
-       |inline.b=false
        |""".stripMargin
   )
 
   checkOutput(
     "inline-flag",
     List("example-nested", "--ia", "--ib"),
-    """|nested.a=false
-       |nested.b=false
-       |inline.a=true
+    """|inline.a=true
        |inline.b=true
        |""".stripMargin
   )
@@ -33,9 +29,35 @@ class CommandLineParserSuite extends BaseSuite {
     "inline-nested-mix-flag",
     List("example-nested", "--ia", "--nested.a"),
     """|nested.a=true
-       |nested.b=false
        |inline.a=true
-       |inline.b=false
+       |""".stripMargin
+  )
+
+  checkOutput(
+    "string-nested",
+    List("example-nested", "--nested.c", "hello"),
+    """|nested.c=hello
+       |""".stripMargin
+  )
+
+  checkOutput(
+    "string-inline",
+    List("example-nested", "--ic", "hello"),
+    """|inline.ic=hello
+       |""".stripMargin
+  )
+
+  checkOutput(
+    "repeated-string-nested",
+    List("example-nested", "--nested.c", "hello"),
+    """|nested.c=hello
+       |""".stripMargin
+  )
+
+  checkOutput(
+    "repeated-string-inline",
+    List("example-nested", "--id", "hello1", "--id", "hello2"),
+    """|inline.id=hello1,hello2
        |""".stripMargin
   )
 
@@ -46,4 +68,5 @@ class CommandLineParserSuite extends BaseSuite {
        |""".stripMargin
   )
   // TODO: concat arrays
+  // TODO: --no- prefix
 }

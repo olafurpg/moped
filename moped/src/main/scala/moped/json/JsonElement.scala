@@ -112,4 +112,6 @@ final case class JsonObject(members: List[JsonMember]) extends JsonElement {
     value.get(key)
   }
 }
-final case class JsonMember(key: JsonString, value: JsonElement)
+final case class JsonMember(key: JsonString, value: JsonElement) {
+  def toDoc: Doc = key.toDoc + Doc.char(':') + Doc.space + value.toDoc
+}

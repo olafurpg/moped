@@ -1,7 +1,7 @@
 package moped.cli
 
-import moped.macros.ParameterShape
 import moped.internal.console.InlinedFlag
+import moped.macros.ParameterShape
 
 final case class TabCompletionContext(
     shell: ShellCompletion,
