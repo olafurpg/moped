@@ -39,6 +39,7 @@ class CommandLineParser[T](
             // pprint.log(o.toDoc.render(10))
             ValueResult(o)
           case e =>
+            pprint.log(e)
             ErrorResult(Diagnostic.typeMismatch("Object", DecodingContext(e)))
         }
     }
@@ -103,7 +104,7 @@ class CommandLineParser[T](
           tryFlag(negatedHead, tail) match {
             case Left(_) =>
               errors += error
-            case Right(Nil) => // Done.
+            case Right(Nil) => loop(tail, NoFlag)
             case Right(settings) =>
               // --no prefix succeeded, default boolean value is false.
               loopSettings(tail, settings, defaultBooleanValue = false)
@@ -111,7 +112,7 @@ class CommandLineParser[T](
         } else {
           errors += error
         }
-      case Right(Nil) => // Done.
+      case Right(Nil) => loop(tail, NoFlag)
       case Right(settings) =>
         loopSettings(tail, settings, defaultBooleanValue = true)
     }
@@ -130,10 +131,10 @@ class CommandLineParser[T](
           case None =>
             settings.parametersFlat.find(_.isCatchInvalidFlags) match {
               case Some(param) =>
-                appendValues(
-                  param.name,
-                  (flag :: tail).map(JsonString(_))
-                )
+                // appendValues(
+                //   param.name,
+                //   List(JsonString(flag))
+                // )
                 Right(Nil)
               case None =>
                 Left(didYouMean(flag, camel))
@@ -182,8 +183,17 @@ class CommandLineParser[T](
       loop(tail, NoFlag)
     } else {
       if (hasBoolean) {
+        val name = settings.head.shape.name
+        val names =
+          settings.map(s => s.keys.mkString(".")).mkString("{", ",", "}")
         errors += Diagnostic.error(
-          "either all inlined flags must be boolean or non-boolean"
+          s"""
+             |invalid usage of @Inline. The field name '$name' inlines to conflicting nested parameters $names, which mix boolean and non-boolean parameters.
+             |You can only fix this problem by changing the source code of this command-line tool.
+             |To fix this problem, you can try one of the following.
+             |  1) change the types of the parameters to be only boolean or non-boolean
+             |  2) remove the @Inline annotation for one of the nested parameters
+             |""".stripMargin
         )
       } else {
         loop(tail, Flag(settings))

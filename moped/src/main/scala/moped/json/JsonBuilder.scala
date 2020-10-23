@@ -4,6 +4,9 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 sealed abstract class JsonBuilder {
+  def isPrimitiveBuilder = this.isInstanceOf[PrimitiveBuilder]
+  def isArrayBuilder = this.isInstanceOf[ArrayBuilder]
+  def isObjectBuilder = this.isInstanceOf[ObjectBuilder]
   def addObjectMember(member: JsonMember): Unit
   def addArrayValue(value: JsonElement): Unit
   def result(): JsonElement
@@ -26,12 +29,14 @@ object JsonBuilder {
 }
 
 final class PrimitiveBuilder(value: JsonElement) extends JsonBuilder {
-  def addObjectMember(member: JsonMember): Unit = ()
-  def addArrayValue(value: JsonElement): Unit = ()
+  override def toString(): String = s"PrimitiveBuilder($value)"
+  def addObjectMember(member: JsonMember): Unit = ???
+  def addArrayValue(value: JsonElement): Unit = ???
   def result(): JsonElement = value
 }
 
 final class ArrayBuilder() extends JsonBuilder {
+  override def toString(): String = s"ArrayBuilder($buf)"
   private val buf = ListBuffer.empty[JsonElement]
   def addObjectMember(member: JsonMember): Unit = ()
   def addArrayValue(value: JsonElement): Unit = buf += value
@@ -39,6 +44,7 @@ final class ArrayBuilder() extends JsonBuilder {
 }
 
 final class ObjectBuilder() extends JsonBuilder {
+  override def toString(): String = s"ObjectBuilder($buf)"
   private val buf = mutable.LinkedHashMap.empty[JsonString, JsonBuilder]
   def addObjectMember(member: JsonMember): Unit = {
     (buf.get(member.key), member.value) match {

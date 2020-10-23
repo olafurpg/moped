@@ -38,10 +38,10 @@ DESCRIPTION
   Write arguments to the standard output
 
 OPTIONS
-  --help: Boolean                Print this help message
-  --uppercase: Boolean = false   If true, the output will be all UPPERCASE
-  --unchanged: Boolean = true    If false, the output will be changed to '--no-unchanged'
-  --no-lowercase: Boolean = true If false, the output will be all lowercase
+  --help: Boolean              Print this help message
+  --uppercase: Boolean = false If true, the output will be all UPPERCASE
+  --unchanged: Boolean = true  If false, the output will be changed to '--no-unchanged'
+  --lowercase: Boolean = false If false, the output will be all lowercase
 
 POSITIONAL ARGUMENTS
   The arguments to write out to standard output

@@ -22,8 +22,8 @@ class ApplicationSuite extends BaseSuite {
 
   checkOutput(
     "no-no-flag",
-    List("echo", "--no-no-lowercase", "HELLO WORLD"),
-    "hello world"
+    List("echo", "--no-lowercase", "HELLO WORLD"),
+    "HELLO WORLD"
   )
 
   checkOutput(
@@ -34,9 +34,9 @@ class ApplicationSuite extends BaseSuite {
 
   checkErrorOutput(
     "no-no-error",
-    List("echo", "--no-no-no-lowercase", "HELLO WORLD"),
-    """|error: found argument '--no-no-no-lowercase' which wasn't expected, or isn't valid in this context.
-       |	Did you mean '--no-lowercase'?
+    List("echo", "--no-no-lowercase", "HELLO WORLD"),
+    """|error: found argument '--no-no-lowercase' which wasn't expected, or isn't valid in this context.
+       |	Did you mean '--lowercase'?
        |""".stripMargin
   )
 

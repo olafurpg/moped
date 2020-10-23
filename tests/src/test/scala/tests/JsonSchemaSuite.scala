@@ -56,7 +56,7 @@ class JsonSchemaSuite extends FunSuite {
       |    "repeated": {
       |      "title": "repeated",
       |      "description": "A repeated field",
-      |      "default": [ 2 ],
+      |      "default": [2],
       |      "required": false,
       |      "type": "array"
       |    }
@@ -101,7 +101,7 @@ class JsonSchemaSuite extends FunSuite {
       |    "b": {
       |      "title": "b",
       |      "description": "Nested field",
-      |      "default": { "value": "Hest" },
+      |      "default": {"value": "Hest"},
       |      "required": false,
       |      "type": "object",
       |      "properties": {

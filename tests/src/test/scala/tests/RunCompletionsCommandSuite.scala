@@ -59,7 +59,7 @@ class RunCompletionsCommandSuite extends BaseSuite {
   val allFlags: List[String] =
     List(
       "--help",
-      "--no-lowercase",
+      "--lowercase",
       "--trailing",
       "--unchanged",
       "--uppercase"

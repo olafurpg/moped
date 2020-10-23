@@ -150,7 +150,8 @@ abstract class MopedSuite(applicationToTest: Application) extends FunSuite {
         else ""
       val out = new StringBuilder()
       def loop(prefix: List[String], c: CommandParser[_]): Unit =
-        if (c.nestedCommands.nonEmpty) {
+        if (c.isHidden) ()
+        else if (c.nestedCommands.nonEmpty) {
           c.nestedCommands.foreach { n =>
             loop(prefix :+ c.subcommandName, n)
           }

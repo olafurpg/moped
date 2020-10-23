@@ -70,7 +70,7 @@ class JsonDecoderSuite extends BaseSuite {
   checkErrorDecoded(
     "fatal-unknown-field",
     parseJson("{'a': 2, 'b': 42}"),
-    """|moped.json:1:9 error: unknown field name 'b'
+    """|moped.json:1:9 error: unknown field name 'b' with value 42
        |{"a": 2, "b": 42
        |         ^
        |""".stripMargin,

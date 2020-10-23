@@ -26,7 +26,7 @@ case class EchoCommand(
     @Description("If false, the output will be changed to '--no-unchanged'")
     unchanged: Boolean = true,
     @Description("If false, the output will be all lowercase")
-    noLowercase: Boolean = true,
+    lowercase: Boolean = false,
     @PositionalArguments()
     @Description("The arguments to write out to standard output")
     args: List[String] = Nil,
@@ -40,7 +40,7 @@ case class EchoCommand(
     val toPrint =
       if (!unchanged) List("--no-unchanged")
       else if (uppercase) args.map(_.toUpperCase())
-      else if (!noLowercase) args.map(_.toLowerCase())
+      else if (lowercase) args.map(_.toLowerCase())
       else args
     out.println(toPrint.mkString(" "))
     if (trailing.nonEmpty) {
