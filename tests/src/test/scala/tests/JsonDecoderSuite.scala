@@ -90,7 +90,7 @@ class JsonDecoderSuite extends BaseSuite {
   )
 
   checkErrorDecoded(
-    "type-mismatch-object-string".only,
+    "type-mismatch-object-string",
     parseJson("{'nestedObject': 'value'}"),
     """|moped.json:1:17 error: Type mismatch at '.nestedObject';
        |  found    : String
