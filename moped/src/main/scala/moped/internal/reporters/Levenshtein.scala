@@ -35,7 +35,8 @@ object Levenshtein {
             .min(dist(j)(i - 1))
             .min(dist(j - 1)(i - 1)) + 1
 
-    dist(s2.length)(s1.length)
+    val minDistance = math.abs(s1.length() - s2.length())
+    dist(s2.length)(s1.length) - minDistance
   }
 
 }

@@ -114,14 +114,15 @@ class CommandLineParserSuite extends BaseSuite {
   )
 
   checkErrorOutput(
-    "type-mismatch-object".only,
+    "type-mismatch-object",
     List(
       "example-nested",
       "--nested",
       "value"
     ),
-    """|flag=true
-       |List(--invalid, value1, value2)
+    """|error: Type mismatch at '.nested';
+       |  found    : String
+       |  expected : Object
        |""".stripMargin
   )
 
@@ -131,8 +132,8 @@ class CommandLineParserSuite extends BaseSuite {
       "example-nested",
       "--iii"
     ),
-    """|flag=true
-       |List(--invalid, value1, value2)
+    """|error: found argument '--iii' which wasn't expected, or isn't valid in this context.
+       |	Did you mean '--ii'?
        |""".stripMargin
   )
 

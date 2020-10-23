@@ -16,7 +16,9 @@ class ConfigCommandSuite extends BaseSuite {
   checkOutput(
     "negative-inline",
     List("config", "--no-use-super-shell"),
-    "no foobar"
+    """|no foobar
+       |--no-use-super-shell
+       |""".stripMargin
   )
 
   checkOutput(

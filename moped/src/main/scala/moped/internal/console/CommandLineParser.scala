@@ -36,7 +36,6 @@ class CommandLineParser[T](
       case None =>
         JsonElement.merge(pendingMembers) match {
           case o: JsonObject =>
-            pprint.log(o.toDoc.render(10))
             ValueResult(o)
           case e =>
             ErrorResult(Diagnostic.typeMismatch("Object", DecodingContext(e)))
@@ -117,11 +116,13 @@ class CommandLineParser[T](
     }
   }
 
-  private def tryFlag(flag: String): Either[Diagnostic, List[InlinedFlag]] = {
-    val camel = Cases.kebabToCamel(dash.replaceFirstIn(flag, ""))
+  private def tryFlag(
+      kebabFlag: String
+  ): Either[Diagnostic, List[InlinedFlag]] = {
+    val camel = Cases.kebabToCamel(dash.replaceFirstIn(kebabFlag, ""))
     camel.split("\\.").toList match {
       case Nil =>
-        Left(Diagnostic.error(s"Flag '$flag' must not be empty"))
+        Left(Diagnostic.error(s"Flag '$kebabFlag' must not be empty"))
       case singleCamel :: Nil =>
         toInline.get(singleCamel) match {
           case None =>
@@ -131,11 +132,11 @@ class CommandLineParser[T](
               case Some(param) =>
                 appendValues(
                   PositionalArgument,
-                  List(JsonString(flag))
+                  List(JsonString(kebabFlag))
                 )
                 Right(Nil)
               case None =>
-                Left(didYouMean(flag, camel))
+                Left(didYouMean(kebabFlag, camel))
             }
           case Some(settings) =>
             Right(settings)
@@ -145,14 +146,14 @@ class CommandLineParser[T](
           case Some(value) =>
             Right(List(InlinedFlag(camelHead :: camelTail, value)))
           case None =>
-            Left(didYouMean(flag, camel))
+            Left(didYouMean(kebabFlag, camel))
         }
     }
   }
 
-  def didYouMean(flag: String, camel: String): Diagnostic = {
+  def didYouMean(kebabFlag: String, camel: String): Diagnostic = {
     val closestCandidate =
-      Levenshtein.closestCandidate(camel, settings.nonHiddenNames)
+      Levenshtein.closestCandidate(camel, toInline.keysIterator.toList)
     val didYouMean = closestCandidate match {
       case None =>
         ""
@@ -160,9 +161,8 @@ class CommandLineParser[T](
         val kebab = Cases.camelToKebab(candidate)
         s"\n\tDid you mean '--$kebab'?"
     }
-    val kebabFlag = Cases.camelToKebab(flag)
     Diagnostic.error(
-      s"found argument '--$kebabFlag' which wasn't expected, or isn't valid in this context.$didYouMean"
+      s"found argument '$kebabFlag' which wasn't expected, or isn't valid in this context.$didYouMean"
     )
   }
 
