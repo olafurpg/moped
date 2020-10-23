@@ -20,7 +20,8 @@ object NestedList {
 
 case class MyClass(
     a: Int = 1,
-    nested: List[NestedList] = Nil
+    nested: List[NestedList] = Nil,
+    nestedObject: NestedList = NestedList()
 ) extends Command {
   def run(): Int = 0
 }
@@ -85,6 +86,17 @@ class JsonDecoderSuite extends BaseSuite {
        |  expected : String
        |{"nested": [{"a": []}]
        |                  ^
+       |""".stripMargin
+  )
+
+  checkErrorDecoded(
+    "type-mismatch-object-string".only,
+    parseJson("{'nestedObject': 'value'}"),
+    """|moped.json:1:17 error: Type mismatch at '.nestedObject';
+       |  found    : String
+       |  expected : Object
+       |{"nestedObject": "value"
+       |                 ^
        |""".stripMargin
   )
 

@@ -9,7 +9,7 @@ import scala.util.control.NonFatal
 import dev.dirs.ProjectDirectories
 import fansi.Color
 import fansi.Str
-import moped.annotations.CatchInvalidFlags
+import moped.annotations.TreatInvalidFlagAsPositional
 import moped.annotations.CommandName
 import moped.annotations.PositionalArguments
 import moped.commands._
@@ -204,7 +204,10 @@ object Application {
                   new ParameterShape(
                     "arguments",
                     "List[String]",
-                    List(new PositionalArguments(), new CatchInvalidFlags()),
+                    List(
+                      new PositionalArguments(),
+                      new TreatInvalidFlagAsPositional()
+                    ),
                     None
                   )
                 )

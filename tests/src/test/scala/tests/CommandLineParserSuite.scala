@@ -100,13 +100,41 @@ class CommandLineParserSuite extends BaseSuite {
   )
 
   checkOutput(
-    "positional-boolean".only,
-    List("example-fallback", "--fallback", "value1", "--flag", "value2"),
+    "positional-boolean",
+    List(
+      "example-fallback",
+      "--invalid",
+      "value1",
+      "--flag",
+      "value2"
+    ),
     """|flag=true
-       |List(--fallback, value1, value2)
+       |List(--invalid, value1, value2)
        |""".stripMargin
   )
 
-  // TODO: catch fallback
-  // TODO: more combined arguments
+  checkErrorOutput(
+    "type-mismatch-object".only,
+    List(
+      "example-nested",
+      "--nested",
+      "value"
+    ),
+    """|flag=true
+       |List(--invalid, value1, value2)
+       |""".stripMargin
+  )
+
+  checkErrorOutput(
+    "dym-boolean",
+    List(
+      "example-nested",
+      "--iii"
+    ),
+    """|flag=true
+       |List(--invalid, value1, value2)
+       |""".stripMargin
+  )
+
+  // TODO: did you mean?
 }

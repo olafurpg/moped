@@ -133,6 +133,11 @@ class Macros(val c: blackbox.Context) {
              context: ${weakTypeOf[DecodingContext]}
          ): ${weakTypeOf[DecodingResult[T]]} = {
            val conf = context.json
+           if (!context.json.isObject) {
+             return _root_.moped.json.ErrorResult(
+               _root_.moped.reporters.Diagnostic.typeMismatch("Object", context)
+             )
+           }
            val settings = $settings
            _root_.moped.internal.json.FatalUnknownFieldDecoder.check(settings, context) match {
              case _root_.scala.Some(error) => return _root_.moped.json.ErrorResult(error)

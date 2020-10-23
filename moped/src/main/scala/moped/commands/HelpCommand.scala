@@ -3,7 +3,7 @@ package moped.commands
 import scala.collection.immutable.Nil
 import scala.collection.mutable
 
-import moped.annotations.CatchInvalidFlags
+import moped.annotations.TreatInvalidFlagAsPositional
 import moped.annotations.CommandName
 import moped.annotations.Description
 import moped.annotations.ExtraName
@@ -95,7 +95,7 @@ object HelpCommand {
                   List(
                     TabCompleter(completer),
                     PositionalArguments(),
-                    CatchInvalidFlags()
+                    TreatInvalidFlagAsPositional()
                   ),
                   None
                 )

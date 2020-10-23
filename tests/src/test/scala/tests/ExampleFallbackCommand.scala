@@ -9,7 +9,8 @@ import moped.cli.CommandParser
 @Hidden
 case class ExampleFallbackCommand(
     flag: Boolean = false,
-    @CatchInvalidFlags
+    @TreatInvalidFlagAsPositional
+    @PositionalArguments
     args: List[String] = Nil,
     app: Application = Application.default
 ) extends Command {

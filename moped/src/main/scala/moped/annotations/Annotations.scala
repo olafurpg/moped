@@ -38,7 +38,7 @@ final case class ParseAsNumber() extends StaticAnnotation
 final case class PositionalArguments() extends StaticAnnotation
 final case class TrailingArguments() extends StaticAnnotation
 final case class Section(name: String) extends StaticAnnotation
-final case class CatchInvalidFlags() extends StaticAnnotation
+final case class TreatInvalidFlagAsPositional() extends StaticAnnotation
 final case class TabCompleteAsOneOf(options: String*) extends StaticAnnotation
 final case class TabCompleter(fn: Completer[_]) extends StaticAnnotation
 final case class Subcommand(ev: CommandParser[_ <: BaseCommand])

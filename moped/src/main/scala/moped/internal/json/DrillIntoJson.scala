@@ -28,7 +28,8 @@ object DrillIntoJson {
       context: DecodingContext
   )(implicit ev: JsonDecoder[T]): DecodingResult[T] = {
     getKey(conf, param.allNames) match {
-      case Some(value) => ev.decode(context.withJson(value))
+      case Some(value) =>
+        ev.decode(context.withJson(value))
       case None => ValueResult(default)
     }
   }

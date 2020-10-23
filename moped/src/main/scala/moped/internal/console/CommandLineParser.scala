@@ -36,10 +36,9 @@ class CommandLineParser[T](
       case None =>
         JsonElement.merge(pendingMembers) match {
           case o: JsonObject =>
-            // pprint.log(o.toDoc.render(10))
+            pprint.log(o.toDoc.render(10))
             ValueResult(o)
           case e =>
-            pprint.log(e)
             ErrorResult(Diagnostic.typeMismatch("Object", DecodingContext(e)))
         }
     }
@@ -96,12 +95,12 @@ class CommandLineParser[T](
       flag: String,
       tail: List[String]
   ): Unit = {
-    tryFlag(flag, tail) match {
+    tryFlag(flag) match {
       case Left(error) =>
         if (flag.startsWith(negatedPrefix)) {
           // Try to parse flag with "--no-" prefix removed.
-          val negatedHead = flag.stripPrefix(negatedPrefix)
-          tryFlag(negatedHead, tail) match {
+          val negatedHead = "--" + flag.stripPrefix(negatedPrefix)
+          tryFlag(negatedHead) match {
             case Left(_) =>
               errors += error
             case Right(Nil) => loop(tail, NoFlag)
@@ -118,23 +117,22 @@ class CommandLineParser[T](
     }
   }
 
-  private def tryFlag(
-      flag: String,
-      tail: List[String]
-  ): Either[Diagnostic, List[InlinedFlag]] = {
+  private def tryFlag(flag: String): Either[Diagnostic, List[InlinedFlag]] = {
     val camel = Cases.kebabToCamel(dash.replaceFirstIn(flag, ""))
     camel.split("\\.").toList match {
       case Nil =>
         Left(Diagnostic.error(s"Flag '$flag' must not be empty"))
-      case flag :: Nil =>
-        toInline.get(flag) match {
+      case singleCamel :: Nil =>
+        toInline.get(singleCamel) match {
           case None =>
-            settings.parametersFlat.find(_.isCatchInvalidFlags) match {
+            settings.parametersFlat.find(
+              _.isTreatInvalidFlagAsPositional
+            ) match {
               case Some(param) =>
-                // appendValues(
-                //   param.name,
-                //   List(JsonString(flag))
-                // )
+                appendValues(
+                  PositionalArgument,
+                  List(JsonString(flag))
+                )
                 Right(Nil)
               case None =>
                 Left(didYouMean(flag, camel))
@@ -142,10 +140,10 @@ class CommandLineParser[T](
           case Some(settings) =>
             Right(settings)
         }
-      case flag :: flags =>
-        settings.get(flag, flags) match {
+      case camelHead :: camelTail =>
+        settings.get(camelHead, camelTail) match {
           case Some(value) =>
-            Right(List(InlinedFlag(flag :: flags, value)))
+            Right(List(InlinedFlag(camelHead :: camelTail, value)))
           case None =>
             Left(didYouMean(flag, camel))
         }

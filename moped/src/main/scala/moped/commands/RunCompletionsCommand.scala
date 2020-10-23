@@ -2,7 +2,7 @@ package moped.commands
 
 import scala.collection.immutable.Nil
 
-import moped.annotations.CatchInvalidFlags
+import moped.annotations.TreatInvalidFlagAsPositional
 import moped.annotations.CommandName
 import moped.annotations.Description
 import moped.annotations.PositionalArguments
@@ -43,7 +43,7 @@ object RunCompletionsCommand {
                 new ParameterShape(
                   "arguments",
                   "List[String]",
-                  List(PositionalArguments(), CatchInvalidFlags()),
+                  List(PositionalArguments(), TreatInvalidFlagAsPositional()),
                   None
                 )
               )
